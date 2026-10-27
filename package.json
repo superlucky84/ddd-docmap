@@ -1,0 +1,38 @@
+{
+  "name": "@superlucky84/ddd-docmap",
+  "version": "0.0.0-dev.0",
+  "description": "Local document maps for Doc-Driven Development projects.",
+  "private": true,
+  "license": "UNLICENSED",
+  "type": "module",
+  "bin": {
+    "ddd-docmap": "./bin/ddd-docmap.js"
+  },
+  "files": [
+    "AGENTS.md",
+    "bin/",
+    "src/",
+    "docs/"
+  ],
+  "scripts": {
+    "check": "node --check bin/ddd-docmap.js && node --check src/cli.js"
+  },
+  "engines": {
+    "node": ">=22"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/superlucky84/ddd-docmap.git"
+  },
+  "bugs": {
+    "url": "https://github.com/superlucky84/ddd-docmap/issues"
+  },
+  "homepage": "https://github.com/superlucky84/ddd-docmap#readme",
+  "keywords": [
+    "doc-driven-development",
+    "documentation",
+    "markdown",
+    "cli"
+  ]
+}
+

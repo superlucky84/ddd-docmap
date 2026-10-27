@@ -1,0 +1,10 @@
+node_modules/
+coverage/
+.cache/
+.ddd-docmap/
+*.tgz
+.DS_Store
+.env
+.env.*
+!.env.example
+
