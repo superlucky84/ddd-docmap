@@ -31,7 +31,11 @@ blockers, and the latest known commit.
 - src/server/ serves only indexed documents and fixed src/web/ assets on loopback.
 - Preserve foreground ownership and clean SIGINT/SIGTERM shutdown.
 - Run npm run test:browser for UI changes; DOCMAP_BROWSER_CHANNEL=chrome uses installed Chrome.
-- Markdown source view is Phase 2; formatted rendering and link navigation belong to Phase 3.
+- Render Markdown on the server with raw HTML disabled; keep reference resolution and file policy aligned.
+- Preserve source view, heading ids, navigation history, and independent map/reader scroll.
+- Serve only registered raster assets and recheck exclusions and symbolic links on every read.
+- Keep map/search/content generations coherent; retain the last good index on configuration errors.
+- Preserve user navigation, search input, and scroll during automatic refresh; close SSE and watchers on shutdown.
 - Introduce behavior tests with the document scanner and other functional modules.
 - Use synthetic, redistributable fixtures for examples and tests.
 - Preserve the target project's original documents and resolve links relative to them.

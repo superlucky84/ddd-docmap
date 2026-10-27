@@ -1,0 +1,21 @@
+{
+  "head": "8cf151d46124bb6361c4ec6d9ea2256182cd67da",
+  "files": {
+    "package.json": "fbec3f35775d05b9184256486169113cf8d3a8038ac5652718441ddf340283ea",
+    "scripts/benchmark.js": null,
+    "src/collector/config.js": "2d8d95017601c7d4c1bc33dc44755d1292d49cc3781e8838017ecfd9aec9adc5",
+    "src/collector/read.js": null,
+    "src/collector/scan.js": "f547c8340225a0f11c561def4a66987a1de45f060f48ccb3aa515475614dc9ea",
+    "src/server/files.js": "cb7a7c4e0c8db3d9b6abebcc5f7affd3931b06220d3de526a4123feb5cf3db31",
+    "src/server/project-store.js": "32068b533f662be1e8957e0773862c9c4694f085be8ed8f91e2c4d9026fe6bbb",
+    "src/web/live.js": "72b16636e1c055e72daf8fba691f0cc61e81a42757cdcd1884d6db48e052847c",
+    "src/web/search.js": "e9203a145a753d58ed2788b4f431c05b8ff59f91a46483d364a597d3d70bbaa1",
+    "test/boundaries.test.js": null,
+    "test/browser/hardening.spec.js": null,
+    "test/collector.test.js": "e7985c4e6ff08563ce443dea67dfb652e090849b4b26642e19c7263aea1648a6",
+    "test/helpers/scale.js": null,
+    "test/lifecycle.test.js": null,
+    "test/scale.test.js": null,
+    "test/shutdown.test.js": null
+  }
+}

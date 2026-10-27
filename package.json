@@ -16,7 +16,7 @@
   ],
   "scripts": {
     "check": "node scripts/check.js",
-    "test": "node --test --test-reporter=spec test/collector.test.js test/config.test.js test/markdown.test.js test/server.test.js test/cli.test.js",
+    "test": "node --test --test-reporter=spec test/*.test.js",
     "test:browser": "playwright test"
   },
   "engines": {
@@ -37,7 +37,10 @@
     "cli"
   ],
   "dependencies": {
+    "chokidar": "5.0.0",
+    "github-slugger": "2.0.0",
     "ignore": "7.0.14",
+    "markdown-it": "15.0.3",
     "mdast-util-from-markdown": "2.1.0",
     "open": "10.2.0",
     "picomatch": "4.0.7"

@@ -1,11 +1,17 @@
+import { createReader } from './reader.js';
+import { createSearch } from './search.js';
+import { connectLive } from './live.js';
+
 const $ = id => document.getElementById(id);
+let reader;
+let search;
 const labels = {
   requirements: 'Requirements', design: 'Design', implementation: 'Implementation',
   'manual-test': 'Checks', readme: 'Overview', research: 'Research', other: 'Document'
 };
 const state = {
-  map: null, groups: new Map(), documents: new Map(), expanded: new Set(['.']),
-  openDocuments: null, selectedId: null, request: null
+  map: null, groups: new Map(), documents: new Map(), redirects: new Map(), expanded: new Set(['.']),
+  openDocuments: null, selectedId: null
 };
 
 function element(tag, className, text) {
@@ -102,7 +108,7 @@ function renderGroup(group) {
       if (duplicate) button.setAttribute('aria-label', label + ' — ' + source.relativePath);
       button.dataset.focusKey = 'doc:' + source.id;
       if (source.id === state.selectedId) button.setAttribute('aria-current', 'page');
-      button.onclick = () => { void selectDocument(id); };
+      button.onclick = () => { void reader.open(id); };
       list.append(button);
     }
     item.append(list);
@@ -117,70 +123,94 @@ function renderGroup(group) {
   return item;
 }
 
-async function selectDocument(id) {
-  state.request?.abort();
-  const request = new AbortController();
-  state.request = request;
-  state.selectedId = id;
-  renderTree();
-  const source = state.documents.get(id);
-  $('reader-empty').hidden = true;
-  $('document-view').hidden = false;
-  $('document-title').textContent = source.title;
-  $('document-path').textContent = source.relativePath;
-  $('document-area').textContent = state.groups.get(source.groupId).title;
-  $('document-source').textContent = '';
-  $('document-status').classList.remove('is-error');
-  $('document-status').textContent = 'Opening document…';
-  $('reader-scroll').scrollTop = 0;
-  document.body.dataset.view = 'document';
-  try {
-    const response = await fetch('/api/document?id=' + encodeURIComponent(id), { signal: request.signal });
-    const result = await response.json();
-    if (state.request !== request) return;
-    if (!response.ok) throw new Error(result.error);
-    $('document-source').textContent = result.markdown;
-    $('document-status').textContent = '';
-    if (matchMedia('(max-width: 900px)').matches) $('document-title').focus({ preventScroll: true });
-  } catch (error) {
-    if (error.name === 'AbortError' || state.request !== request) return;
-    $('document-status').textContent = error.message || 'This document could not be opened.';
-    $('document-status').classList.add('is-error');
-  }
+function getDocument(id) {
+  return state.documents.get(state.redirects.get(id) || id);
 }
 
-$('back-to-map').onclick = () => {
-  document.body.dataset.view = 'map';
-  document.querySelector('[data-focus-key="' + CSS.escape('doc:' + state.selectedId) + '"]')?.focus({ preventScroll: true });
-};
+function applyMap(map) {
+  const oldGroups = state.groups;
+  state.map = map;
+  state.groups = new Map(map.groups.map(group => [group.id, group]));
+  state.documents = new Map(map.documents.map(source => [source.id, source]));
+  state.redirects = new Map(map.redirects.map(entry => [entry.source, entry.targetId]));
+  state.expanded = new Set([...state.expanded].filter(id => state.groups.has(id)));
+  for (const group of map.groups) {
+    if (group.isStructural && !oldGroups.has(group.id)) state.expanded.add(group.id);
+  }
+  if (!state.groups.has(state.openDocuments)) state.openDocuments = null;
+  state.selectedId = getDocument(state.selectedId)?.id || null;
+  const features = map.groups.filter(group => group.documentIds.length).length;
+  const count = map.documents.filter(source => !source.canonicalId).length;
+  $('map-count').textContent = features + ' features · ' + count + ' documents';
+  $('map-message').textContent = count ? '' : 'No documentation found. Add Markdown under a docs folder, or use ddd-docmap.config.json to include another location.';
+  $('warnings').hidden = !map.warnings.length;
+  $('warning-summary').textContent = map.warnings.length + ' collection notices';
+  $('warning-list').replaceChildren(...map.warnings.map(warning =>
+    element('li', '', warning.path + ': ' + warning.message)));
+  renderTree();
+}
 
 async function load() {
   try {
     const response = await fetch('/api/map');
     if (!response.ok) throw new Error('The project could not be loaded.');
-    state.map = await response.json();
-    state.groups = new Map(state.map.groups.map(group => [group.id, group]));
-    state.documents = new Map(state.map.documents.map(source => [source.id, source]));
-    for (const group of state.map.groups) {
-      if (group.isStructural) state.expanded.add(group.id);
-    }
+    applyMap(await response.json());
     const project = state.map.project;
     document.title = project.displayName + ' · ddd-docmap';
     $('project-name').textContent = project.displayName;
     $('project-root').textContent = project.rootLabel;
     $('project-root').title = project.rootLabel;
-    const features = state.map.groups.filter(group => group.documentIds.length).length;
-    $('map-count').textContent = features + ' features · ' + state.map.documents.length + ' documents';
-    if (!state.map.documents.length) {
-      $('map-message').textContent = 'No documentation found. Add Markdown under a docs folder, or use ddd-docmap.config.json to include another location.';
-    }
-    if (state.map.warnings.length) {
-      $('warnings').hidden = false;
-      $('warning-summary').textContent = state.map.warnings.length + ' collection notices';
-      $('warning-list').replaceChildren(...state.map.warnings.map(warning =>
-        element('li', '', warning.path + ': ' + warning.message)));
-    }
-    renderTree();
+    reader = createReader({
+      projectId: project.id,
+      getDocument,
+      getGroup: id => state.groups.get(id),
+      onSelect(id, reveal) {
+        const source = getDocument(id);
+        state.selectedId = source?.id || null;
+        if (source) $('map-message').textContent = '';
+        if (source && reveal) {
+          state.openDocuments = source.groupId;
+          let parent = state.groups.get(source.groupId).parentId;
+          while (parent !== null) {
+            state.expanded.add(parent);
+            parent = state.groups.get(parent).parentId;
+          }
+        }
+        renderTree();
+        search?.selected();
+      },
+      captureMap: () => ({
+        scroll: $('map-scroll').scrollTop, expanded: [...state.expanded], openDocuments: state.openDocuments,
+        search: search?.capture()
+      }),
+      restoreMap(saved) {
+        state.expanded = new Set(saved.expanded.filter(id => state.groups.has(id)));
+        state.openDocuments = state.groups.has(saved.openDocuments) ? saved.openDocuments : null;
+        renderTree();
+        search?.restore(saved.search, saved.scroll);
+        $('map-scroll').scrollTop = saved.scroll;
+      },
+      onError: message => { $('map-message').textContent = message; }
+    });
+    search = createSearch({ open: reader.open, showMap: reader.showMap,
+      getSequence: () => state.map.sequence, getSelected: () => state.selectedId });
+    await reader.initialize();
+    connectLive({
+      getSequence: () => state.map.sequence,
+      status(message) {
+        $('live-status').textContent = message;
+        $('live-status').classList.toggle('is-error', message !== 'Live updates');
+      },
+      async refresh() {
+        const response = await fetch('/api/map');
+        if (!response.ok) throw new Error('The document map could not be refreshed.');
+        const map = await response.json();
+        if (map.sequence <= state.map.sequence) return;
+        applyMap(map);
+        search.refresh();
+        void reader.refresh(map.sequence);
+      }
+    });
   } catch (error) {
     $('project-name').textContent = 'Project unavailable';
     $('map-count').textContent = '';

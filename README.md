@@ -5,9 +5,9 @@ Local document maps for **Doc-Driven Development** projects.
 Find feature documentation spread across a repository, explore its hierarchy,
 and read Markdown without losing your place.
 
-> Phase 2: the CLI opens a local document map with expandable cards and document selection.
-> Documents currently display as Markdown source. Formatted Markdown and link navigation
-> are planned for Phase 3. There is no npm release yet.
+> Phase 4: browse feature cards, read formatted Markdown, search documentation,
+> and see local saves reflected without reloading. Explicit previous paths resolve
+> to their current documents. There is no npm release yet.
 
 ## Document map
 
@@ -18,7 +18,7 @@ Run a CLI in a project to open its local document map:
 3. Expand a card to choose its requirements, design, implementation, or manual checks.
 4. Read the selected Markdown document beside the map.
 
-The planned default keeps the server running in the terminal. Press Ctrl+C to stop it.
+The default keeps the server running in the terminal. Press Ctrl+C to stop it.
 
 Projects can have partial document sets, shared contracts, nested features, and
 additional documents such as README or research notes. Defaults should work
@@ -27,7 +27,7 @@ labels, summaries, and discovery.
 
 ## Development
 
-Requires Node.js 22 or newer. Current validation uses Node.js 24.21.0 on macOS.
+Requires Node.js 22 or newer. Latest validation uses Node.js 22.12.0 on macOS 15.6.1.
 
 ```sh
 git clone https://github.com/superlucky84/ddd-docmap.git
@@ -59,7 +59,47 @@ open; Ctrl+C stops this server. Separate invocations use separate servers.
 If opening a browser fails, open the printed address manually.
 
 The arrow expands child features; the card expands its documents. On narrow
-screens, selecting a document switches to its source view, with a button back to the map.
+screens, selecting a document switches to its reader, with a button back to the map.
+
+## Reading and links
+
+The reader renders tables, fenced code, and read-only task checks, with an outline
+and an optional source view. Document links use the original file location.
+Browser back/forward restores the reader, source mode, and map positions in the current tab.
+
+Local PNG, JPEG, GIF, WebP, and AVIF images are served after path and exclusion checks.
+Raw HTML is displayed as text. SVG and external images show an explanation.
+Code, unindexed Markdown, and missing references keep the current document open;
+code and attachment paths can be copied. External http/https links open in a separate tab.
+
+## Search and live updates
+
+Search titles, feature names, paths, descriptions, and document text, including code.
+Space-separated terms use AND matching; English is case-insensitive and Korean text
+is Unicode-normalized. Results include context and highlight matches. Press / to
+focus search and Escape to clear it. Search shows at most 50 results with the total count.
+
+The local server watches Markdown, raster images, configuration, and ignore rules.
+It uses short polling intervals and batches saves into coherent map/search generations.
+The reader preserves its mode and scroll position. Removing the selected document
+clears its old body and explains what happened. Invalid configuration retains the
+last good index and shows an update notice until fixed. A reconnected tab catches up.
+Navigation state stays in each tab's memory.
+
+To register a previous path, add a version 1 config at the project root:
+
+~~~json
+{
+  "version": 1,
+  "redirects": {
+    "docs/old/DESIGN.md": "docs/current/DESIGN.md"
+  }
+}
+~~~
+
+An explicit previous path works in search, document URLs, and relative Markdown links,
+even when the old file no longer exists. Valid chains resolve to one current document;
+cycles, missing targets, and excluded sources produce collection notices.
 
 ## Browser checks
 
@@ -92,8 +132,8 @@ warnings, and a content-based revision. It does not contain full document bodies
 
 The collector reads nested .gitignore rules and optional ddd-docmap.config.json.
 See the [implemented collection contract](docs/DESIGN.md#phase-1-구현-계약).
-The current config supports version, include, exclude, and groups.
-Document redirects are planned for a later phase.
+The config supports version, include, exclude, groups, and redirects.
+Redirects are explicit project-relative Markdown paths; they are never inferred from prose.
 
 ## Planning documents
 

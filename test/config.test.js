@@ -51,7 +51,7 @@ const invalid = [
   ['missing version', {}, 'version'],
   ['unknown version', { version: 2 }, 'version'],
   ['unknown field', { version: 1, surprise: true }, 'surprise'],
-  ['future redirects', { version: 1, redirects: {} }, 'redirects'],
+  ['redirects type', { version: 1, redirects: [] }, 'redirects'],
   ['include type', { version: 1, include: 'docs/*.md' }, 'include'],
   ['bad pattern item', { version: 1, include: [42] }, 'include[0]'],
   ['outside root', { version: 1, include: ['../**/*.md'] }, 'include[0]'],

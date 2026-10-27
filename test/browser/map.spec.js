@@ -19,7 +19,7 @@ test.afterAll(async () => {
 
 test.beforeEach(async ({ page }) => { await page.goto(app.url); });
 
-test('cards reveal their four documents and display source as text', async ({ page }) => {
+test('cards reveal their four documents and render raw HTML as text', async ({ page }) => {
   await expect(page.locator('#map-count')).toHaveText('5 features · 8 documents');
   await expect(page.getByRole('button', { name: 'Show documents for Filters', exact: true })).toBeHidden();
   await page.getByRole('button', { name: 'Show documents for Catalog', exact: true }).click();
@@ -28,9 +28,14 @@ test('cards reveal their four documents and display source as text', async ({ pa
   await expect(page.getByRole('button', { name: 'Show documents for Filters', exact: true })).toBeHidden();
   await documents.getByRole('button', { name: 'Design', exact: true }).click();
   await expect(page.locator('#document-title')).toHaveText('Catalog — Design');
-  await expect(page.locator('#document-source')).toContainText('<script>');
+  await expect(page.locator('#document-content')).toContainText('<script>');
   expect(await page.evaluate(() => window.untrustedDocumentRan)).toBeUndefined();
-  await expect(page.locator('.source-label')).toHaveText('Markdown source');
+  await expect(page.locator('.source-label')).toHaveText('Reading');
+  await page.getByRole('button', { name: 'View source', exact: true }).click();
+  await expect(page.locator('#document-source')).toBeVisible();
+  await expect(page.locator('#document-source')).toContainText('<script>');
+  await page.getByRole('button', { name: 'Read document', exact: true }).click();
+  await expect(page.locator('#document-content')).toBeVisible();
   if (process.env.DOCMAP_SCREENSHOT_PATH) {
     await page.screenshot({ path: process.env.DOCMAP_SCREENSHOT_PATH, fullPage: true });
   }
@@ -48,7 +53,7 @@ test('hierarchy and document controls work independently with the keyboard', asy
     .getByRole('button', { name: 'Design', exact: true });
   await design.focus();
   await page.keyboard.press('Enter');
-  await expect(page.locator('#document-source')).toContainText('Catalog architecture');
+  await expect(page.locator('#document-content')).toContainText('Catalog architecture');
   await page.getByRole('button', { name: 'Collapse Catalog', exact: true }).focus();
   await page.keyboard.press('Space');
   await expect(page.getByRole('button', { name: 'Show documents for Filters', exact: true })).toBeHidden();
@@ -60,7 +65,7 @@ test('a narrow screen switches to the reader and returns to the selected map', a
   await page.getByRole('button', { name: 'Show documents for Catalog', exact: true }).click();
   await page.getByRole('group', { name: 'Documents for Catalog', exact: true })
     .getByRole('button', { name: 'Requirements', exact: true }).click();
-  await expect(page.locator('#document-source')).toContainText('Browse available content');
+  await expect(page.locator('#document-content')).toContainText('Browse available content');
   await expect(page.getByRole('complementary', { name: 'Document map', exact: true })).toBeHidden();
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
   await page.getByRole('button', { name: 'Back to map' }).click();
@@ -83,7 +88,7 @@ test('a missing document is explained and another document can still be opened',
   await documents.getByRole('button', { name: 'Design', exact: true }).click();
   await expect(page.locator('#document-status')).toHaveText('This document no longer exists.');
   await documents.getByRole('button', { name: 'Requirements', exact: true }).click();
-  await expect(page.locator('#document-source')).toContainText('Browse available content');
+  await expect(page.locator('#document-content')).toContainText('Browse available content');
 });
 
 test('empty projects explain how to add documentation', async ({ page }) => {
@@ -117,12 +122,12 @@ test('a quick second selection stays selected when the first request is delayed'
   await documents.getByRole('button', { name: 'Requirements', exact: true }).click();
   await first;
   await documents.getByRole('button', { name: 'Design', exact: true }).click();
-  await expect(page.locator('#document-source')).toContainText('Catalog architecture');
+  await expect(page.locator('#document-content')).toContainText('Catalog architecture');
   await delayed.fulfill({ contentType: 'application/json', body: JSON.stringify({
     markdown: 'Stale content'
   }) }).catch(() => {});
   await expect(page.locator('#document-title')).toHaveText('Catalog — Design');
-  await expect(page.locator('#document-source')).not.toContainText('Stale content');
+  await expect(page.locator('#document-content')).not.toContainText('Stale content');
 });
 
 test('long Korean titles stay compact and additional documents remain distinguishable', async ({ page }) => {
@@ -144,7 +149,7 @@ test('long Korean titles stay compact and additional documents remain distinguis
     await expect(page.getByRole('button', { name: /검토 메모/ })).toBeVisible();
     await expect(page.getByRole('button', { name: /설계 결정/ })).toBeVisible();
     await page.getByRole('button', { name: /검토 메모/ }).click();
-    await expect(page.locator('#document-source')).toContainText('메모 내용입니다.');
+    await expect(page.locator('#document-content')).toContainText('메모 내용입니다.');
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
   } finally {
     await local.close();

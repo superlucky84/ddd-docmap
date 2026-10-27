@@ -69,5 +69,6 @@ export function extractMetadata(markdown, filename) {
     summary = text;
     break;
   }
-  return { title, summary, headingTitle: heading ? normalize(inlineText(heading)) : '' };
+  const searchText = normalize(tree.children.map(node => inlineText(node)).join(' '));
+  return { title, summary, searchText, headingTitle: heading ? normalize(inlineText(heading)) : '' };
 }

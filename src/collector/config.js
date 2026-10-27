@@ -99,7 +99,7 @@ export async function loadConfiguration(root) {
   if (!isObject(value)) {
     fail('config', 'expected a JSON object');
   }
-  checkFields(value, ['version', 'include', 'exclude', 'groups'], '');
+  checkFields(value, ['version', 'include', 'exclude', 'groups', 'redirects'], '');
   if (value.version !== 1) {
     fail('version', 'expected supported version 1');
   }
@@ -127,7 +127,17 @@ export async function loadConfiguration(root) {
     }
     groups.set(id, entry);
   }
+  const redirects = new Map();
+  if (value.redirects !== undefined && !isObject(value.redirects)) fail('redirects', 'expected an object');
+  for (const [source, destination] of Object.entries(value.redirects || {})) {
+    const from = checkRelative(source, 'redirects.' + source);
+    const to = checkRelative(destination, 'redirects.' + source);
+    if (!/\.md$/i.test(from) || !/\.md$/i.test(to)) fail('redirects.' + source, 'expected Markdown paths');
+    if (redirects.has(from)) fail('redirects.' + source, 'duplicate normalized path');
+    redirects.set(from, to);
+  }
   return {
+    redirects,
     include: include.list,
     exclude: exclude.list,
     groups,

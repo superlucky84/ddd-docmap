@@ -17,7 +17,7 @@ const help = [
   '  -h, --help          Show this help.',
   '  -v, --version       Show the package version.', '',
   'Keep this terminal open. Press Ctrl+C to stop your document map.',
-  'Documents currently use Markdown source view.', ''
+  'Read formatted Markdown or switch to source view in the browser.', ''
 ].join('\n');
 
 export async function run(args, {

@@ -1,0 +1,159 @@
+Phase 5 paused at user request, 2026-10-27.
+Node 22.12.0 / npm 11.20.0 / macOS 15.6.1 / Chrome 156.0.8078.48.
+
+=== tests ===
+npm warn Unknown user config "python". This will stop working in the next major version of npm. See `npm help npmrc` for supported config options.
+
+> @superlucky84/ddd-docmap@0.0.0-dev.0 test
+> node --test --test-reporter=spec test/*.test.js
+
+✔ collector refuses a document replaced by an outside symbolic link between inspection and read (25.863166ms)
+✔ collector refuses a parent replaced by an outside symbolic link during document open (15.554542ms)
+✔ configuration replacement with a symbolic link fails instead of reading outside JSON (6.812584ms)
+✔ help, version, invalid arguments, and invalid roots exit without a server (532.977416ms)
+✔ cwd starts a foreground server and SIGINT exits cleanly (119.513792ms)
+✔ --root overrides cwd and SIGTERM does not terminate another CLI server (211.333875ms)
+✔ opens the browser only after the HTTP server is ready (41.59225ms)
+✔ browser launch failure prints a usable address and keeps serving until stopped (26.811083ms)
+✔ F-01: discovers exactly eight documents and excludes dependencies and output (53.859792ms)
+✔ F-01: a parent has its own four documents and an independent child group (32.49175ms)
+✔ README is the group representative while document buttons keep standard ordering (8.703375ms)
+✔ F-02: Unicode, spaces, duplicate folder names, hidden paths, and file case remain distinct (18.459709ms)
+✔ missing H1 uses a filename for the document and folder name for its group (7.490667ms)
+✔ root-level standard documents belong to the project group (6.940666ms)
+✔ F-03: an empty project is a valid empty snapshot (3.063667ms)
+✔ snapshots are repeatable and body-only changes update revision (9.716208ms)
+✔ nested ignore negation can restore a file, but not a file below an ignored parent (18.767041ms)
+✔ gitignore rules are case-sensitive even though discovery globs are not (9.36275ms)
+✔ F-03: symbolic document and directory links are skipped; a root alias has the same identity (10.629834ms)
+✔ a failed document read leaves healthy documents and reports its relative path (6.872458ms)
+✔ unreadable ignore rules stop only their subtree (6.967417ms)
+✔ F-03: missing and non-directory roots fail with a project error (2.636375ms)
+✔ collection preserves every original file and does not execute project configuration (68.279625ms)
+✔ include and exclude replace their defaults but cannot bypass protected directories (59.232ms)
+✔ an explicit include cannot override gitignore or exclude rules (12.864833ms)
+✔ group overrides apply to document and structural groups and unmatched entries warn (31.378875ms)
+✔ F-03 config: non-object (2.791583ms)
+✔ F-03 config: missing version (2.800708ms)
+✔ F-03 config: unknown version (3.0195ms)
+✔ F-03 config: unknown field (3.657333ms)
+✔ F-03 config: redirects type (4.158166ms)
+✔ F-03 config: include type (3.153ms)
+✔ F-03 config: bad pattern item (5.315708ms)
+✔ F-03 config: outside root (3.17425ms)
+✔ F-03 config: absolute root (2.817208ms)
+✔ F-03 config: negated glob (2.570959ms)
+✔ F-03 config: broken glob (4.127292ms)
+✔ F-03 config: groups type (4.882333ms)
+✔ F-03 config: outside group (4.344542ms)
+✔ F-03 config: title type (4.507417ms)
+✔ F-03 config: empty title (2.869916ms)
+✔ F-03 config: summary type (2.496833ms)
+✔ F-03 config: unknown group field (3.073667ms)
+✔ invalid JSON is a configuration error with the config filename (4.679792ms)
+✔ a symbolic configuration file is not followed (4.667875ms)
+✔ closing during watcher replacement cancels readiness and completes without publishing again (177.937375ms)
+✔ a watcher failure before readiness rejects startup and closes acquired resources (5.764875ms)
+✔ a runtime watcher error keeps the last good generation and a subsequent valid update clears it (164.10025ms)
+✔ watch publishes coherent content/search generations for edit, addition, deletion and atomic save (1496.158083ms)
+✔ bad configuration keeps the last good index and recovers after a policy change (1478.153458ms)
+✔ changing ignore rules recrawls newly visible folders and later changes there are watched (1468.718167ms)
+✔ image changes advance the live generation without changing the Markdown revision (783.837333ms)
+✔ two stores isolate content and shutdown releases watchers (898.079708ms)
+✔ HTTP search, explicit missing-path redirects, SSE, and document generations agree (606.294375ms)
+✔ rapid saves settle on the latest coherent document and search contents (580.833ms)
+✔ extracts a real H1 and narrative while skipping front matter, code, references, and tables (5.018625ms)
+✔ metadata-only documents have no invented summary (0.460166ms)
+✔ an empty document falls back to filename with no heading (0.107333ms)
+✔ setext H1, inline HTML, and code spans produce text without executing HTML (0.61475ms)
+✔ document suffix cleanup respects word boundaries and supports Korean labels (0.594209ms)
+✔ document API returns formatted content, navigation data, and a registered raster image (148.5325ms)
+✔ asset routes accept only image references actually registered by a document (170.851625ms)
+✔ registered images are rechecked against changed ignore rules and symbolic links (59.854375ms)
+✔ indexed documents also honor changed exclusion rules before reading content (34.742291ms)
+✔ explicit redirects flatten missing paths and stubs into one canonical card and search result (27.680959ms)
+✔ cycles, self references, missing targets, exclusions and symbolic sources warn without guessing (23.529625ms)
+✔ redirect schema rejects malformed paths and normalized duplicates: {"../old.md":"docs/a.md"} (4.542625ms)
+✔ redirect schema rejects malformed paths and normalized duplicates: {"docs/a.md":"/out.md"} (3.930959ms)
+✔ redirect schema rejects malformed paths and normalized duplicates: {"docs/a.md":42} (3.91825ms)
+✔ redirect schema rejects malformed paths and normalized duplicates: {"docs/a.md":"docs/a.png"} (3.795834ms)
+✔ redirect schema rejects malformed paths and normalized duplicates: {"docs/a.md":"docs/b.md","docs/./a.md":"docs/b.md"} (3.210916ms)
+✔ renders tables, code, task lists, and unique Unicode headings while escaping HTML (72.736542ms)
+✔ resolves relative, root-relative, Unicode, directory, and current-document links (60.148625ms)
+✔ distinguishes missing, unindexed, code, excluded, and outside paths (99.359042ms)
+✔ registers only allowed local images and does not turn active or external images into sources (57.854417ms)
+✔ external links are restricted and rendered with a separate-tab relationship (40.467792ms)
+✔ punctuation-only heading ids stay unique and code contents are escaped (28.19725ms)
+✔ F-08 collects 300 long documents and searches every canonical group with bounded payloads (1270.617166ms)
+✔ generation reuse still notices changed bytes with identical size and mtime and applies new policies (9.619375ms)
+✔ search combines fields with AND, prioritizes metadata, and normalizes Korean and case (51.072792ms)
+✔ search caps result payloads and uses stable path order for equal scores (164.847333ms)
+✔ serves the static UI and a body-free map from loopback (132.564125ms)
+✔ opens only an indexed document and supports HEAD without a body (71.103ms)
+✔ rejects unknown files, traversal ids, duplicate ids, and write methods (32.024708ms)
+✔ rejects a foreign origin and a foreign Host header (23.213708ms)
+✔ detects a deleted document after the map was created (18.688875ms)
+✔ rechecks both file and ancestor symlinks before opening a document (19.819084ms)
+✔ closing one project leaves the other project running (21.681375ms)
+✔ an occupied port fails without affecting the existing server (28.481625ms)
+✔ repeated servers close active and aborted SSE streams, reuse their port, and honor HEAD (119.318917ms)
+✔ CLI exits cleanly with an SSE client during a settings update and another server stays live (245.817375ms)
+✔ registered raster reads reject a parent swapped outside after path inspection (14.709125ms)
+ℹ tests 92
+ℹ suites 0
+ℹ pass 92
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 7457.234375
+
+=== browser ===
+npm warn Unknown user config "python". This will stop working in the next major version of npm. See `npm help npmrc` for supported config options.
+
+> @superlucky84/ddd-docmap@0.0.0-dev.0 test:browser
+> playwright test
+
+
+Running 34 tests using 1 worker
+
+  ✓   1 test/browser/hardening.spec.js:26:1 › duplicate titles in a long Korean path remain distinct through keyboard navigation (371ms)
+  ✓   2 test/browser/hardening.spec.js:43:1 › a 120-row wide table and long path stay inside a narrow reader (279ms)
+  ✓   3 test/browser/hardening.spec.js:55:1 › focused search results survive refresh and return focus to search when removed (2.0s)
+  ✓   4 test/browser/hardening.spec.js:69:1 › a temporary map refresh failure retries without needing another file save (2.2s)
+  ✓   5 test/browser/live.spec.js:37:1 › search finds Korean body, feature, path and code with safe highlighted context (1.1s)
+  ✓   6 test/browser/live.spec.js:58:1 › IME composition waits to search and the slash shortcut works on mobile (837ms)
+  ✓   7 test/browser/live.spec.js:78:1 › a delayed previous query cannot replace the latest results (642ms)
+  ✓   8 test/browser/live.spec.js:94:1 › saving refreshes source, search and map while preserving mode, scroll and history length (1.7s)
+  ✓   9 test/browser/live.spec.js:111:1 › added documents appear and selected deletion clears the body while another document opens (2.2s)
+  ✓  10 test/browser/live.spec.js:125:1 › bad settings retain the last good map and recover after fixing JSON (2.1s)
+  ✓  11 test/browser/live.spec.js:139:1 › explicit redirects work from an absent previous URL, search path and relative link (1.5s)
+  ✓  12 test/browser/live.spec.js:155:1 › a save during a delayed user navigation preserves the user selection and fetches fresh content (1.1s)
+  ✓  13 test/browser/live.spec.js:174:1 › search and selections are independent across tabs and project servers (804ms)
+  ✓  14 test/browser/live.spec.js:193:1 › SSE reconnect ready catches changes missed while disconnected (1.1s)
+  ✓  15 test/browser/live.spec.js:211:1 › a moved selection follows an explicit redirect without adding a history entry (1.1s)
+  ✓  16 test/browser/live.spec.js:228:1 › typing and scrolling during an automatic document refresh keeps the latest UI state (1.1s)
+  ✓  17 test/browser/live.spec.js:252:1 › image-only saves refresh registered image URLs and deletion updates the reader (2.6s)
+  ✓  18 test/browser/live.spec.js:266:1 › back and forward restore the search state captured when each document was left (1.1s)
+  ✓  19 test/browser/map.spec.js:22:1 › cards reveal their four documents and render raw HTML as text (315ms)
+  ✓  20 test/browser/map.spec.js:44:1 › hierarchy and document controls work independently with the keyboard (221ms)
+  ✓  21 test/browser/map.spec.js:63:1 › a narrow screen switches to the reader and returns to the selected map (276ms)
+  ✓  22 test/browser/map.spec.js:76:1 › a missing document is explained and another document can still be opened (286ms)
+  ✓  23 test/browser/map.spec.js:94:1 › empty projects explain how to add documentation (165ms)
+  ✓  24 test/browser/map.spec.js:108:1 › a quick second selection stays selected when the first request is delayed (279ms)
+  ✓  25 test/browser/map.spec.js:133:1 › long Korean titles stay compact and additional documents remain distinguishable (306ms)
+  ✓  26 test/browser/reading.spec.js:33:1 › renders readable tables, code, task checks, images, and a heading outline (275ms)
+  ✓  27 test/browser/reading.spec.js:53:1 › outline navigation uses unique Unicode anchors (339ms)
+  ✓  28 test/browser/reading.spec.js:62:1 › document links and browser back/forward restore the reader and map positions (394ms)
+  ✓  29 test/browser/reading.spec.js:84:1 › read/source modes keep their own position and survive document history (524ms)
+  ✓  30 test/browser/reading.spec.js:107:1 › code, unindexed, and missing references explain the target without leaving the document (415ms)
+  ✓  31 test/browser/reading.spec.js:128:1 › Unicode and space links also work as direct document/anchor URLs (334ms)
+  ✓  32 test/browser/reading.spec.js:139:1 › an image removed after rendering has a readable fallback (295ms)
+  ✓  33 test/browser/reading.spec.js:149:1 › mobile reading keeps wide content inside the reader and offers a collapsible outline (399ms)
+  ✓  34 test/browser/reading.spec.js:164:1 › a missing section keeps the current content and route (340ms)
+
+  34 passed (30.2s)
+
+
+The descriptor-read-close test was added after the successful Node 92 run; rerun the full suite (93 expected). No code changed after the successful Chrome 34 run.
+Final isolated benchmark failed before the ENOENT handling fix. The comparable no-reuse run was not started because the tool call was interrupted. No final performance budget has been adopted.

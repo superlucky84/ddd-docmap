@@ -23,12 +23,22 @@
         <div class="eyebrow">YOUR WORKSPACE</div>
         <h1 id="project-name">Loading project…</h1>
         <p id="map-count" class="muted" role="status">Reading documentation</p>
+        <form id="search-form" class="search-form" role="search">
+          <label class="sr-only" for="doc-search">Search documentation</label>
+          <input id="doc-search" type="search" placeholder="Search docs…" maxlength="200" autocomplete="off" spellcheck="false" aria-controls="search-results">
+          <button id="clear-search" type="button" aria-label="Clear search" hidden>×</button>
+        </form>
+        <p id="live-status" class="live-status" role="status">Connecting to updates…</p>
       </div>
       <details id="warnings" class="warnings" hidden>
         <summary id="warning-summary"></summary>
         <ul id="warning-list"></ul>
       </details>
       <nav id="map-scroll" class="map-scroll" aria-label="Features and documents">
+        <div id="search-view" hidden>
+          <p id="search-status" class="search-status" role="status"></p>
+          <ul id="search-results" class="search-results" aria-label="Search results"></ul>
+        </div>
         <ul id="map-tree" class="tree"></ul>
         <div id="map-message" class="map-message" role="status"></div>
       </nav>
@@ -48,13 +58,24 @@
       <div id="document-view" class="document-view" hidden>
         <header class="document-heading">
           <button id="back-to-map" class="back-button" type="button">← Back to map</button>
-          <div class="document-breadcrumb"><span id="document-area"></span><span class="source-label">Markdown source</span></div>
+          <div class="document-breadcrumb"><span id="document-area"></span><span id="document-mode" class="source-label">Reading</span><button id="view-toggle" class="view-toggle" type="button">View source</button></div>
           <h1 id="document-title" tabindex="-1"></h1>
           <p id="document-path" class="document-path"></p>
         </header>
+        <div id="link-notice" class="reader-notice" role="status" hidden>
+          <span id="link-message"></span><code id="link-path" hidden></code>
+          <button id="copy-link-path" type="button" hidden>Copy path</button>
+          <button id="dismiss-notice" type="button" aria-label="Dismiss notice">×</button>
+        </div>
         <div id="reader-scroll" class="reader-scroll">
           <p id="document-status" class="document-status" role="status"></p>
-          <pre id="document-source" class="document-source"></pre>
+          <div id="reading-layout" class="reading-layout">
+            <article id="document-content" class="markdown-body"></article>
+            <nav id="document-toc" class="document-toc" aria-label="On this page" hidden>
+              <details id="toc-details"><summary class="eyebrow">On this page</summary><div id="toc-links"></div></details>
+            </nav>
+          </div>
+          <pre id="document-source" class="document-source" hidden></pre>
         </div>
       </div>
     </section>
