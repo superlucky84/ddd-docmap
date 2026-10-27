@@ -1,36 +1,89 @@
 import { readFileSync } from 'node:fs';
+import { parseArgs } from 'node:util';
+import open from 'open';
+import { ConfigurationError, ProjectError } from './collector/index.js';
+import { startServer } from './server/index.js';
 
-const metadata = JSON.parse(
-  readFileSync(new URL('../package.json', import.meta.url), 'utf8')
-);
+const metadata = JSON.parse(readFileSync(new URL('../package.json', import.meta.url), 'utf8'));
+const help = [
+  'ddd-docmap — local document maps for Doc-Driven Development', '',
+  'Usage:',
+  '  ddd-docmap [--root <directory>] [--no-open]',
+  '  ddd-docmap --help',
+  '  ddd-docmap --version', '',
+  'Options:',
+  '  --root <directory>  Read this project instead of the current directory.',
+  '  --no-open           Print the address without opening a browser.',
+  '  -h, --help          Show this help.',
+  '  -v, --version       Show the package version.', '',
+  'Keep this terminal open. Press Ctrl+C to stop your document map.',
+  'Documents currently use Markdown source view.', ''
+].join('\n');
 
-const help = `ddd-docmap — local document maps for Doc-Driven Development
-
-Status: initial project scaffold. The document map viewer is planned.
-
-Usage:
-  ddd-docmap --help
-  ddd-docmap --version
-
-Options:
-  -h, --help     Show this help.
-  -v, --version  Show the package version.
-
-Roadmap: https://github.com/superlucky84/ddd-docmap/blob/main/docs/IMPLEMENT.md
-`;
-
-export function run(args) {
-  if (args.length === 0 || (args.length === 1 && ['--help', '-h'].includes(args[0]))) {
-    process.stdout.write(help);
+export async function run(args, {
+  stdout = process.stdout, stderr = process.stderr, signals = process, opener = open
+} = {}) {
+  let values;
+  try {
+    ({ values } = parseArgs({
+      args, allowPositionals: false, strict: true,
+      options: {
+        root: { type: 'string' }, 'no-open': { type: 'boolean' },
+        help: { type: 'boolean', short: 'h' }, version: { type: 'boolean', short: 'v' }
+      }
+    }));
+  } catch (error) {
+    stderr.write(error.message + '\nRun ddd-docmap --help for usage.\n');
+    return 2;
+  }
+  if (values.help) {
+    stdout.write(help);
     return 0;
   }
-
-  if (args.length === 1 && ['--version', '-v'].includes(args[0])) {
-    process.stdout.write(`${metadata.version}\n`);
+  if (values.version) {
+    stdout.write(metadata.version + '\n');
     return 0;
   }
-
-  process.stderr.write('Unsupported arguments. Run ddd-docmap --help.\n');
-  return 2;
+  let session;
+  try {
+    stdout.write('Reading documentation...\n');
+    session = await startServer({ root: values.root });
+  } catch (error) {
+    stderr.write(error.message + '\n');
+    return error instanceof ConfigurationError || error instanceof ProjectError ? 2 : 1;
+  }
+  let stopping = false;
+  let resolveStopped;
+  const stopped = new Promise(resolve => { resolveStopped = resolve; });
+  const onSignal = () => { void stop(); };
+  async function stop() {
+    if (stopping) return;
+    stopping = true;
+    signals.off('SIGINT', onSignal);
+    signals.off('SIGTERM', onSignal);
+    try {
+      await session.close();
+      stdout.write('Document map stopped.\n');
+      resolveStopped(0);
+    } catch (error) {
+      stderr.write('Could not stop the server: ' + error.message + '\n');
+      resolveStopped(1);
+    }
+  }
+  signals.once('SIGINT', onSignal);
+  signals.once('SIGTERM', onSignal);
+  stdout.write('Document map: ' + session.url + '\n');
+  stdout.write('Project: ' + session.snapshot.project.rootLabel + '\n');
+  stdout.write(session.snapshot.documents.length + ' documents. Press Ctrl+C to stop.\n');
+  if (!values['no-open']) {
+    void Promise.resolve().then(() => {
+      if (!stopping) return opener(session.url);
+    }).catch(error => {
+      if (!stopping) {
+        stderr.write('Could not open a browser: ' + error.message + '\nOpen ' + session.url + ' manually.\n');
+      }
+    });
+  }
+  return stopped;
 }
 

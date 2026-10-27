@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>ddd-docmap</title>
+  <link rel="stylesheet" href="/styles.css">
+  <script type="module" src="/app.js"></script>
+</head>
+<body data-view="map">
+  <header class="app-header">
+    <a class="brand" href="/" aria-label="ddd-docmap home">
+      <svg width="27" height="27" viewBox="0 0 28 28" fill="none" aria-hidden="true"><rect width="28" height="28" rx="7" fill="currentColor"/><path d="M8 7v14m0-11h11m-7 7h7m-7 0v-7" stroke="white" stroke-width="1.7" stroke-linecap="round"/></svg>
+      <span>ddd-docmap</span>
+    </a>
+    <span class="header-divider"></span>
+    <span class="header-label">Document map</span>
+    <span class="local-badge"><span></span> Local workspace</span>
+  </header>
+  <main class="workspace">
+    <aside class="map-pane" aria-label="Document map">
+      <div class="map-heading">
+        <div class="eyebrow">YOUR WORKSPACE</div>
+        <h1 id="project-name">Loading project…</h1>
+        <p id="map-count" class="muted" role="status">Reading documentation</p>
+      </div>
+      <details id="warnings" class="warnings" hidden>
+        <summary id="warning-summary"></summary>
+        <ul id="warning-list"></ul>
+      </details>
+      <nav id="map-scroll" class="map-scroll" aria-label="Features and documents">
+        <ul id="map-tree" class="tree"></ul>
+        <div id="map-message" class="map-message" role="status"></div>
+      </nav>
+      <footer class="map-footer">
+        <span class="eyebrow">PROJECT ROOT</span>
+        <span id="project-root" class="root-path"></span>
+      </footer>
+    </aside>
+    <section id="reader-pane" class="reader-pane" aria-label="Selected document">
+      <div id="reader-empty" class="reader-empty">
+        <div class="empty-illustration" aria-hidden="true"><span></span><span></span><span></span><i></i></div>
+        <span class="eyebrow">A PLACE FOR EVERY DOCUMENT</span>
+        <h2>Find your way through the docs.</h2>
+        <p>Explore a feature, then choose its requirements,<br class="desktop-break"> design, implementation, or checks.</p>
+        <span class="empty-tip"><span>↖</span> Start with a card on the left</span>
+      </div>
+      <div id="document-view" class="document-view" hidden>
+        <header class="document-heading">
+          <button id="back-to-map" class="back-button" type="button">← Back to map</button>
+          <div class="document-breadcrumb"><span id="document-area"></span><span class="source-label">Markdown source</span></div>
+          <h1 id="document-title" tabindex="-1"></h1>
+          <p id="document-path" class="document-path"></p>
+        </header>
+        <div id="reader-scroll" class="reader-scroll">
+          <p id="document-status" class="document-status" role="status"></p>
+          <pre id="document-source" class="document-source"></pre>
+        </div>
+      </div>
+    </section>
+  </main>
+</body>
+</html>

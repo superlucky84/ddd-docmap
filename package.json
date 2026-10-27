@@ -15,7 +15,9 @@
     "docs/"
   ],
   "scripts": {
-    "check": "node --check bin/ddd-docmap.js && node --check src/cli.js"
+    "check": "node scripts/check.js",
+    "test": "node --test --test-reporter=spec test/collector.test.js test/config.test.js test/markdown.test.js test/server.test.js test/cli.test.js",
+    "test:browser": "playwright test"
   },
   "engines": {
     "node": ">=22"
@@ -33,6 +35,17 @@
     "documentation",
     "markdown",
     "cli"
-  ]
+  ],
+  "dependencies": {
+    "ignore": "7.0.14",
+    "mdast-util-from-markdown": "2.1.0",
+    "open": "10.2.0",
+    "picomatch": "4.0.7"
+  },
+  "exports": {
+    ".": "./src/collector/index.js"
+  },
+  "devDependencies": {
+    "@playwright/test": "1.64.1"
+  }
 }
-
