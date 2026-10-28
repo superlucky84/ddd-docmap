@@ -40,7 +40,8 @@ test('the agents help covers every install option, action and exit code', async 
   assert.deepEqual([...documented].sort(), Object.keys(INSTALL_OPTIONS).sort());
   for (const text of ['--dry-run [options]', 'ask for approval', 'skip-modified', 'skip-downgrade', 'skip-managed', 'blocked',
     '  0  Done', '  1  Failed', '  2  Invalid', '  3  Done, but', 'doc-driven-designer-v1', 'default', 'with --all or --only',
-    'ask whether to add the implementer and reviewer']) {
+    'ask whether to add the implementer and reviewer',
+    'tell the user which files were skipped or blocked', 'Never add --force on your own']) {
     assert.ok(help.includes(text), text);
   }
   const main = spawnSync(process.execPath, [cliPath, '--help'], { encoding: 'utf8' });
