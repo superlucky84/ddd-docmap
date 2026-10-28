@@ -10,6 +10,9 @@ None of the code exists; only the documents do.
 - The other features show what real projects look like: partial document sets, nested
   features (`checkout/payments`, `catalog/search`), a shared contract in `docs/shared/`, and
   documents kept beside code in `services/` and `web/`.
+- `AGENTS.md` shows the light project setup from
+  [Apply it to a project](../../METHOD.md#apply-it-to-a-project): agents follow the documents
+  that exist, and small fixes need none.
 
 Open it on the document map from the root of a docatlas clone:
 

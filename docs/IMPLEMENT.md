@@ -713,17 +713,20 @@ npm pack --dry-run 45개 파일. 이 저장소의 문서 지도는 docs/의 5개
 
 ### 구현
 
-- [ ] METHOD.md·METHOD.ko.md에 프로젝트 적용 절: 세 단계 선택지, 가벼운 AGENTS.md·CLAUDE.md 예시, 고쳐 써도 된다는 안내.
-- [ ] README 핵심 규칙 아래에 필요한 만큼 쓰라는 한 줄과 적용 절 링크.
-- [ ] examples/sample-shop/AGENTS.md와 예제 README 안내.
+- [x] METHOD.md·METHOD.ko.md에 프로젝트 적용 절: 세 단계 선택지, 가벼운 AGENTS.md·CLAUDE.md 예시, 고쳐 써도 된다는 안내.
+  작성 규칙 소개도 남겨 두기로 한 문서에 적용한다는 표현으로 바꿨다. 한국어판 예시는 한국어로 썼다.
+- [x] README 핵심 규칙 아래에 필요한 만큼 쓰라는 한 줄과 적용 절 링크.
+- [x] examples/sample-shop/AGENTS.md와 예제 README 안내. 예제 문서 수는 21개 그대로다.
 
 ### Test Hardening
 
-- [ ] 두 METHOD의 구조가 같고, 적용 절이 스킬 규칙과 모순되지 않으며 강제 표현이 없는지 확인한다.
+- [x] 두 METHOD의 구조가 같고, 적용 절이 스킬 규칙과 모순되지 않으며 강제 표현이 없는지 확인한다.
+  제목 13개·표 행 17·글머리 35·번호 9·코드 블록 3·링크 6개가 같다. 새 절에 must·required·반드시 표현이 없다.
 
 ### Integration Test
 
-- [ ] npm run check, npm test, npm run test:platform, npm pack --dry-run, 링크 검사.
+- [x] npm run check, npm test, npm run test:platform, npm pack --dry-run, 링크 검사.
+  문법 72개·agent kit 세 쌍, Node 157개 중 154개 통과·3개 건너뜀·실패 0, 플랫폼 6개 통과, pack 45개 파일, 링크 136개 문제 0.
 - [ ] main 대상 PR을 만들고 플랫폼 CI 결과를 확인한다.
 
 종료 기준: 적용 범위를 고를 수 있다는 안내와 예시가 있고, 기존 검사가 통과하며, PR이 열려 있다.

@@ -70,7 +70,8 @@ agents write, the more those tests are worth, and agents can write them too.
 
 ## Writing rules
 
-These are the rules the agent skills follow. Use them when you write by hand too.
+These are the rules the agent skills follow for the documents you keep. Use them when you
+write by hand too.
 
 - Document before coding non-trivial work. Update the documents before changing a contract
   in code.
@@ -139,6 +140,35 @@ document in the project.
 
 The implementer and reviewer run only when you ask for them. The skill files in
 [agent-kit/](agent-kit/) are the exact rules.
+
+## Apply it to a project
+
+You do not need the whole method everywhere. Use as much as the project and the change need:
+a one-line fix needs no documents, while a new feature or a contract change usually does.
+
+| Level | Setup | Fits |
+| --- | --- | --- |
+| On demand | Install the skills and add nothing to the project. Ask for the designer when a piece of work deserves documents. | Trying it out, or projects where only some features use it |
+| Follow existing documents | Add a short note to `AGENTS.md` or `CLAUDE.md`, like the one below. | Most projects |
+| Full rules | Project-wide rules for documents, phases, and checks, like this repository's [AGENTS.md](AGENTS.md). | Projects that plan all feature work in the documents |
+
+A starting point for the middle level. Copy it, then change it to fit your project:
+
+```markdown
+## Documents
+
+- Some features keep Doc-Driven Development documents (REQUIREMENTS.md, DESIGN.md,
+  IMPLEMENT.md, MANUAL_TEST_CHECKLIST.md) under docs/ or beside their code.
+- Before changing a feature that has them, read them and continue from the current
+  handoff in IMPLEMENT.md.
+- When behavior or a contract changes, update those documents in the same change.
+  Leave undecided points as TBD.
+- Small fixes and features without documents need no new documents unless I ask.
+```
+
+Codex reads `AGENTS.md` and Claude Code reads `CLAUDE.md`. If you use both, keep the text in
+one file; a `CLAUDE.md` can import it with a line containing `@AGENTS.md`.
+`docatlas agents install` never edits these files, so how much to adopt stays your choice.
 
 ## Talking to your agent
 

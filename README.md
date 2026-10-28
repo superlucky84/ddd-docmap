@@ -28,6 +28,10 @@ The core rules:
 - Build in phases, each with test evidence. End the plan with Test Hardening and Integration Test phases.
 - Keep one current handoff (done, next, blockers, latest commit) so another agent can resume.
 
+Use as much of it as a project needs. Small fixes can skip the documents, and project rules in
+`AGENTS.md` or `CLAUDE.md` are optional; see
+[Apply it to a project](https://github.com/superlucky84/docatlas/blob/main/METHOD.md#apply-it-to-a-project).
+
 Documents live beside the code they describe, so a growing project has them in many folders.
 That is why this repository also ships a document map.
 

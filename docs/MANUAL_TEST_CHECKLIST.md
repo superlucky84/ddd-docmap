@@ -461,6 +461,7 @@ test/integration/package.test.js의 부모 1개·하위 3개, 총 4개가 Node 2
 | M-18 | METHOD.ko.md와 METHOD.md의 구조 대조 | 제목·표 행·목록·코드 블록·링크 수 동일 |
 | M-18 | test/examples.test.js | 예제 21개 문서·checkout 4종·중첩 그룹, 저장소 지도는 docs/만 수집 |
 | M-18 | docatlas 서버로 예제 문서 21개 읽기 | 참조 17개 모두 정상 |
+| M-18 | METHOD 프로젝트 적용 절(DC-22) | 두 언어 구조 동일, 강제 표현 없음, 예제 AGENTS.md는 수집되지 않아 문서 21개 유지 |
 
 ## 릴리스 판정
 
