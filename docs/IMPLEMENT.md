@@ -15,11 +15,11 @@
 - 진행 중: Phase 6 Integration Test. 별도 설치 자동 검증은 Node 22.12.0·24.22.1에서 통과했다.
   전체 수동 인수·선언한 Node 22.0·최종 지원 OS 검증은 남아 있다.
 - 완료: 0.2.0의 추가 수집 옵션·설정 파일명·검색 경로 탐색을 사용자가 npm 배포했다.
-  Python·Java 기본 제외와 에이전트 스킬 설치를 포함한 다음 후보는 사용자 요청으로 0.3.0이다. 현재 인계가 최신 상태다.
+  Python·Java 기본 제외와 에이전트 스킬 설치를 포함한 0.3.0도 사용자가 게시했다. 맨 아래 현재 인계가 최신 상태다.
 - 완료: 검색 결과의 경로에서 트리 위치 찾기. 최신 문법 51개·Chrome 40개·설치 통합 4개 통과.
 - 완료: RQ-16·17·18 에이전트 스킬 관리와 설치의 구현·자동 검증·Windows/macOS CI·Claude Code 실제 세션 확인과 PR #1 병합.
   Codex 실제 세션 확인과 남은 수동 인수는 별도다. 0.3.0은 사용자가 npm에 게시했다(2026-10-28 registry latest 확인).
-- 진행 중: RQ-19 저장소 소개와 DDD 본거지 문서. 제품 코드는 바꾸지 않는다.
+- 완료: RQ-19 저장소 소개와 DDD 본거지 문서와 이전 인계 정리. 제품 코드는 바꾸지 않았다. M-18 사람 확인은 남아 있다.
 
 기술 선택은 각 단계에서 근거와 검증을 기록해 DC/IC를 해소한다.
 상세 계약을 바꾸면 요구사항·설계·단계·수동 기준을 같은 작업에서 갱신한다.
@@ -625,7 +625,7 @@ npx --yes docatlas@0.3.0 agents help
 게시 확인(2026-10-28): npm view docatlas@0.3.0 version이 0.3.0, dist-tag latest가 0.3.0이다.
 빈 임시 폴더에서 npx --yes docatlas@0.3.0 --version이 0.3.0을 출력했다.
 
-## 저장소 소개와 DDD 본거지 — 진행 중
+## 저장소 소개와 DDD 본거지 — 완료
 
 대응: RQ-19 / DC-20·21 / M-18.
 진입: 사용자 결정(2026-10-28)을 기준 4종에 기록했다. 작업 브랜치 claude/tender-gates-sa5kn8, 기준 커밋 00064c2.
@@ -661,7 +661,8 @@ npm pack --dry-run 45개 파일. 환경: Linux / Node 22.22.0 / npm 10.9.4.
 - [x] 새 문서의 상대 링크·앵커와 GitHub 절대 링크의 대상 파일·제목을 확인한다.
   README·METHOD·CONTRIBUTING·CHANGELOG·agent-kit/README와 기준 4종의 링크 90개를 github-slugger 앵커로 확인했다. 문제 0.
   docatlas 서버에 --docs-dir .로 이 저장소를 열어 다섯 문서를 읽었다. 참조 오류 없음. README 캡처는 외부 이미지라 정책대로 표시하지 않는다.
-- [ ] 이전 인계를 docs/handoff/로 옮긴 뒤 기준 4종의 링크·앵커를 확인한다.
+- [x] 이전 인계를 docs/handoff/로 옮긴 뒤 기준 4종의 링크·앵커를 확인한다.
+  33개 절·333줄을 옮겼고 제거한 모든 줄이 인계 이력에 있다. 옮긴 앵커 38개를 새 위치로 바꿨다.
 
 브라우저 UI·설치 통합(test:browser·test:integration)은 제품 코드와 화면을 바꾸지 않아 다시 실행하지 않았다.
 이 환경의 Playwright 1.64.1용 브라우저가 없어 캡처는 미리 설치된 Chromium(--executable-path)으로 만들었다.
@@ -851,202 +852,6 @@ previous 인자만 제거했다. 독립 수집은 원래 이전 세대를 넘기
 - 최종 사람의 수동 인수·선언한 Node 22.0·다른 OS·시스템 기본 브라우저 열기는 미검증이다.
   Phase 6 전체 종료와 npm 릴리스는 아직 완료로 표시하지 않는다.
 
-## 인계 상태 — 사용자 요청으로 Phase 5 일시 중단
-
-아래는 **2026-10-27 당시의 보존 기록**이다. 패치는 2026-10-28에 적용했고 검증을 마쳤다.
-다음 작업은 맨 아래 최신 인계를 따른다. 아래 복원 명령을 현재 트리에 중복 적용하지 않는다.
-
-- 기준 시점: 2026-10-27. 최신 커밋은 8cf151d46124bb6361c4ec6d9ea2256182cd67da.
-- 원래 저장소에는 Phase 4까지의 코드가 있다. Phase 3·4 변경도 아직 커밋/푸시하지 않은 작업 트리다.
-- Phase 5는 **미완료**다. 이번에는 계획·인계 문서와 아래 보존 자료만 원래 저장소에 반영했다.
-  Phase 5 제품 코드·테스트·package.json은 아직 원래 저장소에 적용하지 않았다.
-
-### 보존 자료와 작업 위치
-
-- [Phase 5 코드·테스트 패치](./handoff/phase5-wip.patch): 기준 Phase 4 작업 트리에 대한 변경만 포함한다.
-  기준 4종 문서는 이미 반영했으므로 패치에서 제외했다. node_modules·비밀 정보·실제 회사 문서는 포함하지 않는다.
-- [적용 전 코드 기준 해시](./handoff/phase5-baseline.json): 수정 파일의 SHA-256이며 null은 새 파일이다.
-- [마지막 통과 기록](./handoff/phase5-test-results.txt): Node 92개와 Chrome 34개 전체 출력.
-- 전체 임시 작업 사본: /private/tmp/ddd-docmap-phase5.ihy438vc.
-  원본 기준: /private/tmp/ddd-docmap-phase5.ihy438vc.baseline.json.
-- 재사용을 끈 비교용 사본: /private/tmp/ddd-docmap-phase5-no-reuse.mcc44yzc.
-  임시 폴더가 정리되어도 위 패치와 기준 해시로 코드 작업을 복원할 수 있다.
-- 중단 시 확인한 Phase 5 서버·테스트·benchmark 실행 프로세스: 없음.
-
-### 구현·확인한 작업 — 패치 안의 상태
-
-- 감지기 교체 중 종료가 준비 완료를 계속 기다리는 문제를 실패 테스트로 재현하고 수정했다.
-  내부 watcherFactory 시험 연결점과 준비 대기 취소·중복 종료 처리를 추가했다.
-- 수집/설정/ignore/래스터 읽기를 공통 readRegularFile로 묶었다. 파일/부모의 외부 링크 교체를
-  실패 테스트로 재현했고 open 전후 파일 동일성·루트 경계·descriptor 닫기를 보강했다.
-- 이전 세대와 본문 해시가 같은 문서의 AST 메타데이터를 재사용한다.
-  원본과 정책은 매번 읽으며 같은 size/mtime의 내용 변경·제외/재포함을 검증했다.
-- F-08 생성기: 기능 75개×4종=300개, 문서별 최소 16KiB, 총 5,016,514 bytes,
-  비문서/제외 예제 1,003개. 수집/검색/실시간/브라우저를 별도 프로세스로 측정하는 benchmark 초안.
-- 반복 서버/SSE/신호 종료·감지기 실패·큰 표 120행·긴 한글 경로·동명 문서·키보드 검증을 추가했다.
-- 삭제된 검색 결과의 포커스를 검색창으로 복구하고 갱신 재시도 성공 시 Live updates로 안내를 복원했다.
-  페이지 이탈 뒤 재시도 타이머가 다시 생기지 않도록 처리했다.
-
-### 검증 상태와 남은 일
-
-- npm run check: JavaScript 46개 통과.
-- npm test: Node 92개 통과. 그 뒤 descriptor 읽기 실패 시 파일 닫기 테스트 1개를 추가했다.
-  **최신 패치 전체는 재실행 필요(예상 93개)**. 제품 코드 변경은 추가하지 않았다.
-- Chrome: 전체 34개 통과. 기존 30개와 hardening 4개가 포함된다.
-- 초기 임시 측정의 수집 중앙값 약 629ms·검색 약 0.92ms는 최종 비교 결과가 아니다.
-  메모리는 같은 프로세스의 이전 작업 영향을 받았으므로 성능 기준 근거로 채택하지 않는다.
-- 분리한 최종 benchmark는 공통 읽기의 ENOENT 변환 회귀 때문에 문서 열기에서 실패했다.
-  해당 회귀를 수정한 뒤 Node 92개·Chrome 34개가 통과했다. **benchmark 재실행은 아직 하지 않았다.**
-- 재사용 전/후를 같은 방식으로 비교하려던 명령은 도구 호출 중단으로 시작하지 않았다.
-  /private/tmp/ddd-docmap-phase5-no-reuse.log는 없고 최종 성능 표·허용 기준도 미확정이다.
-- 최종 패키징/설치 검사·문서 정합성 검사·Phase 5 종료 판정은 남아 있다.
-  Phase 6 Integration Test와 Phase 7 배포 준비는 계속 별도 단계로 유지한다.
-
-### 재개 순서
-
-1. 작업 트리를 확인한다. git reset/clean이나 기존 Phase 3·4 변경 되돌리기를 하지 않는다.
-2. 패치 대상 파일을 phase5-baseline.json과 비교한다. 달라졌으면 수동 병합하고 덮어쓰지 않는다.
-3. 저장소 루트에서 아래 명령으로 패치를 검토·적용한다. 패치 적용 자체는 커밋을 만들지 않는다.
-
-~~~sh
-git apply --check docs/handoff/phase5-wip.patch
-git apply docs/handoff/phase5-wip.patch
-npm ci --offline --ignore-scripts --no-audit --no-fund --cache /private/tmp/ddd-docmap-phase1-npm-cache
-npm run check
-npm test
-DOCMAP_BROWSER_CHANNEL=chrome npm run test:browser
-~~~
-
-오프라인 캐시가 없으면 정상 npm 설치로 대체한다. loopback/Chrome 실행이 차단되면 실행 권한을 요청한다.
-이미 패치를 적용했다면 중복 적용하지 않고 현재 변경을 확인한다.
-
-4. 다른 테스트와 동시에 실행하지 않고 npm run benchmark -- --browser를 실행한다.
-   비교용 사본에서는 createProjectStore의 scanProject 호출에서 previous 인자만 제거하고 같은 명령을 쓴다.
-   환경·표본·유휴 CPU·RSS와 최종 수치를 기록한 뒤 로컬 회귀 기준을 정한다.
-5. 필요 시 개선 후 관련 회귀·npm pack --dry-run·설치/문서 검증을 마치고 기준 4종의 상태를 갱신한다.
-6. Phase 5 종료 기준을 충족하면 Phase 6으로 간다. 커밋할 때는 사용자 선호대로 영문 메시지를 사용한다.
-
-- 차단 요인: 사용자 요청에 따른 일시 중단. 기술적 차단은 없음.
-
-## 인계 상태 — 2026-10-28
-
-아래 이전 인계는 각 시점의 작업 기록이다. 현재 상태는 맨 아래 최신 인계를 따른다.
-
-- 사용자 요청으로 재개했고 Phase 5를 완료했다. 보존 패치는 이미 적용했으므로 다시 적용하지 않는다.
-- Phase 6의 재현 가능한 설치 통합 테스트를 추가했고 Node 22.12.0·24.22.1에서 통과했다.
-  기준 4종과 README를 현재 구현·검증 범위에 맞췄다.
-- 최신 확인 커밋(이번 작업 전): 4b8b195. 사용자 요청으로 이번 코드·테스트·문서를 함께 커밋한다.
-  이 문서를 포함한 실제 최신 커밋 SHA는 git log -1 --oneline으로 확인한다.
-- 다음: M-01~15의 남은 수동 인수와 선언한 Node 22.0·최종 지원 OS 검증.
-  이후 Phase 7에서 라이선스·패키지 이름·배포 경로·CI·버전·릴리스를 결정한다.
-- 차단 요인: 기술적 차단 없음. 지원 환경·라이선스·배포 결정은 기존 TBD다.
-- 재검증 명령: npm run check, npm test, DOCMAP_BROWSER_CHANNEL=chrome npm run test:browser,
-  DOCMAP_BROWSER_CHANNEL=chrome npm run test:integration, npm run benchmark -- --browser, npm pack --dry-run.
-  통합 검증은 npm 캐시의 production 의존성을 오프라인 사용한다. 다른 캐시라면 DOCMAP_NPM_CACHE를 지정한다.
-  성능 측정은 다른 테스트와 동시에 실행하지 않는다.
-
-## 프로젝트별 설치 인계 — 2026-10-28
-
-- 사용자 선택: 프로젝트별 설치 후 npx docmap / pnpm docmap. 전역 런처/PATH 자동 변경 없음.
-- 완료: 두 bin 이름·lockfile·도움말·설치 안내, 실제 JS 개발 의존성 설치·로컬 실행과 통합 검증.
-- 미설치 npx docmap은 다른 패키지를 찾을 수 있으므로, 배포 후 일회성 명령은
-  npx --package=@superlucky84/ddd-docmap docmap으로 안내한다. 현재 npm 배포는 하지 않았다.
-- 다음: 실제 대상 프로젝트에 tarball을 설치해 사용성을 확인한다. 기존 수동 인수·지원 OS/Node 하한·배포 결정은 유지한다.
-- 기술적 차단 없음. 최신 확인 커밋: 2cb552b2b2338ed64aba70972a8df204859c2792.
-  이번 변경은 작업 트리에 있으며 실제 사내 대상 프로젝트의 manifest·lockfile·문서는 수정하지 않았다.
-
-## docatlas 인계 — 2026-10-28
-
-- 사용자 결정: 패키지와 기본 명령 docatlas, GitHub 저장소도 docatlas, MIT 라이선스.
-  이번에는 배포 준비까지만 진행하며 실제 npm publish를 실행하지 않는다.
-- 완료: manifest/lockfile·공개 import·세 bin·도움말·화면·README·LICENSE, Node/Chrome/설치 통합과 배포 dry-run.
-  GitHub 이름 변경과 저장소 ID 유지·origin 갱신을 확인했다.
-- README는 미설치 npx·npm/pnpm 로컬 설치·미배포 tarball 설치, cwd 기본 루트·--root·--no-open·Ctrl+C를 구분한다.
-- 다음: tarball로 실제 프로젝트의 배포 전 사용성 인수. 실제 배포 시 npm 재로그인·최종 지원 환경 검증을 진행한다.
-- 차단 요인: 현재 준비 범위의 기술적 차단 없음. npm 인증 401은 이후 실제 배포 전에 해소해야 한다.
-- 최신 구현 커밋: e9977a4. 새 GitHub main의 README와 manifest를 확인했고 이 검증 기록도 문서 커밋으로 남긴다.
-- 실제 사내 대상 프로젝트의 manifest·lockfile·원본 문서는 수정하지 않았다.
-
-## 0.2.0 수집 범위·설정 인계 — 2026-10-28
-
-- 완료: 추가 수집 옵션·새 설정 이름/이전 fallback·재수집/읽기 정책·전체 설정 안내와 Test Hardening/Integration Test.
-- 문법 50개·Node 109개·Chrome 34개·설치 통합 4개, pack/publish dry-run·JSON·링크 검증이 통과했다.
-- 검증한 후보 tarball은 /private/tmp/docatlas-0.2.0.tgz다. npm 0.1.0은 사용자 배포 완료, 0.2.0은 미배포다.
-- Confluence 팀 가이드 1735491669는 버전 3으로 갱신했고 기존 다른 변경과 캡처 5장을 보존했다.
-- 다음: 실제 프로젝트 사용성 인수, 필요 시 별도 npm 0.2.0 배포·남은 지원 환경 검증. 기술적 차단 없음.
-- 최신 확인 커밋: ceb5b3e. 이번 변경은 작업 트리에 있으며 아직 커밋하지 않았다.
-
-## 0.2.0 검색 경로 탐색 인계 — 2026-10-28
-
-- 완료: RQ-13/DC-14의 경로 표시·트리 이동·현재 읽기 보존·접근성/경합/갱신과 설치 통합.
-- 문법 51개·Chrome 40개·설치 통합 4개, pack dry-run과 실제 캡처 검토가 통과했다. README·기준 4종을 갱신했다.
-- 수집 범위 단계의 Node 109개는 직전 검증 기록이다. 이번 변경은 UI와 해당 테스트에 한정한다.
-- 다음: 실제 프로젝트 사용성 인수, 필요 시 별도 npm 0.2.0 배포와 팀 가이드 추가 반영. npm 배포는 실행하지 않았다.
-- 기술적 차단 없음. 수동 인수·Node 22.0·다른 OS 검증은 계속 남아 있다.
-- 최신 확인 커밋: ceb5b3e. 이번 작업과 직전 0.2.0 변경은 작업 트리에 미커밋 상태로 있다.
-
-## 커밋·배포 준비 인계 — 2026-10-28
-
-- 사용자 요청으로 c16a862(feat: add configurable discovery and search-to-tree navigation)를 커밋하고 origin/main에 푸시했다.
-  구현·README·기준 4종·manifest/lockfile·테스트 총 28개 파일이 포함됐다.
-- 원격 main을 fetch해 충돌이 없음을 확인하고 일반 push를 사용했다. 강제 push는 하지 않았다.
-- npm registry 조회 당시 latest는 0.1.0이며 0.2.0은 미배포다. npm whoami의 계정은 kimjinwoo다.
-- 기존 문법 51개·Node 109개·Chrome 40개·설치 통합 4개와 패키징 검증을 근거로 삼는다.
-  이번 커밋 작업에서 구현을 더 바꾸거나 동일 테스트를 반복하지 않았다.
-- 이번 요청은 커밋·푸시와 배포 방법 안내다. 실제 npm publish는 사용자 실행 단계로 남긴다.
-
-### 사용자가 실행할 0.2.0 배포 절차
-
-현재 package.json과 lockfile은 이미 0.2.0이다. 추가 npm version 명령은 필요 없다.
-
-```sh
-cd ~/project/ddd-docmap
-npm whoami --registry=https://registry.npmjs.org/
-npm pack --dry-run
-npm publish --access public --registry=https://registry.npmjs.org/
-```
-
-whoami가 인증 오류면 npm login --registry=https://registry.npmjs.org/ 후 다시 실행한다.
-배포 중에는 터미널에 표시된 브라우저/2FA 인증 절차를 따른다.
-공식 절차: https://docs.npmjs.com/creating-and-publishing-unscoped-public-packages/.
-
-배포 완료 후 확인:
-
-```sh
-npm view docatlas version --registry=https://registry.npmjs.org/
-npx docatlas@0.2.0 --version
-cd ~/project/<대상 프로젝트>
-npx docatlas@0.2.0
-```
-
-registry와 실행 버전이 0.2.0인지 확인하고 새 설정·수집 옵션·검색 경로 탐색을 실제 프로젝트에서 인수한다.
-로컬 설치를 공유하는 팀은 해당 프로젝트에서 npm install --save-dev docatlas@0.2.0 또는 pnpm add -D docatlas@0.2.0으로 갱신한다.
-
-- 다음: 사용자 배포와 registry/실제 프로젝트 검증, README/팀 가이드의 미배포 표기 갱신.
-- 기술적 차단 없음. 남은 수동 인수·Node 22.0·다른 OS 범위는 유지한다. 최신 구현 커밋: c16a862.
-
-## 0.2.1 Python·Java 기본 제외와 Windows 최신 인계 — 2026-10-28
-
-- 완료: RQ-14 기본 제외 13개 추가, 설정 대체/읽기/감지 회귀, RQ-15 플랫폼 공통 테스트·Windows 사용법·CI 준비.
-- 문법 54개·Node 115개·Chrome 40개·설치 통합 4개·플랫폼 6개와 pack/문서/YAML 검증이 macOS에서 통과했다.
-- Windows/macOS Node 22/24 workflow는 작성했으나 원격 실행 전이다. 실제 Windows·콘솔·기본 브라우저 지원 확정은 TBD다.
-- 다음: 별도 커밋·푸시 후 Windows CI/실제 인수, 필요 시 별도 0.2.1 배포. 배포 후 팀 가이드의 기본 제외 목록도 갱신한다.
-- 기술적 차단 없음. 최신 확인 커밋은 1ec2bd6이다. 이번 후보는 미커밋·미배포이며 Confluence는 변경하지 않았다.
-
-## 현재 인계 — 2026-10-28
-
-- 완료: PR #1 병합을 확인하고 main을 origin/main의 47ff79a로 동기화했다.
-  Python·Java 기본 제외와 에이전트 스킬 설치의 기존 자동 검증·Windows/macOS CI·Claude Code 실제 세션 인수 기록을 유지한다.
-- 사용자 결정: 0.3.0으로 올리고 npm 게시 방법을 안내한다. 실제 게시·커밋·푸시는 사용자 실행 단계다.
-- 완료: manifest·lockfile·README·기준 4종을 0.3.0 후보에 맞췄다.
-  문법 70개·agent kit 세 쌍·Node 테스트 155개·설치 통합 5개·pack/publish dry-run이 통과했다.
-- 다음: 사용자가 커밋·푸시 → CI 확인 → npm 인증 → dry-run → publish → registry와 실제 CLI 확인을 실행한다.
-  상세 명령은 위 0.3.0 배포 절차를 따른다. npm version을 다시 실행할 필요는 없다.
-- 별도 남은 일: Codex 실제 세션·M-16 수동 항목, Windows 콘솔/기본 브라우저·Node 22.0 인수,
-  Confluence 팀 페이지 갱신(시점은 사용자 결정). 자동 검증과 수동 인수는 구분한다.
-- 차단: 없음. 조회 시 npm latest는 0.2.0이며 0.3.0은 미게시다.
-- 최신 확인 커밋: 47ff79a(PR #1 병합). 이번 배포 준비 변경은 미커밋이다.
-
 ## 플랫폼 CI 캐시 전제 보정 — 검증 완료
 
 진입: 사용자 보고와 run 40652167597 네 작업의 로그. 기준 커밋 a44c39e.
@@ -1078,3 +883,20 @@ npm ci가 받아 둔 잠금파일의 tarball만으로는 새 의존성 트리를
 
 모든 작업에서 문법 54개가 통과했다. Windows의 .cmd 실행기·네이티브 한글/공백 경로와 실제 브라우저 검증이 포함된다.
 기본 브라우저 자동 열기와 실제 터미널 Ctrl+C는 주입 신호·headless 브라우저로 대체 검증했다고 표시하지 않는다.
+
+## 현재 인계
+
+이 프로젝트의 현재 인계는 이 블록 하나다. 작업을 멈출 때 이 블록을 바꾸며 이전 내용은 git 이력에 남는다.
+2026-10-28 이전의 인계와 검증 기록은 [인계 이력](./handoff/HISTORY.md#구현-계획에서-옮긴-기록)에 있다.
+
+- 완료(RQ-19·DC-20): README를 DDD 본거지 소개로 재구성하고 METHOD.md·CONTRIBUTING.md·CHANGELOG.md를 추가했다.
+  agent-kit/README.md의 설치 안내와 package.json의 description·keywords를 고쳤고, 합성 예제 캡처와 scripts/screenshot.js를 추가했다.
+  기준 4종의 이전 인계 33개 절을 docs/handoff/HISTORY.md로 옮겼고, 적용이 끝난 phase5-wip.patch를 삭제했다.
+- 검증: 문법 71개·agent kit 세 쌍, Node 155개 중 152개 통과·3개 건너뜀(root 권한)·실패 0, pack 45개 파일.
+  공개 안내·기준 4종·인계 이력의 링크와 앵커를 확인했다. 옮긴 333줄은 제목 단계와 링크 외에는 그대로다.
+- 이전 상태 유지: 0.3.0은 npm에 게시됐다(2026-10-28 registry latest 확인). PR #1 병합 이후 제품 코드는 바뀌지 않았다.
+- 다음: 사용자 검토 후 main 반영. GitHub 저장소 About·topics 설정은 사용자가 한다.
+  M-18 사람 확인(GitHub 첫 화면, 다음 게시 후 npm 페이지의 캡처·링크), DC-21(METHOD 한국어판·examples/) 결정.
+  기존 남은 일: Codex 실제 세션과 M-16 수동 항목, Windows 콘솔·기본 브라우저·Node 22.0 인수.
+- 차단: 없음. README 캡처는 GitHub main의 절대 URL이라 main에 반영되기 전에는 브랜치 화면에서 보이지 않는다.
+- 최신 커밋: 작업 브랜치 claude/tender-gates-sa5kn8. 이 인계 직전 커밋은 e1e6495이며 실제 최신 SHA는 git log -1로 확인한다.
