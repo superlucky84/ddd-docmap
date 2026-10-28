@@ -858,6 +858,30 @@ npm pack --dry-run 45개 파일. 이 저장소의 문서 지도는 docs/의 5개
 - [x] 도움말 테스트에 두 문구를 더하고, 바꾸기 전 실패·바꾼 뒤 통과를 확인한다. npm run check·npm test·플랫폼.
   변경 전 도움말 테스트 1개 실패, 변경 후 설치 테스트 8개 통과. Node 157개 중 154개 통과·3개 건너뜀·실패 0, 플랫폼 6개, pack 45개 파일.
 
+## Claude Code·Codex 밖 에이전트 안내 — 진행 중
+
+대응: RQ-17·18 / DC-27 / M-16. 같은 PR #4.
+진입: 사용자 결정(2026-10-28)을 기준 4종에 기록했다. 기준 커밋 0457172.
+기준 관찰: 클라이언트 폴더가 없는 홈에서 install은 "--target claude, codex or all을 고르라"는 오류(종료 2)만 내고,
+--target cursor는 허용 목록만 알려 준다. 도움말에는 원본 파일 위치와 다른 에이전트 안내가 없다.
+
+### 구현
+
+- [ ] agentsHelp(kit, kitDir)에 다른 에이전트 절과 원본 경로·GitHub 주소. runAgents는 kitDir를 넘긴다.
+- [ ] 클라이언트 폴더 없음·알 수 없는 --target 오류에 다른 에이전트 안내 문장.
+- [ ] agent-kit/README.md 안내, CHANGELOG Unreleased.
+
+### Test Hardening
+
+- [ ] 도움말 테스트: 절 제목·GitHub 주소·기본 키트 경로. runAgents의 kitDir가 도움말 경로에 반영되는지. 두 오류의 안내 문장.
+  바꾸기 전 실패, 바꾼 뒤 통과를 확인한다.
+
+### Integration Test
+
+- [ ] npm run check, npm test, npm run test:platform, 실제 도움말·오류 출력, 링크 검사.
+
+종료 기준: 다른 에이전트가 도움말이나 오류만 읽고 원본 위치와 할 일을 알 수 있고, Claude Code·Codex 설치 동작은 그대로다.
+
 ## 검증 예제와 기록
 
 F-01~08의 구체적인 구성은 [수동 검증의 가상 프로젝트](./MANUAL_TEST_CHECKLIST.md#가상-프로젝트)를 따른다.
