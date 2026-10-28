@@ -230,7 +230,7 @@ manifest/lockfile의 두 bin 일치가 통과했다. npm pack --dry-run은 런�
 - [x] GitHub 저장소를 docatlas로 바꾸고 동일 저장소 ID·새 URL과 로컬 origin을 확인한다.
 - [x] npm 등록 가능 여부와 로그인 상태, 실제 배포 여부·남은 작업을 기록한다.
 - [x] README의 미설치/설치 실행 방법·cwd 루트·tarball·옵션을 docatlas 기준으로 정리한다.
-- [ ] 이번 변경을 커밋하고 새 GitHub 저장소에 반영한 뒤 원격 README를 확인한다.
+- [x] 이번 변경을 커밋하고 새 GitHub 저장소에 반영한 뒤 원격 README를 확인한다.
 
 기준 테스트: Node 93개·Chrome 34개·설치 통합 4개, 현재 origin의 공개 저장소와 기존 명령.
 종료 기준: 이름·라이선스·파일 목록이 일치하는 tarball과 새 GitHub 저장소를 확인한다.
@@ -256,6 +256,10 @@ README 실행 예제를 추가 검증했다. 프로젝트 manifest/node_modules�
 tarball을 지정한 npm exec의 일회성 실행이 0.1.0을 출력했고 대상에는 문서 외 파일이 생기지 않았다.
 같은 tarball을 로컬 개발 의존성으로 설치한 뒤 npm exec와 pnpm 10.13.1의 docatlas 실행도
 0.1.0을 출력했다. 원본 문서 내용이 유지됨을 확인했다. registry 이름으로 실행하는 예제는 배포 후 사용하도록 표시했다.
+
+구현 커밋 e9977a4(feat: rename package and CLI to docatlas)를 새 origin의 main에 push했다.
+GitHub에서 README와 package.json을 다시 읽어 새 이름·MIT·실행 안내를 확인했다.
+README blob은 95f8d2ddfaa425509fca908ac194109203c72301이며 설치 여부별 사용법과 cwd 기본 루트를 설명한다.
 
 ## 검증 예제와 기록
 
@@ -550,7 +554,7 @@ DOCMAP_BROWSER_CHANNEL=chrome npm run test:browser
 - 완료: manifest/lockfile·공개 import·세 bin·도움말·화면·README·LICENSE, Node/Chrome/설치 통합과 배포 dry-run.
   GitHub 이름 변경과 저장소 ID 유지·origin 갱신을 확인했다.
 - README는 미설치 npx·npm/pnpm 로컬 설치·미배포 tarball 설치, cwd 기본 루트·--root·--no-open·Ctrl+C를 구분한다.
-- 다음: 새 저장소에 소스/README 반영 후 배포 전 사용성 인수. 실제 배포 시 npm 재로그인·최종 지원 환경 검증을 진행한다.
+- 다음: tarball로 실제 프로젝트의 배포 전 사용성 인수. 실제 배포 시 npm 재로그인·최종 지원 환경 검증을 진행한다.
 - 차단 요인: 현재 준비 범위의 기술적 차단 없음. npm 인증 401은 이후 실제 배포 전에 해소해야 한다.
-- 작업 기준 커밋: 2cb552b2b2338ed64aba70972a8df204859c2792. 이 문서를 포함한 새 커밋은 git log -1 --oneline으로 확인한다.
+- 최신 구현 커밋: e9977a4. 새 GitHub main의 README와 manifest를 확인했고 이 검증 기록도 문서 커밋으로 남긴다.
 - 실제 joongangscripts의 manifest·lockfile·원본 문서는 수정하지 않았다.
