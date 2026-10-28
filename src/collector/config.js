@@ -2,6 +2,7 @@ import fs from 'node:fs/promises';
 import path from 'node:path';
 import picomatch from 'picomatch';
 import { ConfigurationError } from './errors.js';
+import { readRegularFile } from './read.js';
 
 export const CONFIG_FILE = 'ddd-docmap.config.json';
 
@@ -91,7 +92,7 @@ export async function loadConfiguration(root) {
       fail('config', 'expected a regular file, not a symbolic link');
     }
     try {
-      value = JSON.parse(await fs.readFile(filename, 'utf8'));
+      value = JSON.parse(await readRegularFile(root, filename));
     } catch (cause) {
       throw new ConfigurationError('cannot read JSON: ' + cause.message, { cause });
     }

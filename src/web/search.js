@@ -86,7 +86,7 @@ export function createSearch({ open, showMap, getSequence, getSelected }) {
       $('search-status').textContent = data.total
         ? data.total + (data.total === 1 ? ' document' : ' documents') + (data.total > 50 ? ' · showing first 50' : '')
         : 'No matching documents.';
-      if (focusId) $('search-results').querySelector('[data-document-id="' + CSS.escape(focusId) + '"]')?.focus({ preventScroll: true });
+      if (focusId) ($('search-results').querySelector('[data-document-id="' + CSS.escape(focusId) + '"]') || input).focus({ preventScroll: true });
       $('map-scroll').scrollTop = scroll;
       restoreScroll = null;
     } catch (error) {

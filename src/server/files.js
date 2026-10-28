@@ -1,9 +1,9 @@
 import fs from 'node:fs/promises';
-import { constants } from 'node:fs';
 import path from 'node:path';
 import { loadConfiguration } from '../collector/config.js';
 import { extendIgnoreLayers, isIgnored, isProtectedName } from '../collector/policy.js';
 import { HttpError } from './errors.js';
+import { readRegularFile as readRegular } from '../collector/read.js';
 
 const isInside = (root, filename) => {
   const relative = path.relative(root, filename);
@@ -13,24 +13,8 @@ const isInside = (root, filename) => {
 function filesystemError(error) {
   if (error instanceof HttpError) return error;
   if (['ENOENT', 'ENOTDIR'].includes(error.code)) return new HttpError(404, 'This file no longer exists.');
-  if (['EACCES', 'EPERM', 'ELOOP'].includes(error.code)) return new HttpError(403, 'This file cannot be read.');
+  if (['EACCES', 'EPERM', 'ELOOP', 'NOT_REGULAR', 'OUTSIDE_ROOT', 'FILE_CHANGED'].includes(error.code)) return new HttpError(403, 'This file cannot be read.');
   return error;
-}
-
-async function readRegular(root, filename, binary = false) {
-  const stat = await fs.lstat(filename);
-  if (!stat.isFile() || stat.isSymbolicLink()) {
-    throw new HttpError(403, 'Only regular files can be opened.');
-  }
-  const resolved = await fs.realpath(filename);
-  if (!isInside(root, resolved)) throw new HttpError(403, 'This file is outside the project.');
-  const handle = await fs.open(resolved, constants.O_RDONLY | (constants.O_NOFOLLOW || 0));
-  try {
-    if (!(await handle.stat()).isFile()) throw new HttpError(403, 'Only regular files can be opened.');
-    return await handle.readFile(binary ? undefined : 'utf8');
-  } finally {
-    await handle.close();
-  }
 }
 
 export async function createFileAccess(root) {

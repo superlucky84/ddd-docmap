@@ -1,0 +1,148 @@
+{
+  "date": "2026-10-28",
+  "baselineCommit": "4b8b195",
+  "command": "npm run benchmark -- --browser",
+  "comparison": "Identical copy except the four scanProject calls in createProjectStore omit previous.",
+  "reuse": {
+    "environment": {
+      "node": "v22.12.0",
+      "platform": "darwin",
+      "release": "24.6.0",
+      "arch": "arm64",
+      "cpu": "Apple M4 Pro",
+      "logicalCpus": 12,
+      "totalMemoryGiB": 24,
+      "macOS": "15.6.1"
+    },
+    "fixture": {
+      "documents": 300,
+      "features": 75,
+      "documentBytes": 5016514,
+      "noiseFiles": 1003
+    },
+    "method": "Separate fresh Node workers; sequential, warm filesystem cache, no explicit GC. Browser metrics exclude server startup; RSS excludes Chrome processes.",
+    "collection": {
+      "firstCollectionMs": 572.18,
+      "collection": {
+        "samples": 5,
+        "p50Ms": 481.17,
+        "p95Ms": 497.71,
+        "maxMs": 497.71
+      },
+      "scanAndSearchIndexMs": 489.5,
+      "search": {
+        "samples": 70,
+        "p50Ms": 0.81,
+        "p95Ms": 3.89,
+        "maxMs": 4.18
+      },
+      "memory": {
+        "rssMiB": 169.16,
+        "heapUsedMiB": 52.46
+      },
+      "maxRssMiB": 169.16
+    },
+    "live": {
+      "storeStartupMs": 673.19,
+      "idle": {
+        "wallMs": 5000.94,
+        "cpuMs": 90.13,
+        "percentOfOneCore": 1.8,
+        "memory": {
+          "rssMiB": 140.95,
+          "heapUsedMiB": 48.37
+        }
+      },
+      "saveToPublishedIndex": {
+        "samples": 5,
+        "p50Ms": 599.3,
+        "p95Ms": 631,
+        "maxMs": 631
+      },
+      "memoryAfterUpdates": {
+        "rssMiB": 213.89,
+        "heapUsedMiB": 115.82
+      },
+      "maxRssMiB": 214.39
+    },
+    "browser": {
+      "version": "156.0.8078.48",
+      "mapReadyMs": 61.47,
+      "searchInputToResultsMs": 216.61,
+      "openDocumentMs": 109.91,
+      "saveToVisibleContentMs": 587.67,
+      "maxRssMiB": 353.64
+    }
+  },
+  "noReuse": {
+    "environment": {
+      "node": "v22.12.0",
+      "platform": "darwin",
+      "release": "24.6.0",
+      "arch": "arm64",
+      "cpu": "Apple M4 Pro",
+      "logicalCpus": 12,
+      "totalMemoryGiB": 24,
+      "macOS": "15.6.1"
+    },
+    "fixture": {
+      "documents": 300,
+      "features": 75,
+      "documentBytes": 5016514,
+      "noiseFiles": 1003
+    },
+    "method": "Separate fresh Node workers; sequential, warm filesystem cache, no explicit GC. Browser metrics exclude server startup; RSS excludes Chrome processes.",
+    "collection": {
+      "firstCollectionMs": 518.53,
+      "collection": {
+        "samples": 5,
+        "p50Ms": 494.2,
+        "p95Ms": 503.97,
+        "maxMs": 503.97
+      },
+      "scanAndSearchIndexMs": 474.71,
+      "search": {
+        "samples": 70,
+        "p50Ms": 0.82,
+        "p95Ms": 3.91,
+        "maxMs": 4.05
+      },
+      "memory": {
+        "rssMiB": 164.89,
+        "heapUsedMiB": 42.2
+      },
+      "maxRssMiB": 164.98
+    },
+    "live": {
+      "storeStartupMs": 1045.17,
+      "idle": {
+        "wallMs": 5000.54,
+        "cpuMs": 76.73,
+        "percentOfOneCore": 1.53,
+        "memory": {
+          "rssMiB": 161.52,
+          "heapUsedMiB": 58.56
+        }
+      },
+      "saveToPublishedIndex": {
+        "samples": 5,
+        "p50Ms": 907.88,
+        "p95Ms": 927.04,
+        "maxMs": 927.04
+      },
+      "memoryAfterUpdates": {
+        "rssMiB": 222.25,
+        "heapUsedMiB": 77.86
+      },
+      "maxRssMiB": 222.5
+    },
+    "browser": {
+      "version": "156.0.8078.48",
+      "mapReadyMs": 65.21,
+      "searchInputToResultsMs": 211.63,
+      "openDocumentMs": 102.08,
+      "saveToVisibleContentMs": 978.16,
+      "maxRssMiB": 483.25
+    }
+  }
+}

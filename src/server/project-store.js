@@ -5,7 +5,7 @@ import { createSearchIndex } from '../collector/search.js';
 import { CONFIG_FILE } from '../collector/config.js';
 
 /** Owns one project's watcher and atomically published read/search generation. */
-export async function createProjectStore(root) {
+export async function createProjectStore(root, { watcherFactory = watch } = {}) {
   let current;
   let error = null;
   let watcher;
@@ -14,6 +14,8 @@ export async function createProjectStore(root) {
   let dirty = false;
   let reconfigure = false;
   let closed = false;
+  let closing;
+  let cancelReady;
   const listeners = new Set();
   const notify = type => {
     for (const listener of listeners) listener(type, status());
@@ -26,12 +28,12 @@ export async function createProjectStore(root) {
       searchIndex: createSearchIndex(scan) };
     error = null;
   }
-  publish(await scanProject(root));
+  publish(await scanProject(root, { previous: current }));
   root = current.snapshot.project.rootLabel;
 
   async function startWatcher() {
     const policy = current.acceptsPath;
-    const next = watch(root, {
+    const next = watcherFactory(root, {
       ignoreInitial: true, followSymlinks: false, atomic: 120,
       // Native fs.watch can suppress the first write immediately after startup.
       usePolling: true, interval: 300, binaryInterval: 500,
@@ -63,8 +65,18 @@ export async function createProjectStore(root) {
       if (!closed) { error = 'File watching failed: ' + cause.message; notify('update-error'); }
     });
     await new Promise((resolve, reject) => {
-      next.once('ready', resolve);
-      next.once('error', reject);
+      const cleanup = () => {
+        next.off('ready', ready);
+        next.off('error', failed);
+        if (cancelReady === cancel) cancelReady = null;
+      };
+      const ready = () => { cleanup(); resolve(); };
+      const failed = cause => { cleanup(); reject(cause); };
+      const cancel = () => failed(new Error('The project watcher was closed.'));
+      cancelReady = cancel;
+      next.once('ready', ready);
+      next.once('error', failed);
+      if (closed) cancel();
     });
   }
 
@@ -77,7 +89,7 @@ export async function createProjectStore(root) {
         const reset = reconfigure;
         reconfigure = false;
         try {
-          const scan = await scanProject(root);
+          const scan = await scanProject(root, { previous: current });
           if (closed) return;
           publish(scan);
           if (reset) {
@@ -86,7 +98,9 @@ export async function createProjectStore(root) {
             await startWatcher();
             // Include changes made while the replacement watcher was starting.
             if (closed) return;
-            publish(await scanProject(root));
+            const audited = await scanProject(root, { previous: current });
+            if (closed) return;
+            publish(audited);
           }
           if (!closed) notify('change');
         } catch (cause) {
@@ -99,7 +113,7 @@ export async function createProjectStore(root) {
 
   try {
     await startWatcher();
-    const scan = await scanProject(root);
+    const scan = await scanProject(root, { previous: current });
     if (scan.snapshot.revision !== current.snapshot.revision) publish(scan);
   } catch (cause) {
     closed = true;
@@ -111,12 +125,15 @@ export async function createProjectStore(root) {
     get current() { return current; },
     status,
     subscribe(listener) { listeners.add(listener); return () => listeners.delete(listener); },
-    async close() {
-      closed = true;
-      clearTimeout(timer);
-      listeners.clear();
-      await watcher.close();
-      await running;
+    close() {
+      if (!closing) {
+        closed = true;
+        clearTimeout(timer);
+        listeners.clear();
+        cancelReady?.();
+        closing = (async () => { await watcher.close(); await running; })();
+      }
+      return closing;
     }
   };
 }

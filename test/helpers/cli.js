@@ -3,8 +3,8 @@ import { fileURLToPath } from 'node:url';
 
 export const cliPath = fileURLToPath(new URL('../../bin/ddd-docmap.js', import.meta.url));
 
-export async function startCli(t, { cwd, args = [] }) {
-  const child = spawn(process.execPath, [cliPath, ...args], { cwd, stdio: ['ignore', 'pipe', 'pipe'] });
+export async function startCli(t, { cwd, args = [], executable = cliPath }) {
+  const child = spawn(process.execPath, [executable, ...args], { cwd, stdio: ['ignore', 'pipe', 'pipe'] });
   let stdout = '';
   let stderr = '';
   const exited = new Promise(resolve => child.once('exit', (code, signal) => resolve({ code, signal })));

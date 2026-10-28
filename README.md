@@ -5,9 +5,9 @@ Local document maps for **Doc-Driven Development** projects.
 Find feature documentation spread across a repository, explore its hierarchy,
 and read Markdown without losing your place.
 
-> Phase 4: browse feature cards, read formatted Markdown, search documentation,
-> and see local saves reflected without reloading. Explicit previous paths resolve
-> to their current documents. There is no npm release yet.
+> Phase 5 hardening is complete. Browse feature cards, read Markdown, search,
+> and see local saves reflected without reloading. Packaged installation checks
+> also pass; final acceptance and release decisions remain. There is no npm release yet.
 
 ## Document map
 
@@ -27,7 +27,8 @@ labels, summaries, and discovery.
 
 ## Development
 
-Requires Node.js 22 or newer. Latest validation uses Node.js 22.12.0 on macOS 15.6.1.
+The declared minimum is Node.js 22. Packaged integration checks pass on Node.js
+22.12.0 and 24.22.1 on macOS 15.6.1. Node.js 22.0 and other OSes remain unverified.
 
 ```sh
 git clone https://github.com/superlucky84/ddd-docmap.git
@@ -115,6 +116,28 @@ An existing Chrome installation can be used instead:
 ~~~sh
 DOCMAP_BROWSER_CHANNEL=chrome npm run test:browser
 ~~~
+
+Check the actual tarball in a separate production-only installation, using synthetic
+JavaScript and non-JavaScript projects:
+
+~~~sh
+DOCMAP_BROWSER_CHANNEL=chrome npm run test:integration
+~~~
+
+The integration check installs offline from the npm cache populated during development
+setup. Set `DOCMAP_NPM_CACHE` to use another cache. It checks the installed CLI and API,
+reading, search, live saves, independent shutdown, and original file hashes.
+
+Measure the synthetic 300-document project separately from other tests:
+
+~~~sh
+npm run benchmark
+npm run benchmark -- --browser
+~~~
+
+The browser benchmark uses installed Chrome by default; `DOCMAP_BROWSER_CHANNEL`
+can select another Playwright channel. Timings, idle CPU, and memory are local measurements.
+See the [recorded results and regression criteria](docs/IMPLEMENT.md#phase-5-완료-검증--2026-10-28).
 
 ## Collector API
 

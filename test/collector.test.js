@@ -129,8 +129,8 @@ test('a failed document read leaves healthy documents and reports its relative p
     'docs/fail.md': '# Unreadable\n',
     'docs/healthy.md': '# Healthy\n'
   });
-  const original = fs.readFile;
-  t.mock.method(fs, 'readFile', async (filename, ...args) => {
+  const original = fs.open;
+  t.mock.method(fs, 'open', async (filename, ...args) => {
     if (filename === path.join(root, 'docs', 'fail.md')) {
       throw Object.assign(new Error('simulated denial'), { code: 'EACCES' });
     }
@@ -148,8 +148,8 @@ test('unreadable ignore rules stop only their subtree', async t => {
     'docs/private/.gitignore': '*.md\n',
     'docs/private/secret.md': '# Not exposed\n'
   });
-  const original = fs.readFile;
-  t.mock.method(fs, 'readFile', async (filename, ...args) => {
+  const original = fs.open;
+  t.mock.method(fs, 'open', async (filename, ...args) => {
     if (filename === path.join(root, 'docs', 'private', '.gitignore')) {
       throw Object.assign(new Error('simulated denial'), { code: 'EACCES' });
     }

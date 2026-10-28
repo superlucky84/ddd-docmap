@@ -9,6 +9,7 @@ import {
 } from './markdown.js';
 
 import { resolveRedirects } from './redirects.js';
+import { readRegularFile } from './read.js';
 
 const compare = (left, right) => left < right ? -1 : left > right ? 1 : 0;
 const hash = value => createHash('sha256').update(value).digest('hex');
@@ -78,7 +79,7 @@ function buildGroups(documents, config, project, warnings, headings) {
  * Read a project's Markdown and return a deterministic document-map snapshot.
  * This function never modifies the target project or starts a server.
  */
-export async function scanProject(directory = process.cwd()) {
+export async function scanProject(directory = process.cwd(), { previous } = {}) {
   let root;
   try {
     if (typeof directory !== 'string' || !directory.trim()) {
@@ -96,6 +97,7 @@ export async function scanProject(directory = process.cwd()) {
   const project = { id: hash(root), displayName: path.basename(root), rootLabel: root };
   const documents = [];
   const headings = new Map();
+  const metadataCache = new Map();
   const contents = new Map();
   const searchTexts = new Map();
   const directoryLayers = new Map();
@@ -104,17 +106,7 @@ export async function scanProject(directory = process.cwd()) {
     code, path: relativePath(root, filename) || '.', message
   });
 
-  async function readRegular(filename) {
-    const stat = await fs.lstat(filename);
-    if (!stat.isFile() || stat.isSymbolicLink()) {
-      throw Object.assign(new Error('not a regular file'), { code: 'NOT_REGULAR' });
-    }
-    const resolved = await fs.realpath(filename);
-    if (!isInside(root, resolved)) {
-      throw Object.assign(new Error('outside project root'), { code: 'OUTSIDE_ROOT' });
-    }
-    return fs.readFile(resolved, 'utf8');
-  }
+  const readRegular = filename => readRegularFile(root, filename);
 
   async function walk(directory, inherited) {
     const ignorePath = path.join(directory, '.gitignore');
@@ -167,7 +159,11 @@ export async function scanProject(directory = process.cwd()) {
       }
       try {
         const markdown = await readRegular(filename);
-        const metadata = extractMetadata(markdown, entry.name);
+        const contentHash = hash(markdown);
+        const cached = previous?.snapshot.project.id === project.id ? previous.metadataCache?.get(relative) : null;
+        const metadata = cached?.contentHash === contentHash
+          ? cached : { ...extractMetadata(markdown, entry.name), contentHash };
+        metadataCache.set(relative, metadata);
         headings.set(relative, metadata.headingTitle);
         contents.set(relative, markdown);
         searchTexts.set(relative, metadata.searchText);
@@ -176,7 +172,7 @@ export async function scanProject(directory = process.cwd()) {
           groupId: path.posix.dirname(relative),
           kind: documentKind(entry.name),
           title: metadata.title, summary: metadata.summary,
-          canonicalId: null, contentHash: hash(markdown)
+          canonicalId: null, contentHash
         });
       } catch (cause) {
         warn('DOCUMENT_READ_FAILED', filename, 'Cannot read document (' + (cause.code || cause.name) + ')');
@@ -205,5 +201,5 @@ export async function scanProject(directory = process.cwd()) {
     compare(left.path, right.path) || compare(left.code, right.code) || compare(left.message, right.message)
   );
   const data = { project, groups, documents, redirects, warnings };
-  return { snapshot: { revision: hash(JSON.stringify(data)), ...data }, contents, searchTexts, acceptsPath };
+  return { snapshot: { revision: hash(JSON.stringify(data)), ...data }, contents, searchTexts, metadataCache, acceptsPath };
 }
