@@ -13,6 +13,7 @@ F-01~03은 test/helpers/projects.js와 테스트가 임시 디렉터리에 생�
 예제 Markdown 사본을 저장소에 쌓지 않으며 테스트 종료 시 임시 디렉터리를 정리한다.
 F-04는 test/helpers/reading.js, F-05·06은 이동 연결·다중 실행 테스트,
 F-07은 test/integration/package.test.js, F-08은 test/helpers/scale.js가 생성한다.
+F-09(에이전트 스킬 설치)는 test/helpers/agent-kit.js와 test/integration/agent-kit.test.js가 임시 HOME·프로젝트로 만든다.
 
 ### F-01 — 기본 계층과 부분 문서
 
@@ -272,7 +273,7 @@ DOCMAP_BROWSER_CHANNEL=chrome으로 설치 Chrome을 선택한다. 지원 환경
 
 ### M-16 — 에이전트 스킬 설치와 갱신
 
-대응: RQ-16·17·18 / PR-09 / DC-16·17·19. 예제: 임시 HOME과 가상 프로젝트(구현 단계에서 정의).
+대응: RQ-16·17·18 / PR-09 / DC-16·17·19. 예제: F-09.
 아래 항목은 구현 후의 인수 기준이다.
 
 - [ ] 스킬이 없는 HOME에서 기본 설치하면 designer 스킬·룰만 감지된 클라이언트의 전역 위치에 생긴다.
@@ -295,6 +296,7 @@ DOCMAP_BROWSER_CHANNEL=chrome으로 설치 Chrome을 선택한다. 지원 환경
 
 - [ ] 설치 후 새 Claude Code 세션에서 doc-driven-designer-v1 스킬과 에이전트가 보인다.
 - [ ] 새 Codex 세션에서 스킬과 에이전트가 보인다. 프로젝트 .codex/agents가 신뢰한 프로젝트에서만 읽히는지 기록한다.
+  자동 관찰(DC-18): Codex CLI 0.165.0의 codex debug prompt-input에서 확인했다. 사람의 실제 세션 확인은 남아 있다.
 - [ ] 설치본이 패키지보다 낮은 버전이면 docatlas 실행 시 한 줄 안내가 나오고 파일은 바뀌지 않는다.
 - [ ] 설치 기록을 읽지 못해도 문서 지도의 실행과 종료가 정상이다.
 
@@ -405,6 +407,7 @@ test/integration/package.test.js의 부모 1개·하위 3개, 총 4개가 Node 2
 | M-17 | 낡은 기록의 한 줄 안내·범위별 미리보기 명령·기록 없음/최신/읽기 실패 무안내·실제 CLI의 출력 순서·종료·무쓰기 | agent-kit-notice.test.js |
 | M-16 | 강제 교체 후 실패 복구와 백업·권한 유지·설치 잠금과 동시 실행·한글/공백·CRLF·판정 후 링크·낮은 버전·ctxbin 사본 | agent-kit-hardening.test.js |
 | M-16 | production tarball의 npm 실행기로 한글·공백 HOME에 미리보기·설치·재실행 (macOS 통과, Windows는 CI 확인 전) | platform.test.js |
+| M-16·17 | F-09: 개발 의존성 설치본으로 도움말→미리보기→설치→재실행, 프로젝트 --all 설치와 경고, 문서 무변경, 낡은 기록 안내→갱신 후 사라짐, 수정본 종료 3과 --force 백업 | integration/agent-kit.test.js |
 
 ## 릴리스 판정
 

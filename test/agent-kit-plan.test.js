@@ -173,13 +173,17 @@ test('same-name warnings explain which copy each client uses', async t => {
   await write(home, '.claude/skills/sample-designer/SKILL.md', item.files.skill.text);
   await write(project, '.codex/agents/sample-designer.toml', item.files.codexAgent.text);
   const local = await planInstall({ kit, items: [item], scope: 'project', home, root: project, clients: ['claude', 'codex'] });
-  assert.deepEqual(local.warnings.map(warning => [warning.client, warning.kind, warning.path]), [
-    ['claude', 'skill', path.join(home, '.claude', 'skills', 'sample-designer', 'SKILL.md')]
+  assert.deepEqual(local.warnings.map(warning => [warning.code, warning.client, warning.kind, warning.path]), [
+    ['same-name', 'claude', 'skill', path.join(home, '.claude', 'skills', 'sample-designer', 'SKILL.md')],
+    ['codex-trust', 'codex', 'agent', undefined]
   ]);
   assert.match(local.warnings[0].message, /uses the global skill instead of the project skill/);
+  assert.match(local.warnings[1].message, /only after the project is trusted/);
   const global = await planInstall({ kit, items: [item], scope: 'global', home, root: project, clients: ['codex'] });
   assert.equal(global.warnings.length, 1);
-  assert.match(global.warnings[0].message, /does not document which of the two agents/);
+  assert.match(global.warnings[0].message, /Codex uses the project agent instead of the global agent in a trusted project/);
+  const claudeOnly = await planInstall({ kit, items: [item], scope: 'project', home, root: project, clients: ['claude'] });
+  assert.ok(!claudeOnly.warnings.some(warning => warning.code === 'codex-trust'));
   const same = await planInstall({ kit, items: [item], scope: 'global', home, root: home, clients: ['claude'] });
   assert.deepEqual(same.warnings, []);
 });

@@ -17,7 +17,7 @@
 - 완료: 0.2.0의 추가 수집 옵션·설정 파일명·검색 경로 탐색을 사용자가 npm 배포했다.
   새 작업은 Python·Java 기본 제외와 Windows 점검의 0.2.1 후보이며 맨 아래 인계가 현재 상태다.
 - 완료: 검색 결과의 경로에서 트리 위치 찾기. 최신 문법 51개·Chrome 40개·설치 통합 4개 통과.
-- 진행 중: RQ-16·17·18 에이전트 스킬 관리와 설치. 1~4단계와 Test Hardening을 완료했고 다음은 Integration Test다.
+- 진행 중: RQ-16·17·18 에이전트 스킬 관리와 설치. Integration Test까지 자동 검증을 마쳤다. Windows CI와 사람의 M-16·17 인수가 남았다.
 
 기술 선택은 각 단계에서 근거와 검증을 기록해 DC/IC를 해소한다.
 상세 계약을 바꾸면 요구사항·설계·단계·수동 기준을 같은 작업에서 갱신한다.
@@ -413,11 +413,11 @@ Confluence의 다른 문서가 함께 게시되지 않도록 원본 publish/sync
 Windows workflow는 test:platform과 test:browser를 실행한다. full npm test/test:integration은 POSIX 전제가 남아 별도 이식 대상이다.
 Windows 네이티브 Ctrl+C·기본 브라우저·PowerShell/CMD·UNC/네트워크 드라이브는 실제 인수 전 미검증이다.
 
-## 에이전트 스킬 관리와 설치 — Test Hardening 완료
+## 에이전트 스킬 관리와 설치 — Integration Test 자동 검증 완료
 
 대응: RQ-16·17·18 / PR-09·10 / DC-16~19 / M-16·17. 기준 커밋 d71ee97, 계획 cc9e98d, 1단계 b85e00e, 2단계 59a561e,
-3단계 49143c0, 4단계 ead614f. 다음 후보 버전 0.3.0은 제안이며 package.json은 아직 0.2.1이다.
-상태: 설치 명령·도움말·업데이트 안내가 동작하고 실패·동시 실행·경로 경계를 보강했다. 남은 단계는 Integration Test다.
+3단계 49143c0, 4단계 ead614f, Test Hardening 5bb8c7a. 다음 후보 버전 0.3.0은 제안이며 package.json은 아직 0.2.1이다.
+상태: 설치 tarball로 전 과정을 자동 검증했고 DC-18을 해소했다. Windows CI 실행과 사람의 M-16·17 인수가 남았다.
 
 진입 조건: DC-19 공개 범위 확인. 2026-10-28 사용자 확인으로 충족했다.
 
@@ -537,14 +537,33 @@ Windows 네이티브 Ctrl+C·기본 브라우저·PowerShell/CMD·UNC/네트워�
 | DOCMAP_NPM_CACHE=/private/tmp/ddd-docmap-phase1-npm-cache npm run test:platform | 6개 통과. tarball npm 실행기로 한글·공백 HOME에 agents 미리보기·설치·재실행 포함 |
 | npm pack --dry-run | 45개 파일 |
 
-### Integration Test
+### Integration Test: 자동 검증 완료
 
-- [ ] production tarball을 임시 프로젝트에 설치하고 임시 HOME으로 전역·프로젝트·--dry-run·재실행을 확인한다.
-- [ ] Windows/macOS CI에 설치 검증을 추가한다.
-- [ ] M-16·17 수동 인수: 실제 Claude Code·Codex 새 세션에서 로드를 확인하고 DC-18 결과를 기록한다.
+- [x] F-09(test/integration/agent-kit.test.js): production tarball을 팀 프로젝트의 개발 의존성으로 설치하고 임시 한글 HOME으로
+  도움말→미리보기(무쓰기)→설치→재실행, 프로젝트 --all 설치와 경고, 문서·AGENTS.md·CLAUDE.md 무변경, 문서 지도에 설치 파일이
+  나타나지 않음, 낡은 기록의 안내→갱신 후 사라짐, 수정본 종료 3과 --force 백업을 확인했다.
+- [x] Windows/macOS CI 대상인 test:platform에 tarball npm 실행기 설치 검증을 추가했다(Test Hardening). 실제 CI 실행은 아래 남은 일이다.
+- [x] DC-18: Codex CLI 0.165.0의 codex debug prompt-input(모델 호출 없음)으로 격리한 HOME·CODEX_HOME에서 관찰했다.
+  프로젝트 스킬은 신뢰와 무관하게, 프로젝트 룰은 신뢰한 프로젝트에서만 읽고, 같은 이름 룰은 프로젝트가 우선이다.
+  같은 이름 경고 문구를 확정하고 프로젝트 설치에 codex-trust 경고를 추가했다.
+- [ ] platform CI의 Windows·macOS 실행. main push나 PR에서 돈다.
+- [ ] M-16·17 사람의 수동 인수: 실제 Claude Code·Codex 새 세션에서 설치된 스킬과 룰이 보이는지 확인한다.
 
 기준 검증: npm run test:integration, npm run test:platform, npm pack --dry-run.
-종료 기준: 설치 tarball로 설치와 갱신이 재현되고 실제 클라이언트 로드 결과를 기록한다.
+종료 기준: 설치 tarball로 설치와 갱신이 재현되고 실제 클라이언트 로드 결과를 기록한다. 자동 부분과 Codex 관찰은 충족했다.
+
+#### Integration Test 검증 — 2026-10-28
+
+환경: macOS / Node 22.12.0 / Chrome. Codex CLI 0.165.0.
+
+| 명령/범위 | 결과 |
+| --- | --- |
+| npm run check | JavaScript 70개 문법, agent kit 세 쌍 검사 통과 |
+| DOCMAP_NPM_CACHE=/private/tmp/ddd-docmap-phase1-npm-cache npm test | 155개 통과 |
+| DOCMAP_NPM_CACHE=/private/tmp/ddd-docmap-phase1-npm-cache npm run test:platform | 6개 통과 |
+| DOCMAP_BROWSER_CHANNEL=chrome DOCMAP_NPM_CACHE=/private/tmp/ddd-docmap-phase1-npm-cache npm run test:integration | 5개 통과. 새 F-09 포함 |
+| npm pack --dry-run | 45개 파일 |
+| codex debug prompt-input 관찰 | 위 DC-18 결과. 실제 HOME과 Codex 설정은 쓰지 않았다 |
 
 ## 검증 예제와 기록
 
@@ -914,13 +933,14 @@ registry와 실행 버전이 0.2.0인지 확인하고 새 설정·수집 옵션�
 
 - 완료: 0.2.1의 Python·Java 기본 제외·플랫폼 테스트와 캐시 전제 보정. 최신 구현 커밋은 967c175이며 main에 푸시했다.
 - run 40657181408의 macOS/Windows × Node 22/24 네 작업이 모두 성공했다. 원인·재현·작업별 결과는 아래 플랫폼 CI 캐시 전제 보정 기록에 있다.
-- 에이전트 스킬: 작업 브랜치 feat/agent-kit. 계획 cc9e98d, 1단계 b85e00e, 2단계 59a561e, 3단계 49143c0, 4단계 ead614f.
-  Test Hardening(잠금·권한 유지와 테스트)은 미커밋이다. 사용자는 1~4단계를 리뷰 없이 진행하기로 했다.
-- 다음: Test Hardening 리뷰 여부를 사용자에게 확인한 뒤 Integration Test(설치 통합, 실제 Claude·Codex 로드와 DC-18, Windows CI).
+- 에이전트 스킬: 작업 브랜치 feat/agent-kit. 계획 cc9e98d, 1단계 b85e00e, 2단계 59a561e, 3단계 49143c0, 4단계 ead614f,
+  Test Hardening 5bb8c7a. Integration Test(F-09·DC-18 반영)는 미커밋이다. 사용자는 앞 단계를 리뷰 없이 진행하기로 했다.
+- 다음: Integration Test 리뷰 여부 확인 → 커밋 → Windows CI를 위한 PR 또는 main 반영(사용자 결정) → 사람의 M-16·17 인수.
+  배포하려면 버전(0.3.0 제안)과 npm publish를 사용자가 정한다.
   별도로 실제 Windows 콘솔 Ctrl+C·PowerShell/CMD·기본 브라우저 인수와 필요 시 npm 배포·팀 가이드 갱신.
 - 남은 일: Confluence 팀 페이지는 이전 designer 1.0.0이다. 갱신 시점은 사용자가 정한다.
-- 차단: 없음. DC-18은 Integration Test의 실제 Codex 확인에서 해소한다.
-- 최신 커밋: ead614f. Test Hardening 변경은 미커밋이다. npm 0.2.1은 미배포이며 Confluence는 읽기만 했다.
+- 차단: 없음. Windows CI는 원격 반영 결정을 기다린다.
+- 최신 커밋: 5bb8c7a. Integration Test 변경은 미커밋이다. npm 0.2.1은 미배포이며 Confluence는 읽기만 했다.
   문서만 바뀐 인계 커밋은 CI를 재실행하지 않는다.
 
 ## 플랫폼 CI 캐시 전제 보정 — 검증 완료

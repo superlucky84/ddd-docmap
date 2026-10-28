@@ -133,7 +133,8 @@ test('Korean and space paths with CRLF kit sources install LF files and stay unc
   const local = await agents(context, ['install', '--project', '--target', 'all']);
   assert.equal(local.code, 0, local.stderr);
   assert.equal(local.lines[0][5], path.join(project, '.claude', 'skills', 'sample-designer', 'SKILL.md'));
-  assert.equal(local.lines.filter(line => line[0] === 'warning').length, 4);
+  assert.deepEqual(local.lines.filter(line => line[0] === 'warning').map(line => line[1]),
+    ['same-name', 'same-name', 'same-name', 'same-name', 'codex-trust']);
   assert.ok(await read(path.join(project, '.docatlas', 'agents.json')));
 });
 

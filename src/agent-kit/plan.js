@@ -19,13 +19,15 @@ const LAYOUT = {
   }
 };
 
-// What each client does when the global and project folders define the same name (checked 2026-10-28).
+// What each client does when the global and project folders define the same name.
+// Claude Code: documentation checked 2026-10-28. Codex: observed with Codex CLI 0.165.0 on 2026-10-28.
 const SAME_NAME = {
   'claude:skill': 'Claude Code uses the global skill instead of the project skill.',
   'claude:agent': 'Claude Code uses the project agent instead of the global agent.',
   'codex:skill': 'Codex lists both skills without merging them.',
-  'codex:agent': 'Codex does not document which of the two agents it uses.'
+  'codex:agent': 'Codex uses the project agent instead of the global agent in a trusted project.'
 };
+const CODEX_TRUST = 'Codex reads project agents in .codex/agents only after the project is trusted.';
 
 function isRecord(value) {
   return typeof value === 'object' && value !== null && !Array.isArray(value);
@@ -226,6 +228,9 @@ export async function planInstall({ kit, items, scope, home, root, clients, forc
         }
       }
     }
+  }
+  if (scope === 'project' && actions.some(action => action.client === 'codex' && action.kind === 'agent' && action.action !== 'blocked')) {
+    warnings.push({ code: 'codex-trust', client: 'codex', kind: 'agent', message: CODEX_TRUST });
   }
   return { scope, base, kitVersion: kit.kitVersion, actions, warnings };
 }

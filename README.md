@@ -341,7 +341,8 @@ npx docatlas agents install             # install the designer skill and rule
   `~/.claude/agents`, `~/.agents/skills`, and `~/.codex/agents`, for the clients whose folders exist.
   Add `--all` or `--only <name>` for the implementer and reviewer, `--target` to choose clients, and
   `--project` to install into the project instead. Claude Code uses a global skill before a project
-  skill with the same name, so the command warns about such pairs.
+  skill with the same name, and Codex reads project agents only in trusted projects; the command warns
+  about both.
 - After updating docatlas, run the same command again. Files you edited, files from a newer docatlas,
   and files managed by ctxbin are skipped; `--force` replaces them after saving a backup in
   `~/.docatlas/backups/`. Install records are kept in `~/.docatlas/agents.json`, or in

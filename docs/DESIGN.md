@@ -336,14 +336,15 @@ PR-02·05·06·08 / DC-09, IC-03에 대응한다. 아래 계약으로 구현했�
 
 ### 클라이언트 위치와 같은 이름 규칙
 
-2026-10-28 Claude Code·Codex 공식 문서에서 확인했다. 클라이언트 규칙이 바뀌면 다시 확인한다.
+2026-10-28 Claude Code·Codex 공식 문서에서 확인했다. 문서에 없는 Codex 룰 규칙은 Codex CLI 0.165.0에서 관찰했다(DC-18).
+클라이언트 규칙이 바뀌면 다시 확인한다.
 
 | 항목 | 전역 (기본) | 프로젝트 (옵션) | 같은 이름일 때 |
 | --- | --- | --- | --- |
 | Claude 스킬 | ~/.claude/skills/<name>/SKILL.md | <root>/.claude/skills/<name>/SKILL.md | 전역 우선 |
 | Claude 룰 | ~/.claude/agents/<name>.md | <root>/.claude/agents/<name>.md | 프로젝트 우선 |
 | Codex 스킬 | ~/.agents/skills/<name>/SKILL.md | <root>/.agents/skills/<name>/SKILL.md | 합치지 않고 둘 다 표시 |
-| Codex 룰 | ~/.codex/agents/<name>.toml | <root>/.codex/agents/<name>.toml | 문서 미기재 (DC-18) |
+| Codex 룰 | ~/.codex/agents/<name>.toml | <root>/.codex/agents/<name>.toml | 프로젝트 우선. 프로젝트 룰은 신뢰한 프로젝트에서만 읽음 (DC-18) |
 
 전역 사본이 있는 사용자에게는 프로젝트 설치만으로 Claude 스킬 갱신이 전달되지 않는다. 이것이 전역 기본의 근거다.
 Codex 룰은 name·description·developer_instructions를 가진 TOML이다. 원본 Markdown 본문을 developer_instructions로 변환한다.
@@ -427,6 +428,7 @@ src/agent-kit/plan.js가 파일을 쓰지 않고 대상마다 아래 순서로 �
   위치는 전역 ~/.docatlas/agents.json, 프로젝트 <root>/.docatlas/agents.json(함께 커밋)이다. 백업은 ~/.docatlas/backups/다.
   수집기는 이미 .docatlas/를 기본 제외한다.
 - 반대쪽 범위(전역↔cwd 프로젝트)에 같은 경로가 있으면 같은 이름 경고와 함께 클라이언트 규칙 표의 동작을 알린다.
+- 프로젝트 설치에 Codex 룰이 들어가면 codex-trust 경고로 신뢰한 프로젝트에서만 읽힌다고 알린다(Integration Test 추가).
 - 쓰기 순서와 복구는 위 명령 계약을 따른다.
 
 ### 업데이트 안내 — 4단계 구현 (PR-10)
@@ -591,8 +593,9 @@ README의 기본 사용 명령은 docatlas다. 프로젝트 루트에서의 npx 
   재실행 갱신, 기본 designer 한 쌍, 당분간 Confluence 배포 유지. 구현 전. M-16, M-17.
 - [x] DC-17: 위 명령 계약대로 명령 이름·옵션·결과 줄·종료 코드(3 추가)·백업 위치를 3단계에서 구현했고, 클라이언트 감지·
   설치 기록 형식·ctxbin 관리 사본 처리·링크 예외는 2단계에서 구현했다. 제거 명령은 범위에 넣지 않았다. M-16.
-- [ ] DC-18: Codex 프로젝트 .codex/agents의 로드 조건(프로젝트 신뢰 여부)과 전역/프로젝트 같은 이름 우선순위.
-  공식 문서에 없어 실제 Codex에서 확인한다. M-17.
+- [x] DC-18: Codex CLI 0.165.0에서 codex debug prompt-input(모델 호출 없음)으로 모델에 보이는 입력을 관찰했다.
+  격리한 HOME·CODEX_HOME에서 프로젝트 스킬은 신뢰와 무관하게 읽고, 프로젝트 룰은 신뢰한 프로젝트에서만 읽는다.
+  같은 이름 룰은 프로젝트 것만 보이고, 같은 이름 스킬은 둘 다 보인다. 경고 문구와 codex-trust 경고에 반영했다. M-17.
 - [x] DC-19: 2026-10-28 사용자 확인. 공개 저장소와 npm 패키지(MIT)에 스킬·룰 원본을 포함한다. M-16.
 - [x] DC-11: 프로젝트별 설치와 docmap/ddd-docmap 공통 진입점을 구현하고 설치 검증을 통과했다.
   사용자 선택은 npx docmap / pnpm docmap이며 전역 런처를 추가하지 않는다. M-08, M-11.
