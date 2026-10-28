@@ -557,6 +557,8 @@ guide/는 이 저장소 기획 문서(docs/)와 구분하며, 저장소 지도(d
 - 문서 지도 캡처는 저장소에 넣을 수 있는 합성 영문 예제로 만들어 .github/assets/document-map.png에 둔다.
   개발 스크립트 scripts/screenshot.js가 예제 복사·서버 실행·브라우저 캡처를 재현한다. 제품 코드와 npm 패키지에는 포함하지 않는다.
 - DC-21: METHOD.ko.md는 METHOD.md의 번역이며 영어판이 기준이다. 두 문서는 같은 변경에서 함께 고친다.
+- Clone 실행 안내(2026-10-29 사용자 확인): README·METHOD 두 언어판·예제 README에서 저장소 루트의 npm install을
+  npx docatlas 실행보다 먼저 안내한다. 로컬 소스 의존성을 준비하는 문서 보정이며, npm 배포 없이 커밋한다. 검증: M-18.
 - DC-21: examples/sample-shop/은 사용자 안내용 영문 합성 예제다. checkout은 4종 전체로 상태 표시·결정·phase·인계를 보여 주고,
   다른 기능은 부분 문서·중첩 기능·공유 계약·코드 옆 docs/를 보여 준다. 실제 회사 문서를 쓰지 않는다.
   테스트 fixture가 아니며, 기존 테스트는 계속 임시 디렉터리에 예제를 만든다. README 캡처는 이 예제를 복사해 만든다.

@@ -243,9 +243,10 @@ Codex는 `AGENTS.md`를, Claude Code는 `CLAUDE.md`를 읽습니다. 둘 다 쓴
 [examples/sample-shop](examples/sample-shop/)은 영어로 쓴 작은 가상 쇼핑몰입니다. checkout 기능에는
 4종 문서가 모두 있습니다: 상태 표시, `TBD` 하나가 남은 결정 체크리스트, Test Hardening과 Integration
 Test를 포함한 phase, 인계, 실행 기록이 있는 수동 확인. 다른 기능은 일부 문서, 중첩 기능, 공유 계약을
-보여 줍니다. clone한 저장소 루트에서 `npx docatlas --root examples/sample-shop`으로 열 수 있습니다.
+보여 줍니다. clone한 저장소 루트에서 `npm install`을 먼저 실행한 뒤,
+`npx docatlas --root examples/sample-shop`으로 열 수 있습니다.
 
 docatlas 자체도 이 방식으로 만듭니다. [기획 문서](docs/)에는 요구사항 `RQ-*`, 결정 체크리스트 `DC-*`,
 부트스트랩부터 배포까지의 phase(Test Hardening과 Integration Test 포함), 수동 확인 `M-*`이 있고,
-현재 인계는 `IMPLEMENT.md`에 있습니다. 기획 문서는 한국어로 쓰여 있습니다. 이 저장소를 clone해
-`npx docatlas`를 실행하면 지도로 볼 수 있습니다.
+현재 인계는 `IMPLEMENT.md`에 있습니다. 기획 문서는 한국어로 쓰여 있습니다. 이 저장소를 clone한 루트에서
+`npm install`을 먼저 실행한 뒤 `npx docatlas`를 실행하면 지도로 볼 수 있습니다.

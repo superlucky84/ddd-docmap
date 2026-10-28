@@ -267,10 +267,11 @@ Neither is required. The method is Markdown plus the habits above.
 Its checkout feature has the complete set of four documents: status labels, a decision
 checklist with one `TBD`, phases with Test Hardening and Integration Test, a handoff, and
 manual checks with a run log. The other features show partial sets, nested features, and a
-shared contract. From the root of a clone, open it with `npx docatlas --root examples/sample-shop`.
+shared contract. From the root of a clone, run `npm install` first, then open it with
+`npx docatlas --root examples/sample-shop`.
 
 docatlas itself is built this way. Its [planning documents](docs/) hold requirements
 `RQ-*`, a decision checklist `DC-*`, phases from bootstrap to release with dedicated Test
 Hardening and Integration Test phases, and manual checks `M-*`, with the current handoff in
-`IMPLEMENT.md`. They are written in Korean. Run `npx docatlas` in a clone of this
-repository to explore them.
+`IMPLEMENT.md`. They are written in Korean. In the root of a clone of this repository,
+run `npm install` first, then `npx docatlas` to explore them.

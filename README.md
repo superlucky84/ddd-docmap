@@ -127,8 +127,9 @@ keep old links working after moving a document, see the
 | Development and tests | [CONTRIBUTING.md](https://github.com/superlucky84/docatlas/blob/main/CONTRIBUTING.md) |
 | Release notes | [CHANGELOG.md](https://github.com/superlucky84/docatlas/blob/main/CHANGELOG.md) |
 
-docatlas is developed with its own method: clone this repository and run `npx docatlas` in it
-to explore its planning documents, or `npx docatlas --root examples/sample-shop` for the example.
+docatlas is developed with its own method: clone this repository and run `npm install` in its root
+first. Then run `npx docatlas` to explore its planning documents, or
+`npx docatlas --root examples/sample-shop` for the example.
 
 ## License
 

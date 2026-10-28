@@ -326,7 +326,8 @@ DOCMAP_BROWSER_CHANNEL=chrome으로 설치 Chrome을 선택한다. 지원 환경
 - [ ] 다음 게시 후 npm 패키지 페이지에서 README의 캡처와 GitHub 링크가 열린다.
 - [ ] 공개 안내(README·METHOD·CONTRIBUTING·agent-kit 안내)에 Confluence·사내 사본 설명이 없다.
 - [ ] METHOD.ko.md가 METHOD.md와 같은 내용을 한국어로 전한다(DC-21).
-- [ ] 저장소 clone에서 npx docatlas --root examples/sample-shop으로 예제를 열면 checkout 4종과 부분 문서·중첩 기능이 보인다.
+- [ ] README·METHOD 두 언어판·예제 README가 clone한 저장소 루트에서 npm install을 먼저 실행하도록 안내한다.
+- [ ] 저장소 clone에서 npm install 후 npx docatlas --root examples/sample-shop으로 예제를 열면 checkout 4종과 부분 문서·중첩 기능이 보인다.
 - [ ] 저장소 루트에서 문서 지도를 열면 예제가 섞이지 않고 이 프로젝트의 기획 문서만 보인다.
 - [ ] METHOD의 프로젝트 적용 절이 강제 규칙이 아니라 고를 수 있는 선택지로 읽히고, 예시를 그대로 붙여 쓸 수 있다(DC-22).
   문서 관리 절과 README에서 docatlas가 사람이 문서의 분포와 내용을 파악해 에이전트에게 정리를 맡기기 위한 뷰어라는 이유가 읽힌다.

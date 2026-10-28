@@ -1141,8 +1141,10 @@ npm ci가 받아 둔 잠금파일의 tarball만으로는 새 의존성 트리를
 2026-10-28 이전의 인계와 검증 기록은 [인계 이력](./handoff/HISTORY.md#구현-계획에서-옮긴-기록)에 있다.
 
 - 완료: 0.3.1을 npm에 게시했다(gitHead 8f6bc69). 저장소 소개(DC-20~25), .conda 기본 제외(DC-24), 에이전트용 도움말 보강(DC-26·27) 포함.
+- 완료(2026-10-29): README·METHOD 두 언어판·예제 README의 clone 실행 안내에 npm install 선행 단계를 추가하고 기준 문서를 맞췄다.
+  npm run check(문법 72개·agent kit 세 쌍), 예제 테스트 2개, npm pack --dry-run(45개 파일), git diff --check 통과.
+  사용자 요청대로 문서만 커밋하며 npm 배포는 하지 않는다.
 - 사용자 단계: 태그 v0.3.1(8f6bc69)과 GitHub 릴리스 노트. 이 세션에서는 태그 푸시가 403으로 거부됐다.
-- 다음 후보: README·METHOD·예제의 "clone 후 npx docatlas" 안내에 npm install 단계 추가(사용자 결정 전).
-  M-16·M-18 사람 확인(에이전트가 새 도움말을 따르는지, npm 페이지 README), Codex 실제 세션, Windows 콘솔·Node 22.0 인수.
+- 다음: M-16·M-18 사람 확인(에이전트가 새 도움말을 따르는지, npm 페이지 README), Codex 실제 세션, Windows 콘솔·Node 22.0 인수.
 - 차단: 없음.
-- 최신 커밋: main의 이 인계 커밋. 실제 최신 SHA는 git log -1로 확인한다.
+- 최신 확인 커밋: 0ef9dc1. 이번 문서 수정 커밋의 SHA는 git log -1로 확인한다.

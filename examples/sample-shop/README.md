@@ -17,5 +17,6 @@ None of the code exists; only the documents do.
 Open it on the document map from the root of a docatlas clone:
 
 ```sh
+npm install
 npx docatlas --root examples/sample-shop
 ```
