@@ -17,6 +17,7 @@
 - 완료: 0.2.0의 추가 수집 옵션·설정 파일명·검색 경로 탐색을 사용자가 npm 배포했다.
   새 작업은 Python·Java 기본 제외와 Windows 점검의 0.2.1 후보이며 맨 아래 인계가 현재 상태다.
 - 완료: 검색 결과의 경로에서 트리 위치 찾기. 최신 문법 51개·Chrome 40개·설치 통합 4개 통과.
+- 진행 중: RQ-16·17·18 에이전트 스킬 관리와 설치. 자동 검증·Windows/macOS CI·Claude Code 실제 세션 확인을 마쳤고 PR #1에 올렸다. Codex 실제 세션 확인과 병합·배포 결정이 남았다.
 
 기술 선택은 각 단계에서 근거와 검증을 기록해 DC/IC를 해소한다.
 상세 계약을 바꾸면 요구사항·설계·단계·수동 기준을 같은 작업에서 갱신한다.
@@ -312,7 +313,7 @@ README blob은 95f8d2ddfaa425509fca908ac194109203c72301이며 설치 여부별 �
 | Markdown/JSON 예제 | README·기준 4종·팀 가이드의 JSON 7개와 로컬 링크 27개·이미지 5개 확인. 설정 예제는 실제 loader로 검증 |
 | Confluence | 기존 페이지 1735491669를 버전 3으로 갱신. 이미지 5장·대상 페이지 1개 동기화, 기존 다른 변경 파일 7개 보존 |
 
-팀 가이드: https://thejoongang.atlassian.net/wiki/pages/viewpage.action?pageId=1735491669.
+팀 가이드: 사내 Confluence 페이지 ID 1735491669.
 로컬 원본은 ~/project/confluence/page/share/1735491669.md다. 0.1.0 배포본과 0.2.0 후보의 차이를 명시했다.
 Confluence의 다른 문서가 함께 게시되지 않도록 원본 publish/sync 명령을 대상 페이지만 담은 임시 작업 폴더에서 실행했다.
 
@@ -411,6 +412,160 @@ Confluence의 다른 문서가 함께 게시되지 않도록 원본 publish/sync
 
 Windows workflow는 test:platform과 test:browser를 실행한다. full npm test/test:integration은 POSIX 전제가 남아 별도 이식 대상이다.
 Windows 네이티브 Ctrl+C·기본 브라우저·PowerShell/CMD·UNC/네트워크 드라이브는 실제 인수 전 미검증이다.
+
+## 에이전트 스킬 관리와 설치 — Integration Test 자동 검증 완료
+
+대응: RQ-16·17·18 / PR-09·10 / DC-16~19 / M-16·17. 기준 커밋 d71ee97, 계획 cc9e98d, 1단계 b85e00e, 2단계 59a561e,
+3단계 49143c0, 4단계 ead614f, Test Hardening 5bb8c7a. 다음 후보 버전 0.3.0은 제안이며 package.json은 아직 0.2.1이다.
+상태: 설치 tarball로 전 과정을 자동 검증했고 DC-18을 해소했다. PR #1의 Windows/macOS CI가 통과했다. 사람의 M-16·17 인수가 남았다.
+
+진입 조건: DC-19 공개 범위 확인. 2026-10-28 사용자 확인으로 충족했다.
+
+### 1단계 — 원본 이관: 완료
+
+- [x] 2026-10-28 ctxbin에 올린 세 쌍과 같은 내용으로 agent-kit/skills·agents를 만들었다. 사람용 agent-kit/README.md를 함께 둔다.
+- [x] manifest.json에 kit 1.0.0, 항목별 버전·파일 해시와 이전 배포본 해시를 기록했다.
+  이전 해시는 ctxbin 백업과 Confluence 팀 페이지 v5에서 얻었다. 팀 페이지의 designer 스킬은 이전 ctxbin 파일과 같고,
+  룰은 frontmatter 없이 실려 있으며 이전 ctxbin 룰의 본문과 같다.
+- [x] scripts/agent-kit.js와 npm run check에 원본 검사를 추가했다. frontmatter 구문, 룰은 name·description만, name·버전·경로 일치,
+  manifest 해시, 이전 항목의 버전·중복, 목록 밖 파일·링크·UTF-8을 확인한다. 개발 전용이며 npm 패키지에 포함하지 않는다.
+- [x] AGENTS.md에 agent-kit 원본 관리와 배포본 갱신 순서를 추가했다.
+
+남은 일: Confluence 팀 페이지는 아직 이전 designer 1.0.0이다. RQ-16 인수에 필요하며 갱신 시점은 사용자가 정한다.
+
+기준 검증: npm run check, npm test, npm pack --dry-run(패키지 파일 목록 변화 없음).
+종료 기준: 원본과 manifest가 검사를 통과하고 npm 패키지 내용은 바뀌지 않는다. 충족했다.
+
+#### 1단계 검증 — 2026-10-28
+
+환경: macOS / Node 22.12.0.
+
+| 명령/범위 | 결과 |
+| --- | --- |
+| npm run check | JavaScript 56개 문법, agent kit 1.0.0의 세 쌍 검사 통과 |
+| DOCMAP_NPM_CACHE=/private/tmp/ddd-docmap-phase1-npm-cache npm test | 124개 통과. agent-kit.test.js 9개 포함 |
+| npm pack --dry-run | 29개 파일. 기존과 같고 agent-kit/·scripts/·test/는 포함하지 않는다 |
+| ctxbin 대조 | agent-kit의 세 스킬이 ctxbin의 현재 값과 같다 |
+
+### 2단계 — 설치 판정 모듈: 완료
+
+- [x] src/agent-kit/에 원본 읽기(manifest 해시 확인)·대상 경로 계산·Codex TOML 변환·판정을 구현했다.
+  node 기본 모듈만 쓰며 수집기·서버·화면과 서로 참조하지 않는다. 1단계 해시·frontmatter 규칙을 옮겨 검사 스크립트도 같은 모듈을 쓴다.
+- [x] 임시 HOME과 가상 프로젝트로 create/unchanged/replace(recorded·previous-file·previous-body)/skip-modified/
+  skip-downgrade/skip-managed/blocked, --force 백업 표시, 같은 이름 경고, 읽을 수 없는 기록, 쓰기 없음을 테스트했다.
+- [x] 설계와 달라진 점: 전역 설치에서는 ~/.claude 같은 클라이언트 폴더 자체가 디렉터리 링크여도 허용한다.
+  dotfiles 저장소로 설정 폴더를 관리하는 사용자를 막지 않기 위해서다. 그 아래 경로와 프로젝트 설치의 링크는 계속 거부한다.
+
+기준 검증: npm run check, npm test.
+종료 기준: 파일을 쓰지 않는 판정 결과가 테스트로 고정된다. 충족했다.
+
+#### 2단계 검증 — 2026-10-28
+
+환경: macOS / Node 22.12.0.
+
+| 명령/범위 | 결과 |
+| --- | --- |
+| npm run check | JavaScript 63개 문법, agent kit 세 쌍 검사 통과 |
+| DOCMAP_NPM_CACHE=/private/tmp/ddd-docmap-phase1-npm-cache npm test | 134개 통과. agent-kit-plan.test.js 10개 포함 |
+| npm pack --dry-run | 34개 파일. src/agent-kit/ 5개가 늘었고 agent-kit/는 3단계 전까지 포함하지 않는다 |
+| 실제 HOME 판정(쓰기 없음) | 세 스킬은 Claude·Codex 모두 unchanged. 룰은 ctxbin이 관리해 skip-managed. ~/.docatlas를 만들지 않았다 |
+
+### 3단계 — 설치 명령과 에이전트용 도움말: 완료
+
+- [x] docatlas agents install·help(install --help 포함)와 docatlas --help의 안내 두 줄을 추가했다. agents 외의 위치 인자는 기존처럼 오류다.
+- [x] 쓰기 전 재확인(판정 이후 변경·링크)·--force 백업·임시 파일 후 이름 변경·설치 기록·실패 시 복구를 src/agent-kit/install.js에 구현했다.
+  대화형 질문 없이 탭 구분 결과 줄과 종료 코드 0/1/2/3으로 알린다.
+- [x] package.json files에 agent-kit/를 추가하고 README에 Agent skills 사용법을 추가했다. 미배포 기능으로 표시했고 팀 안내 시점은 사용자가 정한다.
+
+기준 검증: npm run check, npm test, npm pack --dry-run.
+종료 기준: 임시 HOME에서 전역/프로젝트 설치·재실행·보호·--dry-run 무쓰기와 도움말-옵션 대조가 통과한다. 충족했다.
+
+#### 3단계 검증 — 2026-10-28
+
+환경: macOS / Node 22.12.0.
+
+| 명령/범위 | 결과 |
+| --- | --- |
+| npm run check | JavaScript 66개 문법, agent kit 세 쌍 검사 통과 |
+| DOCMAP_NPM_CACHE=/private/tmp/ddd-docmap-phase1-npm-cache npm test | 143개 통과. agent-kit-install.test.js 9개 포함 |
+| npm pack --dry-run | 44개 파일, 59.6kB. agent-kit/ 8개와 src/agent-kit/ 7개 포함 |
+| 설치 명령 테스트 | dry-run 무쓰기, 설치·기록·재실행 무변경, 이전 배포본 교체, 수정본 skip(종료 3)과 --force 백업, 프로젝트 설치·같은 이름 경고, 인자 오류 8종, 쓰기 실패 복구, 판정 후 변경 중단, bin 경유 실행 |
+
+### 4단계 — 업데이트 안내: 완료
+
+- [x] 문서 지도 시작 시 manifest와 전역·문서 지도 루트의 설치 기록을 읽어 낡은 kit이면 미리보기 명령과 함께 한 줄로 안내한다.
+  src/agent-kit/notice.js. 쓰기 없음, 읽기 실패 무시, 서버 준비와 종료에 영향 없음.
+- [x] 4단계 결정: 설치 기록이 없는 손 복사본에는 안내하지 않는다. Confluence 우선 배포 방침과 맞추기 위해서다.
+- [x] 테스트 도우미 startCli에 env 옵션을 추가해 임시 HOME으로 실제 CLI를 검증한다.
+
+기준 검증: npm test의 CLI·수명주기 테스트.
+종료 기준: 안내가 표시되고 기존 시작·종료·신호 정리 테스트가 그대로 통과한다. 충족했다.
+
+#### 4단계 검증 — 2026-10-28
+
+환경: macOS / Node 22.12.0.
+
+| 명령/범위 | 결과 |
+| --- | --- |
+| npm run check | JavaScript 68개 문법, agent kit 세 쌍 검사 통과 |
+| DOCMAP_NPM_CACHE=/private/tmp/ddd-docmap-phase1-npm-cache npm test | 149개 통과. agent-kit-notice.test.js 6개 포함, 기존 CLI·수명주기·종료 테스트 그대로 통과 |
+| npm pack --dry-run | 45개 파일. src/agent-kit/notice.js 추가 |
+
+### Test Hardening: 완료
+
+- [x] 실패 복구: --force로 고친 파일을 교체한 뒤 쓰기 권한 없는 폴더에서 실패해도, 고친 파일을 원래 내용·권한으로 되돌리고 백업을 남긴다.
+- [x] 동시 실행: 찾은 문제 — 실패한 실행의 복구가 다른 실행이 쓴 파일을 지울 수 있었다. <base>/.docatlas/install.lock 잠금을 추가했다.
+  잠금이 있으면 아무것도 바꾸지 않고 종료 1. 세 실행을 동시에 돌려도 결과는 한 벌이고 임시 파일·잠금이 남지 않는다.
+- [x] 권한: 찾은 문제 — 교체한 파일의 권한 비트가 기본값으로 바뀌었다. 교체와 복구 때 기존 권한을 유지한다.
+- [x] 한글/공백이 든 HOME·프로젝트와 CRLF 원본: LF로 설치되고 재실행은 unchanged, 프로젝트 설치는 같은 이름 경고 4개를 낸다.
+- [x] 판정 뒤 생긴 심볼릭 링크: 쓰기 전에 멈추고 아무것도 바꾸지 않는다.
+- [x] 이전 docatlas는 높은 버전 설치본을 낮추지 않고(skip-downgrade, 종료 3), ctxbin 관리 사본은 건드리지도 기록하지도 않는다.
+- [x] test:platform: production tarball의 npm 실행기로 한글·공백 HOME(HOME·USERPROFILE 지정)에 미리보기·설치·재실행을 검증한다. macOS 통과.
+- [x] 같은 플랫폼 검증의 Windows 실행: PR #1의 CI에서 Windows Node 22/24 모두 6개 통과(아래 Integration Test 기록).
+
+기준 검증: npm test, npm run test:platform.
+종료 기준: 어떤 실패에서도 사용자가 고친 파일이 사라지지 않고 백업으로 복원할 수 있다. macOS에서 충족했다.
+
+#### Test Hardening 검증 — 2026-10-28
+
+환경: macOS / Node 22.12.0.
+
+| 명령/범위 | 결과 |
+| --- | --- |
+| npm run check | JavaScript 69개 문법, agent kit 세 쌍 검사 통과 |
+| DOCMAP_NPM_CACHE=/private/tmp/ddd-docmap-phase1-npm-cache npm test | 155개 통과. agent-kit-hardening.test.js 6개 포함 |
+| DOCMAP_NPM_CACHE=/private/tmp/ddd-docmap-phase1-npm-cache npm run test:platform | 6개 통과. tarball npm 실행기로 한글·공백 HOME에 agents 미리보기·설치·재실행 포함 |
+| npm pack --dry-run | 45개 파일 |
+
+### Integration Test: 자동 검증 완료
+
+- [x] F-09(test/integration/agent-kit.test.js): production tarball을 팀 프로젝트의 개발 의존성으로 설치하고 임시 한글 HOME으로
+  도움말→미리보기(무쓰기)→설치→재실행, 프로젝트 --all 설치와 경고, 문서·AGENTS.md·CLAUDE.md 무변경, 문서 지도에 설치 파일이
+  나타나지 않음, 낡은 기록의 안내→갱신 후 사라짐, 수정본 종료 3과 --force 백업을 확인했다.
+- [x] Windows/macOS CI 대상인 test:platform에 tarball npm 실행기 설치 검증을 추가했다(Test Hardening). 실제 CI 실행은 아래 남은 일이다.
+- [x] DC-18: Codex CLI 0.165.0의 codex debug prompt-input(모델 호출 없음)으로 격리한 HOME·CODEX_HOME에서 관찰했다.
+  프로젝트 스킬은 신뢰와 무관하게, 프로젝트 룰은 신뢰한 프로젝트에서만 읽고, 같은 이름 룰은 프로젝트가 우선이다.
+  같은 이름 경고 문구를 확정하고 프로젝트 설치에 codex-trust 경고를 추가했다.
+- [x] platform CI의 Windows·macOS 실행: PR #1, run 40665207058, fa90bfd. 네 작업 모두 통과.
+- [x] M-17 Claude Code: 사용자가 Claude Code 2.1.308 새 세션에서 프로젝트 룰이 전역보다 우선하고 같은 이름 스킬은 전역이 쓰임을 확인했다.
+- [ ] M-17 Codex 사람의 실제 세션 확인(자동 관찰은 DC-18). 나머지 M-16 수동 항목.
+
+기준 검증: npm run test:integration, npm run test:platform, npm pack --dry-run.
+종료 기준: 설치 tarball로 설치와 갱신이 재현되고 실제 클라이언트 로드 결과를 기록한다. 자동 부분과 Codex 관찰은 충족했다.
+
+#### Integration Test 검증 — 2026-10-28
+
+환경: macOS / Node 22.12.0 / Chrome. Codex CLI 0.165.0.
+
+| 명령/범위 | 결과 |
+| --- | --- |
+| npm run check | JavaScript 70개 문법, agent kit 세 쌍 검사 통과 |
+| DOCMAP_NPM_CACHE=/private/tmp/ddd-docmap-phase1-npm-cache npm test | 155개 통과 |
+| DOCMAP_NPM_CACHE=/private/tmp/ddd-docmap-phase1-npm-cache npm run test:platform | 6개 통과 |
+| DOCMAP_BROWSER_CHANNEL=chrome DOCMAP_NPM_CACHE=/private/tmp/ddd-docmap-phase1-npm-cache npm run test:integration | 5개 통과. 새 F-09 포함 |
+| npm pack --dry-run | 45개 파일 |
+| codex debug prompt-input 관찰 | 위 DC-18 결과. 실제 HOME과 Codex 설정은 쓰지 않았다 |
+| [platform CI 40665207058](https://github.com/superlucky84/docatlas/actions/runs/40665207058) | macOS·Windows × Node 22/24 네 작업 통과. 각 작업 문법·agent kit 검사, 플랫폼 6개(tarball npm 실행기로 한글·공백 HOME에 agents 설치 포함), pack 45파일. Windows는 USERPROFILE과 .cmd 실행기 경로 |
 
 ## 검증 예제와 기록
 
@@ -696,7 +851,7 @@ DOCMAP_BROWSER_CHANNEL=chrome npm run test:browser
   npx --package=@superlucky84/ddd-docmap docmap으로 안내한다. 현재 npm 배포는 하지 않았다.
 - 다음: 실제 대상 프로젝트에 tarball을 설치해 사용성을 확인한다. 기존 수동 인수·지원 OS/Node 하한·배포 결정은 유지한다.
 - 기술적 차단 없음. 최신 확인 커밋: 2cb552b2b2338ed64aba70972a8df204859c2792.
-  이번 변경은 작업 트리에 있으며 실제 joongangscripts의 manifest·lockfile·문서는 수정하지 않았다.
+  이번 변경은 작업 트리에 있으며 실제 사내 대상 프로젝트의 manifest·lockfile·문서는 수정하지 않았다.
 
 ## docatlas 인계 — 2026-10-28
 
@@ -708,7 +863,7 @@ DOCMAP_BROWSER_CHANNEL=chrome npm run test:browser
 - 다음: tarball로 실제 프로젝트의 배포 전 사용성 인수. 실제 배포 시 npm 재로그인·최종 지원 환경 검증을 진행한다.
 - 차단 요인: 현재 준비 범위의 기술적 차단 없음. npm 인증 401은 이후 실제 배포 전에 해소해야 한다.
 - 최신 구현 커밋: e9977a4. 새 GitHub main의 README와 manifest를 확인했고 이 검증 기록도 문서 커밋으로 남긴다.
-- 실제 joongangscripts의 manifest·lockfile·원본 문서는 수정하지 않았다.
+- 실제 사내 대상 프로젝트의 manifest·lockfile·원본 문서는 수정하지 않았다.
 
 ## 0.2.0 수집 범위·설정 인계 — 2026-10-28
 
@@ -758,7 +913,7 @@ whoami가 인증 오류면 npm login --registry=https://registry.npmjs.org/ 후 
 ```sh
 npm view docatlas version --registry=https://registry.npmjs.org/
 npx docatlas@0.2.0 --version
-cd ~/project/joongangscript
+cd ~/project/<대상 프로젝트>
 npx docatlas@0.2.0
 ```
 
@@ -779,12 +934,17 @@ registry와 실행 버전이 0.2.0인지 확인하고 새 설정·수집 옵션�
 ## 현재 인계 — 2026-10-28
 
 - 완료: 0.2.1의 Python·Java 기본 제외·플랫폼 테스트와 캐시 전제 보정. 최신 구현 커밋은 967c175이며 main에 푸시했다.
-- 이전 run 40652167597은 네 작업 모두 production 설치의 ENOTCACHED로 실패했다. 새 캐시 + npm ci로 로컬 재현했고 --prefer-offline 설치로 보정했다.
-- 새 run 40657181408의 macOS/Windows × Node 22/24 네 작업이 모두 성공했다. 각 작업은 문법 54개·플랫폼 6개·브라우저 40개·pack 29개 파일을 통과했다.
-- 결과: https://github.com/superlucky84/docatlas/actions/runs/40657181408. 네 작업의 완료 상태와 실제 로그를 확인했다.
-- 제품 런타임은 이번 캐시 수정에서 바꾸지 않았다. 기존 전체 Node 115개와 POSIX 설치 통합 4개는 이전 로컬 검증 기록이다.
-- 다음: 실제 Windows 콘솔 Ctrl+C·PowerShell/CMD·기본 브라우저 인수, 필요 시 별도 npm 0.2.1 배포·팀 가이드 갱신.
-- 기술적 차단 없음. npm 0.2.1은 미배포이며 Confluence는 변경하지 않았다. 문서만 바뀐 인계 커밋은 CI를 재실행하지 않는다.
+- run 40657181408의 macOS/Windows × Node 22/24 네 작업이 모두 성공했다. 원인·재현·작업별 결과는 아래 플랫폼 CI 캐시 전제 보정 기록에 있다.
+- 에이전트 스킬: 작업 브랜치 feat/agent-kit. 계획 cc9e98d, 1단계 b85e00e, 2단계 59a561e, 3단계 49143c0, 4단계 ead614f,
+  Test Hardening 5bb8c7a, Integration Test fa90bfd. 사용자 요청으로 push했고 PR #1(https://github.com/superlucky84/docatlas/pull/1)을 열었다.
+  PR의 platform CI 네 작업이 통과했다. 사용자는 앞 단계를 리뷰 없이 진행하기로 했다.
+- 다음: Codex 실제 세션 확인과 남은 M-16 수동 항목, PR 병합 결정, 배포 시 버전(0.3.0 제안)·npm publish·Confluence 갱신.
+  Claude Code 실제 세션 확인은 2026-10-28 사용자가 마쳤다(M-17).
+  별도로 실제 Windows 콘솔 Ctrl+C·PowerShell/CMD·기본 브라우저 인수와 필요 시 npm 배포·팀 가이드 갱신.
+- 남은 일: Confluence 팀 페이지는 이전 designer 1.0.0이다. 갱신 시점은 사용자가 정한다.
+- 차단: 없음.
+- 최신 구현 커밋: fa90bfd(PR #1). 이 인계는 문서 커밋으로 추가한다. npm 0.2.1은 미배포이며 Confluence는 읽기만 했다.
+  문서만 바뀐 인계 커밋은 CI를 재실행하지 않는다.
 
 ## 플랫폼 CI 캐시 전제 보정 — 검증 완료
 

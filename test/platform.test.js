@@ -138,8 +138,8 @@ test('installed production tarball exposes npm launchers and reads a manifest-fr
   project.after(() => fs.rm(temporary, { recursive: true, force: true }));
   const npmCli = process.env.npm_execpath;
   assert.ok(npmCli, 'Run this suite with npm run test:platform or npm test.');
-  async function npm(args, cwd) {
-    const env = { ...process.env };
+  async function npm(args, cwd, extraEnv = {}) {
+    const env = { ...process.env, ...extraEnv };
     if (env.DOCMAP_NPM_CACHE) env.npm_config_cache = env.DOCMAP_NPM_CACHE;
     return execute(process.execPath, [npmCli, ...args], { cwd, env, timeout: 60000, maxBuffer: 2 ** 20 });
   }
@@ -159,6 +159,22 @@ test('installed production tarball exposes npm launchers and reads a manifest-fr
     if (process.platform === 'win32') assert.ok((await fs.stat(launcher)).isFile());
   }
   await assert.rejects(fs.access(path.join(project.root, 'package.json')), { code: 'ENOENT' });
+  // Agent kit installs through the npm launcher into a Unicode home chosen by HOME or USERPROFILE.
+  const agentHome = path.join(temporary, '사용자 홈 with spaces');
+  await fs.mkdir(path.join(agentHome, '.claude'), { recursive: true });
+  const agentEnv = { HOME: agentHome, USERPROFILE: agentHome };
+  const agentCommand = ['exec', '--offline', '--', 'docatlas', 'agents', 'install', '--target', 'all'];
+  const preview = await npm([...agentCommand, '--dry-run'], temporary, agentEnv);
+  assert.match(preview.stdout, /^dry-run\tcreate\tnew\tclaude\tskill\tdoc-driven-designer-v1\t/m);
+  await assert.rejects(fs.access(path.join(agentHome, '.claude', 'skills')), { code: 'ENOENT' });
+  await npm(agentCommand, temporary, agentEnv);
+  const kitSkill = (await fs.readFile(path.join(repository, 'agent-kit/skills/doc-driven-designer-v1/SKILL.md'), 'utf8')).replace(/\r\n/g, '\n');
+  assert.equal(await fs.readFile(path.join(agentHome, '.claude/skills/doc-driven-designer-v1/SKILL.md'), 'utf8'), kitSkill);
+  assert.match(await fs.readFile(path.join(agentHome, '.codex/agents/doc-driven-designer-v1.toml'), 'utf8'), /^name = "doc-driven-designer-v1"\n/);
+  await fs.access(path.join(agentHome, '.docatlas/agents.json'));
+  const rerun = await npm(agentCommand, temporary, agentEnv);
+  assert.deepEqual(rerun.stdout.trimEnd().split('\n').filter(line => !line.startsWith('summary')).map(line => line.split('\t')[0]),
+    ['unchanged', 'unchanged', 'unchanged', 'unchanged']);
   const installed = path.join(temporary, 'node_modules/docatlas');
   const { run: installedRun } = await import(pathToFileURL(path.join(installed, 'src/cli.js')));
   const cli = await controlledCli(project, installedRun);

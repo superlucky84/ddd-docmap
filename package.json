@@ -11,6 +11,7 @@
     "ddd-docmap": "bin/docatlas.js"
   },
   "files": [
+    "agent-kit/",
     "bin/",
     "src/"
   ],
