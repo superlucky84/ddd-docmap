@@ -675,3 +675,43 @@ DOCMAP_BROWSER_CHANNEL=chrome npm run test:browser
 - 다음: 실제 프로젝트 사용성 인수, 필요 시 별도 npm 0.2.0 배포와 팀 가이드 추가 반영. npm 배포는 실행하지 않았다.
 - 기술적 차단 없음. 수동 인수·Node 22.0·다른 OS 검증은 계속 남아 있다.
 - 최신 확인 커밋: ceb5b3e. 이번 작업과 직전 0.2.0 변경은 작업 트리에 미커밋 상태로 있다.
+
+## 커밋·배포 준비 인계 — 2026-10-28
+
+- 사용자 요청으로 c16a862(feat: add configurable discovery and search-to-tree navigation)를 커밋하고 origin/main에 푸시했다.
+  구현·README·기준 4종·manifest/lockfile·테스트 총 28개 파일이 포함됐다.
+- 원격 main을 fetch해 충돌이 없음을 확인하고 일반 push를 사용했다. 강제 push는 하지 않았다.
+- npm registry 조회 당시 latest는 0.1.0이며 0.2.0은 미배포다. npm whoami의 계정은 kimjinwoo다.
+- 기존 문법 51개·Node 109개·Chrome 40개·설치 통합 4개와 패키징 검증을 근거로 삼는다.
+  이번 커밋 작업에서 구현을 더 바꾸거나 동일 테스트를 반복하지 않았다.
+- 이번 요청은 커밋·푸시와 배포 방법 안내다. 실제 npm publish는 사용자 실행 단계로 남긴다.
+
+### 사용자가 실행할 0.2.0 배포 절차
+
+현재 package.json과 lockfile은 이미 0.2.0이다. 추가 npm version 명령은 필요 없다.
+
+```sh
+cd ~/project/ddd-docmap
+npm whoami --registry=https://registry.npmjs.org/
+npm pack --dry-run
+npm publish --access public --registry=https://registry.npmjs.org/
+```
+
+whoami가 인증 오류면 npm login --registry=https://registry.npmjs.org/ 후 다시 실행한다.
+배포 중에는 터미널에 표시된 브라우저/2FA 인증 절차를 따른다.
+공식 절차: https://docs.npmjs.com/creating-and-publishing-unscoped-public-packages/.
+
+배포 완료 후 확인:
+
+```sh
+npm view docatlas version --registry=https://registry.npmjs.org/
+npx docatlas@0.2.0 --version
+cd ~/project/joongangscript
+npx docatlas@0.2.0
+```
+
+registry와 실행 버전이 0.2.0인지 확인하고 새 설정·수집 옵션·검색 경로 탐색을 실제 프로젝트에서 인수한다.
+로컬 설치를 공유하는 팀은 해당 프로젝트에서 npm install --save-dev docatlas@0.2.0 또는 pnpm add -D docatlas@0.2.0으로 갱신한다.
+
+- 다음: 사용자 배포와 registry/실제 프로젝트 검증, README/팀 가이드의 미배포 표기 갱신.
+- 기술적 차단 없음. 남은 수동 인수·Node 22.0·다른 OS 범위는 유지한다. 최신 구현 커밋: c16a862.
