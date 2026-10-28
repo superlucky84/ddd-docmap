@@ -19,7 +19,7 @@ test('Python and Java defaults prune generated subtrees while keeping source and
   const snapshot = await collectProject(root);
   assert.deepEqual(ids(snapshot), Object.keys(SOURCE_DOCUMENTS).sort());
   for (const directory of visited) {
-    assert.ok(!/(?:^|\/)(?:\.venv|venv|__pycache__|\.pytest_cache|\.mypy_cache|\.ruff_cache|\.tox|\.nox|\.eggs|[^/]+\.egg-info|target|\.gradle|\.m2|build)(?:\/|$)/i.test(directory), directory);
+    assert.ok(!/(?:^|\/)(?:\.venv|venv|\.conda|__pycache__|\.pytest_cache|\.mypy_cache|\.ruff_cache|\.tox|\.nox|\.eggs|[^/]+\.egg-info|target|\.gradle|\.m2|build)(?:\/|$)/i.test(directory), directory);
   }
   assert.deepEqual(snapshot.warnings, []);
   await assert.rejects(fs.access(path.join(root, 'package.json')), { code: 'ENOENT' });
@@ -46,6 +46,7 @@ test('explicit includes and scope options cannot bypass language defaults, but e
 test('language defaults also apply at every depth and without case sensitivity', async t => {
   const { root } = await createProject(t, {
     'packages/api/.VENV/docs/README.md': '# Dependency',
+    'packages/api/.CONDA/docs/README.md': '# Conda dependency',
     'services/api/TARGET/docs/README.md': '# Generated',
     'services/api/.GRADLE/docs/DESIGN.md': '# Cache',
     'packages/api/Example.EGG-INFO/docs/README.md': '# Metadata',

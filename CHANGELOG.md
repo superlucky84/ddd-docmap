@@ -1,8 +1,15 @@
 # Changelog
 
-Published versions of the `docatlas` npm package. Dates are npm publish dates (UTC).
+Changes to the `docatlas` npm package. Dates are npm publish dates (UTC); Unreleased lists
+changes on main that are not published yet.
 Agent skill and rule versions are tracked separately in
 [agent-kit/manifest.json](agent-kit/manifest.json).
+
+## Unreleased
+
+- Exclude `.conda` by default at any depth, so a conda environment created inside a project
+  (the folder name VS Code uses) keeps its package docs off the map. Other names, such as `env`,
+  are still included; add them to `.gitignore` or `exclude`.
 
 ## 0.3.0 — 2026-10-28
 

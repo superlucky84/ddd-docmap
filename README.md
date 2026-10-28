@@ -247,15 +247,16 @@ Generated directories are excluded at any depth. The default exclusions are:
 | Category | Excluded directory names |
 | --- | --- |
 | Output/cache | `dist`, `build`, `coverage`, `.docatlas`, `.ddd-docmap` |
-| Python environments | `.venv`, `venv`, `.tox`, `.nox` |
+| Python environments | `.venv`, `venv`, `.conda`, `.tox`, `.nox` |
 | Python caches/metadata | `__pycache__`, `.pytest_cache`, `.mypy_cache`, `.ruff_cache`, `.eggs`, `*.egg-info` |
 | Java build/dependency caches | `target`, `.gradle`, `.m2` |
 
-The Python and Java rows were added in 0.3.0. They prevent dependency docs,
+The Python and Java rows were added in 0.3.0, and `.conda` in the next release after 0.3.0
+(see the [changelog](https://github.com/superlucky84/docatlas/blob/main/CHANGELOG.md)). They prevent dependency docs,
 test environments, and generated copies from appearing in the map or being watched.
 Ordinary source folders and names such as `env`, `bin`, `out`, `vendor`,
 `target-design`, and `venv-guide` are not excluded.
-A conda environment created inside the project, such as `./.conda` or `./env`, is not
+A conda environment created inside the project under another name, such as `./env`, is not
 excluded either; add it to `.gitignore` or `exclude` so its package docs stay out of the map.
 These are replaceable defaults, not fixed exclusions: an explicit `exclude` array
 replaces the entire list. Projects with an existing custom list must add any desired
@@ -311,6 +312,7 @@ give one group a clearer label:
     "**/.ddd-docmap/**",
     "**/.venv/**",
     "**/venv/**",
+    "**/.conda/**",
     "**/__pycache__/**",
     "**/.pytest_cache/**",
     "**/.mypy_cache/**",

@@ -762,7 +762,7 @@ npm pack --dry-run 45개 파일. 이 저장소의 문서 지도는 docs/의 5개
 
 종료 기준: 스펙 주도 개발과의 공통점과 차이, Linux·WSL·conda 안내가 문서에 있고 기존 검사가 통과한다. 제품 코드 변경은 없다.
 
-## .conda 기본 제외 — 진행 중
+## .conda 기본 제외 — 완료(배포 전)
 
 대응: RQ-14 / DC-24 / M-01·09.
 진입: 사용자 선택(2026-10-28)을 기준 4종에 기록했다. PR #2 위에 쌓은 브랜치 claude/conda-default-exclusion, 기준 커밋 99a4c20.
@@ -771,17 +771,20 @@ npm pack --dry-run 45개 파일. 이 저장소의 문서 지도는 docs/의 5개
 
 ### 구현
 
-- [ ] src/collector/config.js의 기본 exclude에 **/.conda/**를 더한다.
-- [ ] README의 기본 제외 표·설정 예제·conda 안내, CHANGELOG의 Unreleased 항목.
+- [x] src/collector/config.js의 기본 exclude에 **/.conda/**를 더한다.
+- [x] README의 기본 제외 표·설정 예제·conda 안내, CHANGELOG의 Unreleased 항목.
 
 ### Test Hardening
 
-- [ ] 언어 예제에 루트·중첩 .conda 문서를 더하고, 탐색하지 않는 디렉터리 검사와 대소문자 무시 검사에 .conda를 넣는다.
-- [ ] exclude: [] 대체로 .conda 문서가 다시 포함되는 기존 검사가 그대로 통과한다.
+- [x] 언어 예제에 루트·중첩 .conda 문서를 더하고, 탐색하지 않는 디렉터리 검사와 대소문자 무시 검사에 .conda를 넣는다.
+  코드 변경 전 언어 테스트 3개가 실패하고, 변경 후 3개 모두 통과했다.
+- [x] exclude: [] 대체로 .conda 문서가 다시 포함되는 기존 검사가 그대로 통과한다.
 
 ### Integration Test
 
-- [ ] npm run check, npm test, npm run test:platform(설치된 tarball에서 .conda 제외), npm pack --dry-run.
+- [x] npm run check, npm test, npm run test:platform(설치된 tarball에서 .conda 제외), npm pack --dry-run.
+  문법 72개·agent kit 세 쌍, Node 157개 중 154개 통과·3개 건너뜀·실패 0, 플랫폼 6개 통과, pack 45개 파일.
+  재현 예제에서 .conda 문서는 빠지고 env 문서는 그대로 수집된다.
 - [ ] PR #2를 기준으로 하는 PR을 만든다. 실제 배포는 사용자 단계다.
 
 종료 기준: .conda 문서가 모든 깊이에서 기본 제외되고 env 등 일반 이름은 그대로이며 기존 검사가 통과한다.
@@ -1019,8 +1022,10 @@ npm ci가 받아 둔 잠금파일의 tarball만으로는 새 의존성 트리를
   이어서 사용자 설명대로 문서 관리 절을 더해, 사람이 문서 분포와 내용을 파악해 에이전트에게 정리를 시키는 뷰어로 docatlas를 소개했다.
 - 완료(DC-23): METHOD 두 언어에 스펙 주도 개발과의 관계 절, README에 그 요약과 Linux·WSL 지원 상태·conda 환경 안내를 넣었다.
   Linux 근거: Ubuntu 24.04 / Node 22.22.0에서 Node 154개·플랫폼 6개·브라우저 40개 통과. WSL은 직접 실행하지 않았다.
-- 다음: [PR #2](https://github.com/superlucky84/docatlas/pull/2)의 CI 확인과 사용자 검토 후 main 병합.
-  .conda 기본 제외는 PR #2 위에 쌓은 별도 PR에서 진행한다(RQ-14 확장, 다음 배포 필요).
+- 완료(DC-24, 별도 브랜치 claude/conda-default-exclusion): 기본 exclude에 **/.conda/**를 더했다. README·CHANGELOG(Unreleased) 반영.
+  검증: Node 154개 통과·3개 건너뜀·실패 0, 플랫폼 6개 통과, pack 45개 파일.
+- 다음: [PR #2](https://github.com/superlucky84/docatlas/pull/2)를 먼저 main에 병합한 뒤 .conda PR을 병합한다.
+  .conda 제외는 다음 npm 배포(0.3.0 이후)에 포함된다. 배포는 사용자 단계다.
   GitHub 저장소 About·topics 설정은 사용자가 한다.
   M-18 사람 확인(GitHub 첫 화면, 한국어판, 예제 열기, 다음 게시 후 npm 페이지의 캡처·링크).
   기존 남은 일: Codex 실제 세션과 M-16 수동 항목, Windows 콘솔·기본 브라우저·Node 22.0 인수.

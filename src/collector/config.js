@@ -22,6 +22,7 @@ const DEFAULT_EXCLUDE = [
   '**/.ddd-docmap/**',
   '**/.venv/**',
   '**/venv/**',
+  '**/.conda/**',
   '**/__pycache__/**',
   '**/.pytest_cache/**',
   '**/.mypy_cache/**',
