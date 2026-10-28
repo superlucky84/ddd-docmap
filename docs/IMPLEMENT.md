@@ -735,6 +735,97 @@ npm pack --dry-run 45개 파일. 이 저장소의 문서 지도는 docs/의 5개
 
 종료 기준: 적용 범위를 고를 수 있다는 안내와 예시가 있고, 기존 검사가 통과하며, PR이 열려 있다.
 
+## 스펙 주도 개발과의 관계와 지원 환경 안내 — 완료
+
+대응: RQ-15·19 / DC-10·23 / M-12·18.
+진입: 사용자 결정(2026-10-28)을 기준 4종에 기록했다. 기준 커밋 f9e691e. PR #2의 CI 네 작업(macOS·Windows × Node 22·24)이 통과했다.
+기준 검증: Ubuntu 24.04 / Node 22.22.0에서 Node 157개 중 154개 통과·3개 건너뜀·실패 0, 플랫폼 6개,
+브라우저 40개(Playwright 1.64.1, 미리 설치된 Chrome for Testing 153.0.8010.12를 임시 설정으로 지정) 통과.
+데스크톱 브라우저가 없는 환경에서 CLI가 주소를 출력하고 Ctrl+C로 정상 종료했다. 프로젝트 안 .conda·env의 패키지 문서가 수집되는 것을 재현했다.
+
+### 구현
+
+- [x] METHOD.md·METHOD.ko.md: 비교 절을 스펙 주도 개발과의 관계 절로 바꾼다. 두 언어 구조를 같게 유지한다.
+  철학 절이라 "왜 문서인가" 바로 다음으로 옮겼다. 공통점, 중심 비교 표, 문서 관리 절 링크, 한 줄 답으로 구성했다.
+- [x] README: DDD 소개 아래 스펙 주도 개발과의 관계 문단, 지원 환경 표의 Linux·WSL 행과 WSL 안내, conda 환경 안내.
+  WSL 브라우저 열기는 open 패키지가 PowerShell로 Windows 기본 브라우저를 여는 코드를 확인해 적었다.
+
+### Test Hardening
+
+- [x] 다른 도구에 대한 서술이 공개된 흐름만 언급하고 단정하지 않는지, 지원 확정 표현이 없는지 확인한다.
+  다른 도구는 "스펙을 계획·작업·코드로 이어 간다"만 언급한다. README에 supported·officially 표현이 없다.
+
+### Integration Test
+
+- [x] npm run check, npm test, 링크 검사, 두 METHOD 구조 대조. 이어서 PR #2에 푸시하고 CI를 확인한다.
+  문법 72개·agent kit 세 쌍, Node 154개 통과·3개 건너뜀·실패 0, 링크 143개 문제 0, 두 METHOD 구조 동일(표 행 23·링크 8).
+
+종료 기준: 스펙 주도 개발과의 공통점과 차이, Linux·WSL·conda 안내가 문서에 있고 기존 검사가 통과한다. 제품 코드 변경은 없다.
+
+후속 보강(2026-10-28 사용자 요청):
+
+- [x] METHOD 두 언어에 "같은 순간, 두 관점"과 "어디에서 왔나" 하위 절을 더한다. 예시는 예제 checkout 인계·DC-3와 맞춘다.
+  외부 링크(adr.github.io, Readme Driven Development 원문)는 주소와 저자·연도를 확인했다.
+- [x] 두 METHOD 구조 대조, 링크 검사(예제 인계 앵커 포함), npm run check·npm test.
+  구조 동일(제목 16개·글머리 38·링크 11개), 링크 117개 문제 0, Node 154개 통과·3개 건너뜀·실패 0.
+
+## .conda 기본 제외 — 완료(배포 전)
+
+대응: RQ-14 / DC-24 / M-01·09.
+진입: 사용자 선택(2026-10-28)을 기준 4종에 기록했다. PR #2 위에 쌓은 브랜치 claude/conda-default-exclusion, 기준 커밋 99a4c20.
+기준 검증(변경 전): 문법 72개·agent kit 세 쌍, Node 157개 중 154개 통과·3개 건너뜀·실패 0, 플랫폼 6개 통과.
+프로젝트 안 .conda·env 아래 패키지 문서가 기본 수집에 포함되는 것을 재현했다.
+
+### 구현
+
+- [x] src/collector/config.js의 기본 exclude에 **/.conda/**를 더한다.
+- [x] 기본 제외 표·설정 예제·conda 안내, CHANGELOG의 Unreleased 항목.
+  DC-25로 이 설명이 guide/configuration.md로 옮겨져, PR #2 병합 시 같은 수정을 가이드에 다시 반영했다.
+
+### Test Hardening
+
+- [x] 언어 예제에 루트·중첩 .conda 문서를 더하고, 탐색하지 않는 디렉터리 검사와 대소문자 무시 검사에 .conda를 넣는다.
+  코드 변경 전 언어 테스트 3개가 실패하고, 변경 후 3개 모두 통과했다.
+- [x] exclude: [] 대체로 .conda 문서가 다시 포함되는 기존 검사가 그대로 통과한다.
+
+### Integration Test
+
+- [x] npm run check, npm test, npm run test:platform(설치된 tarball에서 .conda 제외), npm pack --dry-run.
+  문법 72개·agent kit 세 쌍, Node 157개 중 154개 통과·3개 건너뜀·실패 0, 플랫폼 6개 통과, pack 45개 파일.
+  재현 예제에서 .conda 문서는 빠지고 env 문서는 그대로 수집된다.
+- [x] PR #2를 기준으로 하는 PR을 만든다. 실제 배포는 사용자 단계다. [PR #3](https://github.com/superlucky84/docatlas/pull/3).
+
+종료 기준: .conda 문서가 모든 깊이에서 기본 제외되고 env 등 일반 이름은 그대로이며 기존 검사가 통과한다.
+
+## README 축약과 사용 가이드 분리 — 완료
+
+대응: RQ-19 / DC-25 / M-18.
+진입: 사용자 결정(2026-10-28)을 기준 4종에 기록했다. 기준 커밋 3929473. README는 512줄이며 Reference가 약 290줄이다.
+기준 검증: 문법 72개·agent kit 세 쌍, Node 154개 통과·3개 건너뜀·실패 0, 링크 검사 문제 0.
+
+### 구현
+
+- [x] guide/document-map.md·guide/configuration.md·guide/platforms.md를 README 내용으로 만든다. 링크는 새 위치에 맞춘다.
+  문서 지도·설정 가이드는 README 절을 그대로 옮기고 제목 단계와 링크만 바꿨다. 지원 환경 가이드는 상태 표 → Windows → WSL 순으로
+  다시 묶고, Linux 결과가 생겨 "other OSes remain unverified"를 "environments not listed above"로 고쳤다.
+- [x] agent-kit/README.md에 에이전트 설치 위치·갱신·출력 상세를 옮긴다.
+- [x] README를 DC-25 순서로 줄인다. Configuration 제목과 가이드 링크를 남긴다. 512줄 → 132줄.
+  옵션 표는 README에만 두고 설정 가이드는 링크로 바꿨다. CONTRIBUTING에 README·guide 역할을 적었다.
+
+### Test Hardening
+
+- [x] 이전 README의 줄을 새 README·guide·agent-kit/README와 줄 단위로 대조해 빠진 정보가 없는지 확인한다.
+  378줄 중 그대로 없는 46줄을 검토했다. 요약·이동·링크 변경이었고, 빠진 METHOD 적용 절 링크와 블로그 글 링크를 되살렸다.
+
+### Integration Test
+
+- [x] 링크·앵커 검사(guide 포함), npm run check·npm test, npm pack --dry-run(파일 수 45개 유지).
+  링크 165개 문제 0, Node 154개 통과·3개 건너뜀·실패 0, pack 45개 파일.
+- [x] PR #3에 병합하고 CLI 도움말 링크를 바꾼다. src/cli.js의 설정 링크가 guide/configuration.md를 가리킨다(다음 배포).
+  README의 .conda 수정은 guide/configuration.md로 옮겨 다시 반영했다.
+
+종료 기준: README가 핵심과 링크만 담고, 이전 정보가 모두 새 위치에 있으며, 검사가 통과한다.
+
 ## 검증 예제와 기록
 
 F-01~08의 구체적인 구성은 [수동 검증의 가상 프로젝트](./MANUAL_TEST_CHECKLIST.md#가상-프로젝트)를 따른다.
@@ -966,9 +1057,15 @@ npm ci가 받아 둔 잠금파일의 tarball만으로는 새 의존성 트리를
 - 완료(DC-22): METHOD 두 언어에 프로젝트 적용 절(세 단계 선택지와 가벼운 AGENTS.md 예시), README 안내, 예제 AGENTS.md.
   검증: Node 157개 중 154개 통과·3개 건너뜀·실패 0, 플랫폼 6개 통과, pack 45개 파일, 링크 136개 문제 0.
   이어서 사용자 설명대로 문서 관리 절을 더해, 사람이 문서 분포와 내용을 파악해 에이전트에게 정리를 시키는 뷰어로 docatlas를 소개했다.
-- 다음: [PR #2](https://github.com/superlucky84/docatlas/pull/2)의 CI 확인과 사용자 검토 후 main 병합.
-  GitHub 저장소 About·topics 설정은 사용자가 한다.
-  M-18 사람 확인(GitHub 첫 화면, 한국어판, 예제 열기, 다음 게시 후 npm 페이지의 캡처·링크).
-  기존 남은 일: Codex 실제 세션과 M-16 수동 항목, Windows 콘솔·기본 브라우저·Node 22.0 인수.
-- 차단: 없음. README 캡처는 GitHub main의 절대 URL이라 main에 반영되기 전에는 브랜치 화면에서 보이지 않는다.
-- 최신 커밋: 작업 브랜치 claude/tender-gates-sa5kn8. 이 인계 직전 커밋은 d4e6740이며 실제 최신 SHA는 git log -1로 확인한다.
+- 완료(DC-23): METHOD 두 언어에 스펙 주도 개발과의 관계 절, README에 그 요약과 Linux·WSL 지원 상태·conda 환경 안내를 넣었다.
+  Linux 근거: Ubuntu 24.04 / Node 22.22.0에서 Node 154개·플랫폼 6개·브라우저 40개 통과. WSL은 직접 실행하지 않았다.
+- 완료(DC-25): README를 핵심과 링크만 남기도록 줄이고(512 → 132줄) 사용 레퍼런스를 guide/ 세 문서와 agent-kit/README.md로 옮겼다.
+- 완료(DC-24, 별도 브랜치 claude/conda-default-exclusion): 기본 exclude에 **/.conda/**를 더했다. README·CHANGELOG(Unreleased) 반영.
+  검증: Node 154개 통과·3개 건너뜀·실패 0, 플랫폼 6개 통과, pack 45개 파일.
+- 다음: [PR #2](https://github.com/superlucky84/docatlas/pull/2)는 f9e691e 시점에 main에 병합됐다(병합 커밋 368370c).
+  그 뒤 올린 문서 커밋 7개(스펙 주도 개발과의 관계, Linux·WSL 안내, README 축약과 guide/)와 .conda·CLI 도움말 변경은
+  모두 main을 향한 [PR #3](https://github.com/superlucky84/docatlas/pull/3)에 있다. PR #3을 병합하면 끝난다.
+  .conda와 CLI 도움말 링크는 다음 npm 배포(0.3.0 이후)에 포함된다. 배포는 사용자 단계다.
+- 차단: 없음. README 캡처는 PR #2 병합으로 main에 있다.
+- 최신 커밋: PR #3 브랜치 claude/conda-default-exclusion(main으로 병합 시험 결과 충돌 없음, Node 154개 통과).
+  이후 새 작업은 병합된 main에서 다시 시작한다. 실제 최신 SHA는 git log -1로 확인한다.

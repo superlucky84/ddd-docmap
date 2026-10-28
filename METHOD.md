@@ -24,6 +24,60 @@ the documents it produces. The background essay is
   becoming the norm.
 - **Stay the owner.** You make the decisions, verify each phase, and review the code.
 
+## Is this spec-driven development?
+
+Close, and many people use the two names for the same idea. Both write before coding, and
+`REQUIREMENTS.md` and `DESIGN.md` are specifications in all but name, so Doc-Driven
+Development includes spec-driven work. Spec-driven tools such as GitHub Spec Kit and Kiro
+turn a specification into a plan, tasks, and code.
+
+The difference is what sits at the center.
+
+| | Spec-driven development | Doc-Driven Development |
+| --- | --- | --- |
+| At the center | The specification | The documents, and how they are managed over time |
+| Main question | Is the spec clear enough to build from? | Can a person or an agent pick up the project from its documents today? |
+| Typical flow | Spec → plan → tasks → code | Requirements → decisions → phases → code, updating the documents as the work changes them |
+| The person's role | Shapes and approves the spec | Knows where the documents are and what they say, makes decisions, and tells agents what to update or tidy |
+
+Here the specification is one part of a larger, living document set. The documents are the
+project's memory: they stay after the feature ships, sit beside the code they describe, and get
+merged, moved, and pruned as the project grows (see
+[Keep the documents healthy](#keep-the-documents-healthy)). Managing that set, with a person
+who knows it, is the point; a precise spec is one of its results.
+
+So to "Isn't this spec-driven development?": it includes it, but the center is the documents
+and how they are managed, not the spec.
+
+### Same moment, two lenses
+
+A session ends halfway through Phase 3 of a checkout feature, and a new agent picks up the work.
+
+- **With only a specification,** the agent knows what checkout should do. It does not know which
+  parts are done, why taxes come from the pricing service, that the retry policy is still
+  undecided, or what proved Phase 2. It has to rebuild that from the code, or guess.
+- **With the document set,** it reads the handoff (done, next, blockers), sees that DC-3 is still
+  `TBD`, checks the Phase 3 checklist and its test evidence, and continues with decline handling
+  instead of inventing a retry policy.
+
+The specification says what to build. The documents also say where the work stands and why.
+The sample project is paused at this exact moment; see its
+[checkout handoff](examples/sample-shop/docs/checkout/IMPLEMENT.md#handoff).
+
+### Where it comes from
+
+Little here is new on its own. Doc-Driven Development combines older habits:
+
+- Writing requirements and design before code, which it shares with spec-driven development.
+- [Architecture decision records](https://adr.github.io/), popularized by Michael Nygard in 2011,
+  which keep each decision with its context and rationale.
+- [Readme Driven Development](https://tom.preston-werner.com/2010/08/23/readme-driven-development.html),
+  described by Tom Preston-Werner in 2010, which writes the description before the code.
+- Handoff notes, which teams have long left for whoever works next.
+
+What it adds is a way to run these habits with AI agents, and a choice of center: one living
+document set that people and agents share, kept current and kept tidy.
+
 ## The document set
 
 | Document | Answers | Contains |
@@ -198,19 +252,6 @@ A few prompts that fit the flow:
 - "Before we start coding, check whether any decisions or documents are missing."
 - "Use doc-driven-implementer-v1 to implement Phase 1."
 - "Review this phase with doc-driven-reviewer-v1."
-
-## Compared with spec-first tools
-
-Spec-first tools such as GitHub Spec Kit and Kiro also put a written specification before
-code. Doc-Driven Development puts its weight on a few other things:
-
-- The documents stay after the feature ships and remain the project's memory.
-- They live beside the code and move as ownership changes.
-- Every statement is marked as confirmed, proposed, or implemented.
-- Decisions are a visible checklist, and `TBD` is a normal, tracked state.
-- Each phase passes a test gate, and every plan ends with hardening and integration phases.
-- The handoff is part of the plan, so any agent or person can resume the work.
-- It needs plain Markdown only. The skills install into Claude Code and Codex.
 
 ## Tools in this repository
 

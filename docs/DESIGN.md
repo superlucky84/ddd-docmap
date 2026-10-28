@@ -156,6 +156,8 @@ redirects는 이전 Markdown 상대 경로를 현재 Markdown 상대 경로에 �
 - 기본 exclude에 **/.venv/**, **/venv/**, **/__pycache__/**, **/.pytest_cache/**,
   **/.mypy_cache/**, **/.ruff_cache/**, **/.tox/**, **/.nox/**, **/.eggs/**, **/*.egg-info/**,
   **/target/**, **/.gradle/**, **/.m2/**를 추가한다. 모든 깊이에 적용하고 기존 기본값을 유지한다.
+- DC-24: 0.3.0 이후 기본 exclude에 **/.conda/**를 더한다. 같은 규칙(모든 깊이·대소문자 무시·대체 가능한 기본값)을 따른다.
+  conda 환경을 이름으로 알아내는 다른 방법(conda-meta 폴더 감지 등)은 쓰지 않는다. env 같은 일반 이름은 계속 제외하지 않는다.
 - 고정 제외로 승격하지 않는다. include/--docs-dir/--all-md는 기본 제외를 우회하지 않으며,
   명시적 exclude 배열은 기존 계약대로 기본 목록을 대체한다. exclude: [] 재포함도 검증한다.
 - 소스 언어·패키지 manifest의 유무로 문서를 분류하지 않는다. Python/Java/Gradle 코드·설정을 실행하지 않는다.
@@ -507,7 +509,8 @@ README의 기본 사용 명령은 docatlas다. 프로젝트 루트에서의 npx 
 
 | 파일 | 내용 | npm 패키지 |
 | --- | --- | --- |
-| README.md | 소개·DDD 요약·구성·빠른 시작·역할·이 저장소 예시, 문서 지도 사용법, Reference | 자동 포함 |
+| README.md | 핵심만: 소개·DDD 요약·구성·빠른 시작·역할·문서 지도 기본·Configuration 안내·더 읽기 목록(DC-25) | 자동 포함 |
+| guide/document-map.md · guide/configuration.md · guide/platforms.md | README에서 옮긴 사용 레퍼런스(DC-25) | 제외 |
 | METHOD.md | 방법론 전문(영문): 정의·원칙·4종 문서·흐름·작성 규칙·역할·문서 배치·도구와의 관계 | 제외 |
 | CONTRIBUTING.md | 개발 설치·검사·브라우저/설치 통합·플랫폼·벤치마크·소스 tarball·문서 작업 방식 | 제외 |
 | CHANGELOG.md | 게시한 버전별 변경 요약 | 제외(npm 10.9.4 pack에서 자동 포함 안 됨 확인) |
@@ -516,21 +519,26 @@ README의 기본 사용 명령은 docatlas다. 프로젝트 루트에서의 npx 
 | examples/sample-shop/ | 영문 합성 예제 프로젝트(DC-21) | 제외 |
 | docatlas.config.json | 이 저장소 문서 지도의 include를 docs/**/*.md로 한정(DC-21) | 제외 |
 
-README 순서:
+README 순서(DC-25, 목표 150줄 안팎):
 
-1. 제목과 한 줄 소개. DDD가 Doc-Driven Development이며 Domain-Driven Design이 아님을 밝힌다.
-2. Doc-Driven Development 요약: 핵심 문장, 4종 문서, 흐름, 핵심 규칙, METHOD와 블로그 링크.
-3. 이 저장소의 세 구성: 방법론·agent kit·문서 지도.
-4. 빠른 시작: 스킬 설치 → 에이전트와 설계 → 문서 지도 실행.
-5. 에이전트 역할: designer·implementer·reviewer와 기본 설치 여부.
-6. 이 저장소도 같은 방식으로 만든다: docs/의 기준 4종과 이 저장소에서 문서 지도를 여는 방법.
-7. 문서 지도: 실행·설치 방법과 화면 동작(기존 내용).
-8. Reference: 문서 위치·옵션·Configuration·읽기·검색·agent 설치 상세·Windows·Collector API.
-9. 기여·계획 문서·라이선스.
+1. 제목과 한 줄 소개, DDD가 Domain-Driven Design이 아니라는 안내, 캡처.
+2. Doc-Driven Development 요약: 핵심 문장, 4종 문서, 핵심 규칙 3개, 필요한 만큼 쓰라는 한 줄,
+   스펙 주도 개발 질문에 대한 짧은 답, METHOD 링크.
+3. 이 저장소의 구성 표, 빠른 시작, 에이전트 역할 표.
+4. 문서 지도 기본: 사람용 지도인 이유 한 문단, 실행 명령, 옵션 표, 지원 OS 한 줄과 가이드 링크.
+5. Configuration: 설정 없이 동작한다는 안내와 가이드 링크. 0.3.0 도움말이 가리키는 앵커라 제목을 유지한다.
+6. 더 읽기 목록: METHOD·가이드 세 개·agent-kit·예제·이 저장소 기획 문서·CONTRIBUTING·CHANGELOG.
+7. 라이선스.
+
+상세 위치(DC-25): 문서 지도 실행·설치·화면·읽기·검색·Collector API는 guide/document-map.md,
+문서 위치·제외·설정 파일은 guide/configuration.md, Windows·Linux·WSL은 guide/platforms.md,
+에이전트 설치 위치·갱신·출력은 agent-kit/README.md(npm 패키지 포함)로 옮긴다. 같은 설명을 두 곳에 쓰지 않는다.
+guide/는 이 저장소 기획 문서(docs/)와 구분하며, 저장소 지도(docs/만 수집)에는 넣지 않는다.
 
 규칙:
 
-- src/cli.js의 도움말이 README#configuration을 가리키므로 `## Configuration` 제목을 유지한다.
+- 0.3.0의 src/cli.js 도움말이 README#configuration을 가리키므로 README에 Configuration 제목과 가이드 링크를 유지한다.
+  다음 배포부터 도움말은 guide/configuration.md를 가리킨다(DC-25, PR #3).
 - npm 패키지에 없는 파일(METHOD·CONTRIBUTING·CHANGELOG·docs·캡처)은 GitHub 절대 URL로,
   패키지에 있는 LICENSE·agent-kit/는 상대 경로로 연결한다. 기존 README 링크 규칙과 같다.
 - METHOD.md와 README 요약은 agent-kit 세 스킬·룰의 규칙을 요약한다. 새 규칙을 만들지 않는다.
@@ -552,6 +560,15 @@ README 순서:
   examples/sample-shop/AGENTS.md는 같은 가벼운 예시다. 루트 파일이라 기본 수집 대상이 아니며 예제 문서 수(21개)는 그대로다.
 - DC-22: METHOD 두 언어에 문서 관리 절을 둔다. 정리는 에이전트가 하되 사람이 문서의 분포와 내용을 알아야 정리를 시킬 수
   있다는 점과, 그래서 docatlas가 사람이 보는 읽기 전용 뷰어라는 점을 설명한다. README 요약도 같은 이유로 문서 지도를 소개한다.
+- DC-23: METHOD의 spec 우선 도구 비교 절을 "스펙 주도 개발과의 관계" 절로 바꾼다. 공통점(코드 전에 쓰고, 요구사항·설계는
+  사실상 스펙)과 차이(중심이 스펙이 아니라 문서 전체와 그 관리, 사람이 문서의 분포와 내용을 파악해 에이전트를 지휘)를 쓴다.
+  다른 도구는 공개적으로 알려진 흐름(스펙 → 계획 → 작업 → 코드)만 언급하고 단점을 단정하지 않는다. README에도 짧은 문단과 링크를 둔다.
+  보강: 하위 절 두 개를 둔다. "같은 순간, 두 관점"은 예제 checkout의 Phase 3 중단 시점(DC-3 TBD)으로 스펙만 있을 때와
+  문서 세트가 있을 때를 비교한다. "어디에서 왔나"는 스펙 우선 작성, ADR(Nygard 2011), README 주도 개발(Preston-Werner 2010)을
+  이어받았고 새로운 점은 AI 에이전트용 조합과 중심의 선택이라고 밝힌다. 외부 링크는 확인한 주소만 쓴다.
+- README 지원 환경 표: Linux는 자동 검증 결과(환경·날짜·테스트 수)를 적고 지원 확정으로 표현하지 않는다(DC-10 TBD).
+  WSL은 직접 검증하지 않았음을 밝히고 코드 동작에서 나온 안내(WSL 안의 Node 22+, 출력된 127.0.0.1 주소 그대로 사용,
+  WSL 파일 시스템 권장, 설치 위치)를 둔다. 프로젝트 안 conda 환경은 0.3.0 기본 제외가 아니므로 .gitignore나 exclude를 안내한다.
 - 이전 README의 사용법 정보는 지우지 않고 새 위치로 옮긴다. 버전별 신규 표시는 CHANGELOG.md로 옮긴다.
 - package.json은 description과 keywords만 바꾼다. 이름·버전·bin·files·의존성은 그대로다.
 
@@ -661,6 +678,11 @@ README 순서:
   저장소 루트 docatlas.config.json의 include를 docs/**/*.md로 한정해 이 저장소의 지도에서 예제를 뺀다. M-18.
 - [x] DC-22: 2026-10-28 사용자 선택. 프로젝트 적용은 강제 규칙이 아니라 선택지로 안내하고,
   AGENTS.md·CLAUDE.md 권장 예시는 출발점으로 보여 준다. M-18.
+- [x] DC-25: 2026-10-28 사용자 선택. README는 핵심과 링크만 두고 사용 레퍼런스는 guide/와 agent-kit/README.md로 옮긴다.
+  CLI 도움말 링크 변경은 다음 배포(PR #3). M-18.
+- [x] DC-24: 2026-10-28 사용자 선택. 기본 exclude에 **/.conda/**를 더하고 다음 배포에 포함한다. M-01, M-09.
+- [x] DC-23: 2026-10-28 사용자 설명. 스펙 주도 개발과의 공통점을 인정하고, 중심이 문서와 그 관리라는 철학 차이를
+  METHOD 두 언어와 README에 설명한다. M-18.
 - [x] DC-11: 프로젝트별 설치와 docmap/ddd-docmap 공통 진입점을 구현하고 설치 검증을 통과했다.
   사용자 선택은 npx docmap / pnpm docmap이며 전역 런처를 추가하지 않는다. M-08, M-11.
 - [x] IC-01: picomatch 4.0.7, ignore 7.0.14, mdast-util-from-markdown 2.1.0과

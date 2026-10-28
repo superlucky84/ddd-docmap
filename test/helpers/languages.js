@@ -1,6 +1,8 @@
 export const GENERATED_DOCUMENTS = {
   '.venv/lib/python3.12/site-packages/example/docs/README.md': '# Virtual environment dependency',
   'tools/venv/Lib/site-packages/example/REQUIREMENTS.md': '# Windows virtual environment dependency',
+  '.conda/lib/python3.12/site-packages/example/docs/README.md': '# Conda environment dependency',
+  'services/api/.conda/Lib/site-packages/example/DESIGN.md': '# Nested Windows conda environment dependency',
   'src/__pycache__/docs/DESIGN.md': '# Bytecode cache',
   '.pytest_cache/docs/README.md': '# Test cache',
   'tools/.mypy_cache/docs/DESIGN.md': '# Type checker cache',
