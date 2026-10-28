@@ -884,7 +884,7 @@ npm pack --dry-run 45개 파일. 이 저장소의 문서 지도는 docs/의 5개
 
 종료 기준: 다른 에이전트가 도움말이나 오류만 읽고 원본 위치와 할 일을 알 수 있고, Claude Code·Codex 설치 동작은 그대로다.
 
-## 0.3.1 배포 준비 — 완료(게시는 사용자 단계)
+## 0.3.1 배포 준비 — 완료, 게시 확인
 
 대응: RQ-14·17·18·19 / DC-24~27 / M-11·16·18.
 진입: PR #4 병합 후 main 666d55e. 작업 브랜치를 main으로 빨리 감기했다. main의 트리는 마지막 전체 검증 커밋 0061f21과 같다.
@@ -915,6 +915,11 @@ npx --yes docatlas@0.3.1 agents help
 ```
 
 선택: git tag v0.3.1, git push origin v0.3.1. CHANGELOG의 날짜는 npm 게시일(UTC)이며 다른 날 게시하면 고친다.
+
+게시 확인(2026-10-28): 사용자가 0.3.1을 게시했다. npm view docatlas@0.3.1의 gitHead는 8f6bc69(준비 커밋)다.
+태그 v0.3.1과 GitHub 릴리스는 이 세션의 git 프록시가 태그 푸시를 거부(HTTP 403)하고 gh 인증이 없어 사용자가 만든다.
+참고: docatlas 저장소 안에서 npx docatlas를 실행하면 레지스트리 패키지가 아니라 그 checkout의 소스가 실행되므로
+npm install 전에는 ERR_MODULE_NOT_FOUND(open)가 난다. 레지스트리 버전은 npx --yes docatlas@latest로 실행한다.
 
 ## 검증 예제와 기록
 
@@ -1135,8 +1140,9 @@ npm ci가 받아 둔 잠금파일의 tarball만으로는 새 의존성 트리를
 이 프로젝트의 현재 인계는 이 블록 하나다. 작업을 멈출 때 이 블록을 바꾸며 이전 내용은 git 이력에 남는다.
 2026-10-28 이전의 인계와 검증 기록은 [인계 이력](./handoff/HISTORY.md#구현-계획에서-옮긴-기록)에 있다.
 
-- 완료: PR #2·#3·#4가 main에 병합됐다(666d55e). 저장소 소개(DC-20~25), .conda 기본 제외(DC-24), 에이전트용 도움말 보강(DC-26·27).
-- 완료: 0.3.1 배포 준비(위 절). 버전·CHANGELOG·가이드를 맞추고 사용자 요청으로 main에 직접 푸시했다.
-- 다음: 준비 커밋의 main CI 확인 → 사용자가 위 절차로 npm 게시와 확인. 이후 M-16·M-18 사람 확인, Codex 실제 세션, Windows 콘솔·Node 22.0 인수.
-- 차단: 없음. npm publish는 사용자 인증이 필요하다.
-- 최신 커밋: main 666d55e 위의 작업 브랜치. 실제 최신 SHA는 git log -1로 확인한다.
+- 완료: 0.3.1을 npm에 게시했다(gitHead 8f6bc69). 저장소 소개(DC-20~25), .conda 기본 제외(DC-24), 에이전트용 도움말 보강(DC-26·27) 포함.
+- 사용자 단계: 태그 v0.3.1(8f6bc69)과 GitHub 릴리스 노트. 이 세션에서는 태그 푸시가 403으로 거부됐다.
+- 다음 후보: README·METHOD·예제의 "clone 후 npx docatlas" 안내에 npm install 단계 추가(사용자 결정 전).
+  M-16·M-18 사람 확인(에이전트가 새 도움말을 따르는지, npm 페이지 README), Codex 실제 세션, Windows 콘솔·Node 22.0 인수.
+- 차단: 없음.
+- 최신 커밋: main의 이 인계 커밋. 실제 최신 SHA는 git log -1로 확인한다.
