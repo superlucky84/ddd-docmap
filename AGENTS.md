@@ -41,3 +41,12 @@ blockers, and the latest known commit.
 - Preserve the target project's original documents and resolve links relative to them.
 - Prefer locally installed skills. Use ctxbin only when the user explicitly requests it.
 
+## Agent kit
+
+- agent-kit/ holds the canonical doc-driven skills and agent rules. Wiki pages and ctxbin entries are copies.
+- Agent rule frontmatter has only name and description. A skill's metadata.version equals its manifest item version.
+- Keep docatlas-specific markers out of skill and rule files so copied and installed files stay identical.
+- When a skill or rule changes, follow agent-kit/README.md: raise versions, move old hashes to previous,
+  record new hashes with node scripts/agent-kit.js hash, and run npm run check.
+- Update the wiki and ctxbin copies only after the repository change passes checks.
+

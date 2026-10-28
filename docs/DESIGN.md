@@ -347,12 +347,20 @@ PR-02·05·06·08 / DC-09, IC-03에 대응한다. 아래 계약으로 구현했�
 전역 사본이 있는 사용자에게는 프로젝트 설치만으로 Claude 스킬 갱신이 전달되지 않는다. 이것이 전역 기본의 근거다.
 Codex 룰은 name·description·developer_instructions를 가진 TOML이다. 원본 Markdown 본문을 developer_instructions로 변환한다.
 
-### 원본 형식 — 설계 제안
+### 원본 형식 — 1단계 구현됨
 
-- agent-kit/skills/<name>/SKILL.md와 agent-kit/agents/<name>.md로 둔다. 룰의 frontmatter에는 name·description만 쓴다.
+- agent-kit/skills/<name>/SKILL.md와 agent-kit/agents/<name>.md에 둔다. 룰의 frontmatter에는 name·description만 쓴다.
 - 원본 파일에 docatlas 전용 표시를 넣지 않는다. Confluence에서 복사한 사본과 설치본이 같아야 한다.
-- agent-kit/manifest.json에 kit 버전, 파일별 해시, 이전 배포본의 해시를 둔다. 이전 해시로 수동 복사본을 알아본다.
-  스킬 frontmatter의 metadata.version은 사람이 보는 버전이며 kit 버전과 함께 올린다.
+- frontmatter는 최상위 key: value와 두 칸 들여쓴 한 단계 map만 쓴다. 값은 따옴표 없는 문자열이나 큰따옴표 문자열이다.
+  ": "·" #"·true·숫자처럼 YAML이 문자열로 읽지 않을 값은 큰따옴표로 감싼다.
+- agent-kit/manifest.json(schema 1)은 kitVersion과 items를 가진다. 항목은 name·version·default·skill/agent의 path·sha256·previous다.
+  previous 항목은 version·kind(skill/agent/codex-agent)·part(file/body)·sha256·source이며 현재보다 낮은 버전이어야 한다.
+- 해시는 BOM을 지우고 CRLF/CR을 LF로 바꾸고 끝 공백을 지운 뒤 개행 하나를 붙인 UTF-8의 SHA-256이다.
+  본문 해시는 frontmatter 뒤 본문(앞 빈 줄 제외)에 같은 규칙을 쓴다. Confluence 팀 페이지는 룰을 frontmatter 없이 싣기 때문에
+  룰은 본문 해시로도 이전 배포본을 알아본다.
+- 스킬 frontmatter의 metadata.version은 manifest 항목 version과 같다. 내용을 바꾸면 항목 version과 kitVersion을 함께 올린다.
+- 검사는 개발 전용 scripts/agent-kit.js와 npm run check가 한다. 2단계에서 설치에 필요한 읽기·해시 규칙을 src/agent-kit/로 옮기고
+  검사 스크립트가 그 모듈을 사용하게 한다.
 
 ### 명령 — 설계 제안 (DC-17)
 
@@ -388,7 +396,7 @@ docatlas --help에는 agents 하위 명령과 agents help를 가리키는 한 �
 | 대상 파일 없음 | create |
 | 내용이 같음 | unchanged |
 | 설치 기록의 해시와 같음 | replace |
-| 기록은 없지만 이전 배포본 해시와 같음 | replace하고 기록을 만든다 |
+| 기록은 없지만 이전 배포본 해시와 같음(룰은 본문 해시 포함) | replace하고 기록을 만든다 |
 | 그 외(사용자가 고침) | skip-modified. --force일 때 백업 후 replace |
 | 설치본 버전이 패키지보다 높음 | skip-downgrade. --force일 때만 replace |
 | ctxbin 설치 기록에 있는 항목 | skip-managed. 한 위치를 두 도구가 관리하지 않게 한다 (DC-17) |

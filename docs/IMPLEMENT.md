@@ -17,7 +17,7 @@
 - 완료: 0.2.0의 추가 수집 옵션·설정 파일명·검색 경로 탐색을 사용자가 npm 배포했다.
   새 작업은 Python·Java 기본 제외와 Windows 점검의 0.2.1 후보이며 맨 아래 인계가 현재 상태다.
 - 완료: 검색 결과의 경로에서 트리 위치 찾기. 최신 문법 51개·Chrome 40개·설치 통합 4개 통과.
-- 계획: RQ-16·17·18 에이전트 스킬 관리와 설치. 계약을 기록했고 구현 전이다. 진입 조건(DC-19)을 충족해 1단계부터 시작할 수 있다.
+- 진행 중: RQ-16·17·18 에이전트 스킬 관리와 설치. 1단계 원본 이관을 완료했고 다음은 2단계 설치 판정 모듈이다.
 
 기술 선택은 각 단계에서 근거와 검증을 기록해 DC/IC를 해소한다.
 상세 계약을 바꾸면 요구사항·설계·단계·수동 기준을 같은 작업에서 갱신한다.
@@ -413,22 +413,38 @@ Confluence의 다른 문서가 함께 게시되지 않도록 원본 publish/sync
 Windows workflow는 test:platform과 test:browser를 실행한다. full npm test/test:integration은 POSIX 전제가 남아 별도 이식 대상이다.
 Windows 네이티브 Ctrl+C·기본 브라우저·PowerShell/CMD·UNC/네트워크 드라이브는 실제 인수 전 미검증이다.
 
-## 에이전트 스킬 관리와 설치 — 계획
+## 에이전트 스킬 관리와 설치 — 1단계 완료
 
-대응: RQ-16·17·18 / PR-09·10 / DC-16~19 / M-16·17. 기준 커밋 d71ee97. 다음 후보 버전 0.3.0은 제안이다.
-상태: 기준 4종에 계약을 기록했다. 코드·agent-kit·패키지는 아직 바꾸지 않았다.
+대응: RQ-16·17·18 / PR-09·10 / DC-16~19 / M-16·17. 기준 커밋 d71ee97, 계획 문서 커밋 cc9e98d. 다음 후보 버전 0.3.0은 제안이다.
+상태: 1단계 원본 이관을 완료했다. 설치 코드와 npm 패키지 내용은 아직 바꾸지 않았다.
 
 진입 조건: DC-19 공개 범위 확인. 2026-10-28 사용자 확인으로 충족했다.
 
-### 1단계 — 원본 이관
+### 1단계 — 원본 이관: 완료
 
-- [ ] 2026-10-28 ctxbin에 올린 세 쌍과 같은 내용으로 agent-kit/skills·agents를 만든다.
-- [ ] manifest.json에 kit 버전·파일 해시와 이전 배포본 해시를 기록한다. 이전 해시는 ctxbin 백업과 Confluence 게시본에서 얻는다.
-- [ ] npm run check에 원본 검사를 추가한다: frontmatter 구문, 룰은 name·description만, name과 경로 일치, manifest 해시 일치.
-- [ ] AGENTS.md에 agent-kit 원본 관리와 배포본 갱신 순서를 추가한다.
+- [x] 2026-10-28 ctxbin에 올린 세 쌍과 같은 내용으로 agent-kit/skills·agents를 만들었다. 사람용 agent-kit/README.md를 함께 둔다.
+- [x] manifest.json에 kit 1.0.0, 항목별 버전·파일 해시와 이전 배포본 해시를 기록했다.
+  이전 해시는 ctxbin 백업과 Confluence 팀 페이지 v5에서 얻었다. 팀 페이지의 designer 스킬은 이전 ctxbin 파일과 같고,
+  룰은 frontmatter 없이 실려 있으며 이전 ctxbin 룰의 본문과 같다.
+- [x] scripts/agent-kit.js와 npm run check에 원본 검사를 추가했다. frontmatter 구문, 룰은 name·description만, name·버전·경로 일치,
+  manifest 해시, 이전 항목의 버전·중복, 목록 밖 파일·링크·UTF-8을 확인한다. 개발 전용이며 npm 패키지에 포함하지 않는다.
+- [x] AGENTS.md에 agent-kit 원본 관리와 배포본 갱신 순서를 추가했다.
+
+남은 일: Confluence 팀 페이지는 아직 이전 designer 1.0.0이다. RQ-16 인수에 필요하며 갱신 시점은 사용자가 정한다.
 
 기준 검증: npm run check, npm test, npm pack --dry-run(패키지 파일 목록 변화 없음).
-종료 기준: 원본과 manifest가 검사를 통과하고 npm 패키지 내용은 바뀌지 않는다.
+종료 기준: 원본과 manifest가 검사를 통과하고 npm 패키지 내용은 바뀌지 않는다. 충족했다.
+
+#### 1단계 검증 — 2026-10-28
+
+환경: macOS / Node 22.12.0.
+
+| 명령/범위 | 결과 |
+| --- | --- |
+| npm run check | JavaScript 56개 문법, agent kit 1.0.0의 세 쌍 검사 통과 |
+| DOCMAP_NPM_CACHE=/private/tmp/ddd-docmap-phase1-npm-cache npm test | 124개 통과. agent-kit.test.js 9개 포함 |
+| npm pack --dry-run | 29개 파일. 기존과 같고 agent-kit/·scripts/·test/는 포함하지 않는다 |
+| ctxbin 대조 | agent-kit의 세 스킬이 ctxbin의 현재 값과 같다 |
 
 ### 2단계 — 설치 판정 모듈
 
@@ -839,13 +855,13 @@ registry와 실행 버전이 0.2.0인지 확인하고 새 설정·수집 옵션�
 
 - 완료: 0.2.1의 Python·Java 기본 제외·플랫폼 테스트와 캐시 전제 보정. 최신 구현 커밋은 967c175이며 main에 푸시했다.
 - run 40657181408의 macOS/Windows × Node 22/24 네 작업이 모두 성공했다. 원인·재현·작업별 결과는 아래 플랫폼 CI 캐시 전제 보정 기록에 있다.
-- 계획 추가: RQ-16·17·18 에이전트 스킬 관리와 설치를 기준 4종에 기록했다. 코드·agent-kit·패키지는 바꾸지 않았다.
-  사용자가 DC-19 공개 범위와 RQ-18 에이전트용 도움말을 확인했다.
-  같은 날 스킬·룰 세 쌍을 ctxbin 원격에 갱신하고 이 개발 환경의 Claude·Codex 전역에 설치했다. 이 내용이 agent-kit 원본의 출발점이다.
-- 다음: 에이전트 스킬 1단계(원본 이관). 별도로 실제 Windows 콘솔 Ctrl+C·PowerShell/CMD·기본 브라우저 인수와
-  필요 시 npm 0.2.1 배포·팀 가이드 갱신.
+- 에이전트 스킬: RQ-16·17·18 계획을 cc9e98d로 커밋했고 1단계 원본 이관을 완료했다. 작업 브랜치는 feat/agent-kit이다.
+  agent-kit/의 세 쌍은 같은 날 ctxbin과 이 개발 환경의 Claude·Codex 전역에 설치한 값과 같다. 검증은 위 1단계 기록을 따른다.
+- 다음: 1단계 리뷰 여부를 사용자에게 확인한 뒤 2단계 설치 판정 모듈. 별도로 실제 Windows 콘솔 Ctrl+C·PowerShell/CMD·
+  기본 브라우저 인수와 필요 시 npm 0.2.1 배포·팀 가이드 갱신.
+- 남은 일: Confluence 팀 페이지는 이전 designer 1.0.0이다. 갱신 시점은 사용자가 정한다.
 - 차단: 없음. DC-17·18은 해당 단계에서 해소한다.
-- 최신 커밋: d71ee97. 이번 문서 변경은 미커밋이다. npm 0.2.1은 미배포이며 Confluence는 변경하지 않았다.
+- 최신 커밋: cc9e98d. 1단계 변경은 미커밋이다. npm 0.2.1은 미배포이며 Confluence는 읽기만 했다.
   문서만 바뀐 인계 커밋은 CI를 재실행하지 않는다.
 
 ## 플랫폼 CI 캐시 전제 보정 — 검증 완료
