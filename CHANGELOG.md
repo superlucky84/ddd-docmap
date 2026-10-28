@@ -10,6 +10,7 @@ Agent skill and rule versions are tracked separately in
 - Exclude `.conda` by default at any depth, so a conda environment created inside a project
   (the folder name VS Code uses) keeps its package docs off the map. Other names, such as `env`,
   are still included; add them to `.gitignore` or `exclude`.
+- `docatlas --help` links to the configuration guide instead of a README section.
 
 ## 0.3.0 — 2026-10-28
 

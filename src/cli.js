@@ -34,7 +34,7 @@ const help = [
   '  redirects          Map previous Markdown paths to current documents.',
   '--docs-dir adds to include; --all-md replaces include. Exclusions still apply.',
   'node_modules, .git, ignored paths, and symbolic links are never bypassed.',
-  'Settings and examples: https://github.com/superlucky84/docatlas#configuration', '',
+  'Settings and examples: https://github.com/superlucky84/docatlas/blob/main/guide/configuration.md', '',
   'Keep this terminal open. Press Ctrl+C to stop your document map.',
   'Read formatted Markdown or switch to source view in the browser.', ''
 ].join('\n');

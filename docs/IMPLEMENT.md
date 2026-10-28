@@ -797,7 +797,7 @@ npm pack --dry-run 45개 파일. 이 저장소의 문서 지도는 docs/의 5개
 
 종료 기준: .conda 문서가 모든 깊이에서 기본 제외되고 env 등 일반 이름은 그대로이며 기존 검사가 통과한다.
 
-## README 축약과 사용 가이드 분리 — 완료(PR #3 반영 대기)
+## README 축약과 사용 가이드 분리 — 완료
 
 대응: RQ-19 / DC-25 / M-18.
 진입: 사용자 결정(2026-10-28)을 기준 4종에 기록했다. 기준 커밋 3929473. README는 512줄이며 Reference가 약 290줄이다.
@@ -821,7 +821,8 @@ npm pack --dry-run 45개 파일. 이 저장소의 문서 지도는 docs/의 5개
 
 - [x] 링크·앵커 검사(guide 포함), npm run check·npm test, npm pack --dry-run(파일 수 45개 유지).
   링크 165개 문제 0, Node 154개 통과·3개 건너뜀·실패 0, pack 45개 파일.
-- [ ] PR #3에 병합하고 CLI 도움말 링크를 바꾼다.
+- [x] PR #3에 병합하고 CLI 도움말 링크를 바꾼다. src/cli.js의 설정 링크가 guide/configuration.md를 가리킨다(다음 배포).
+  README의 .conda 수정은 guide/configuration.md로 옮겨 다시 반영했다.
 
 종료 기준: README가 핵심과 링크만 담고, 이전 정보가 모두 새 위치에 있으며, 검사가 통과한다.
 
