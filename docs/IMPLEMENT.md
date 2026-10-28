@@ -735,7 +735,7 @@ npm pack --dry-run 45개 파일. 이 저장소의 문서 지도는 docs/의 5개
 
 종료 기준: 적용 범위를 고를 수 있다는 안내와 예시가 있고, 기존 검사가 통과하며, PR이 열려 있다.
 
-## 스펙 주도 개발과의 관계와 지원 환경 안내 — 진행 중
+## 스펙 주도 개발과의 관계와 지원 환경 안내 — 완료
 
 대응: RQ-15·19 / DC-10·23 / M-12·18.
 진입: 사용자 결정(2026-10-28)을 기준 4종에 기록했다. 기준 커밋 f9e691e. PR #2의 CI 네 작업(macOS·Windows × Node 22·24)이 통과했다.
@@ -745,16 +745,20 @@ npm pack --dry-run 45개 파일. 이 저장소의 문서 지도는 docs/의 5개
 
 ### 구현
 
-- [ ] METHOD.md·METHOD.ko.md: 비교 절을 스펙 주도 개발과의 관계 절로 바꾼다. 두 언어 구조를 같게 유지한다.
-- [ ] README: DDD 소개 아래 스펙 주도 개발과의 관계 문단, 지원 환경 표의 Linux·WSL 행과 WSL 안내, conda 환경 안내.
+- [x] METHOD.md·METHOD.ko.md: 비교 절을 스펙 주도 개발과의 관계 절로 바꾼다. 두 언어 구조를 같게 유지한다.
+  철학 절이라 "왜 문서인가" 바로 다음으로 옮겼다. 공통점, 중심 비교 표, 문서 관리 절 링크, 한 줄 답으로 구성했다.
+- [x] README: DDD 소개 아래 스펙 주도 개발과의 관계 문단, 지원 환경 표의 Linux·WSL 행과 WSL 안내, conda 환경 안내.
+  WSL 브라우저 열기는 open 패키지가 PowerShell로 Windows 기본 브라우저를 여는 코드를 확인해 적었다.
 
 ### Test Hardening
 
-- [ ] 다른 도구에 대한 서술이 공개된 흐름만 언급하고 단정하지 않는지, 지원 확정 표현이 없는지 확인한다.
+- [x] 다른 도구에 대한 서술이 공개된 흐름만 언급하고 단정하지 않는지, 지원 확정 표현이 없는지 확인한다.
+  다른 도구는 "스펙을 계획·작업·코드로 이어 간다"만 언급한다. README에 supported·officially 표현이 없다.
 
 ### Integration Test
 
-- [ ] npm run check, npm test, 링크 검사, 두 METHOD 구조 대조. 이어서 PR #2에 푸시하고 CI를 확인한다.
+- [x] npm run check, npm test, 링크 검사, 두 METHOD 구조 대조. 이어서 PR #2에 푸시하고 CI를 확인한다.
+  문법 72개·agent kit 세 쌍, Node 154개 통과·3개 건너뜀·실패 0, 링크 143개 문제 0, 두 METHOD 구조 동일(표 행 23·링크 8).
 
 종료 기준: 스펙 주도 개발과의 공통점과 차이, Linux·WSL·conda 안내가 문서에 있고 기존 검사가 통과한다. 제품 코드 변경은 없다.
 
@@ -989,9 +993,12 @@ npm ci가 받아 둔 잠금파일의 tarball만으로는 새 의존성 트리를
 - 완료(DC-22): METHOD 두 언어에 프로젝트 적용 절(세 단계 선택지와 가벼운 AGENTS.md 예시), README 안내, 예제 AGENTS.md.
   검증: Node 157개 중 154개 통과·3개 건너뜀·실패 0, 플랫폼 6개 통과, pack 45개 파일, 링크 136개 문제 0.
   이어서 사용자 설명대로 문서 관리 절을 더해, 사람이 문서 분포와 내용을 파악해 에이전트에게 정리를 시키는 뷰어로 docatlas를 소개했다.
+- 완료(DC-23): METHOD 두 언어에 스펙 주도 개발과의 관계 절, README에 그 요약과 Linux·WSL 지원 상태·conda 환경 안내를 넣었다.
+  Linux 근거: Ubuntu 24.04 / Node 22.22.0에서 Node 154개·플랫폼 6개·브라우저 40개 통과. WSL은 직접 실행하지 않았다.
 - 다음: [PR #2](https://github.com/superlucky84/docatlas/pull/2)의 CI 확인과 사용자 검토 후 main 병합.
+  .conda 기본 제외는 PR #2 위에 쌓은 별도 PR에서 진행한다(RQ-14 확장, 다음 배포 필요).
   GitHub 저장소 About·topics 설정은 사용자가 한다.
   M-18 사람 확인(GitHub 첫 화면, 한국어판, 예제 열기, 다음 게시 후 npm 페이지의 캡처·링크).
   기존 남은 일: Codex 실제 세션과 M-16 수동 항목, Windows 콘솔·기본 브라우저·Node 22.0 인수.
 - 차단: 없음. README 캡처는 GitHub main의 절대 URL이라 main에 반영되기 전에는 브랜치 화면에서 보이지 않는다.
-- 최신 커밋: 작업 브랜치 claude/tender-gates-sa5kn8. 이 인계 직전 커밋은 d4e6740이며 실제 최신 SHA는 git log -1로 확인한다.
+- 최신 커밋: 작업 브랜치 claude/tender-gates-sa5kn8. 이 인계 직전 커밋은 6b04a64 이후 작업이며 실제 최신 SHA는 git log -1로 확인한다.

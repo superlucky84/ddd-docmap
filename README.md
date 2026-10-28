@@ -36,6 +36,11 @@ Documents live beside the code they describe and keep growing. Agents can write 
 but to tell an agent what to keep, merge, or remove, you need to know where the documents are and
 what they say. That is why this repository also ships a document map for people.
 
+**Isn't this spec-driven development?** It overlaps: the requirements and design documents are
+specs, so it includes spec-driven work. The difference is the center. Here it is the whole document
+set and how it is managed over time, not the spec alone; see
+[how they differ](https://github.com/superlucky84/docatlas/blob/main/METHOD.md#is-this-spec-driven-development).
+
 Read the full method in [METHOD.md](https://github.com/superlucky84/docatlas/blob/main/METHOD.md)
 (한국어: [METHOD.ko.md](https://github.com/superlucky84/docatlas/blob/main/METHOD.ko.md)) and the background essay
 [Doc-Driven Development With AI](https://subtleflo.com/2026/2/27/doc-driven-development-with-ai).
@@ -250,6 +255,8 @@ The Python and Java rows were added in 0.3.0. They prevent dependency docs,
 test environments, and generated copies from appearing in the map or being watched.
 Ordinary source folders and names such as `env`, `bin`, `out`, `vendor`,
 `target-design`, and `venv-guide` are not excluded.
+A conda environment created inside the project, such as `./.conda` or `./env`, is not
+excluded either; add it to `.gitignore` or `exclude` so its package docs stay out of the map.
 These are replaceable defaults, not fixed exclusions: an explicit `exclude` array
 replaces the entire list. Projects with an existing custom list must add any desired
 new patterns themselves. `.git` and `node_modules` remain fixed exclusions.
@@ -445,12 +452,28 @@ Our injected-signal tests check application cleanup without claiming native cons
 | --- | --- |
 | macOS | Local CLI, collector, live updates, browser and installed-package checks pass; exact runs are recorded in the planning documents. |
 | Windows | The platform workflow checks native paths, npm launchers and the browser; consult the latest CI run and verification notes. PowerShell/CMD, default-browser opening and physical Ctrl+C also need manual validation. |
-| UNC/network drives, WSL, Linux | No support claim from this work; validate separately. |
+| Linux | Node, platform, and browser tests pass on Ubuntu 24.04 with Node.js 22.22.0 (2026-10-28). Without a desktop browser, docatlas prints the address and keeps running; open it yourself or use `--no-open`. |
+| WSL | Not tested directly. It runs as Linux; see the notes below. |
+| UNC/network drives | No support claim from this work; validate separately. |
 
 The declared minimum is Node.js 22. Packaged integration checks pass on Node.js
 22.12.0 and 24.22.1 on macOS 15.6.1. Node.js 22.0 and other OSes remain unverified.
 The [platform checks](https://github.com/superlucky84/docatlas/blob/main/CONTRIBUTING.md#platform-checks)
 describe the macOS and Windows CI.
+
+#### WSL (Ubuntu on Windows)
+
+These notes come from how docatlas works, not from a WSL test run.
+
+- Install Node.js 22+ inside WSL, for example with nvm. Ubuntu's own `nodejs` package is older
+  (18 on Ubuntu 24.04), and a Windows Node.js on the PATH should not be used from WSL.
+- docatlas opens your Windows default browser through PowerShell. If it does not open, paste the
+  printed `http://127.0.0.1:<port>/` address into the browser. Use that address exactly:
+  the server rejects `localhost`.
+- Keep the project in the WSL file system, such as `~/project`. Projects under `/mnt/c` should
+  work, but change detection polls files and can be slower there.
+- `docatlas agents install` run inside WSL installs into the WSL home folder. If Claude Code or
+  Codex runs on the Windows side, run the install command on Windows instead.
 
 ### Collector API
 

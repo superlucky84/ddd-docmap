@@ -24,6 +24,31 @@ the documents it produces. The background essay is
   becoming the norm.
 - **Stay the owner.** You make the decisions, verify each phase, and review the code.
 
+## Is this spec-driven development?
+
+Close, and many people use the two names for the same idea. Both write before coding, and
+`REQUIREMENTS.md` and `DESIGN.md` are specifications in all but name, so Doc-Driven
+Development includes spec-driven work. Spec-driven tools such as GitHub Spec Kit and Kiro
+turn a specification into a plan, tasks, and code.
+
+The difference is what sits at the center.
+
+| | Spec-driven development | Doc-Driven Development |
+| --- | --- | --- |
+| At the center | The specification | The documents, and how they are managed over time |
+| Main question | Is the spec clear enough to build from? | Can a person or an agent pick up the project from its documents today? |
+| Typical flow | Spec → plan → tasks → code | Requirements → decisions → phases → code, updating the documents as the work changes them |
+| The person's role | Shapes and approves the spec | Knows where the documents are and what they say, makes decisions, and tells agents what to update or tidy |
+
+Here the specification is one part of a larger, living document set. The documents are the
+project's memory: they stay after the feature ships, sit beside the code they describe, and get
+merged, moved, and pruned as the project grows (see
+[Keep the documents healthy](#keep-the-documents-healthy)). Managing that set, with a person
+who knows it, is the point; a precise spec is one of its results.
+
+So to "Isn't this spec-driven development?": it includes it, but the center is the documents
+and how they are managed, not the spec.
+
 ## The document set
 
 | Document | Answers | Contains |
@@ -198,19 +223,6 @@ A few prompts that fit the flow:
 - "Before we start coding, check whether any decisions or documents are missing."
 - "Use doc-driven-implementer-v1 to implement Phase 1."
 - "Review this phase with doc-driven-reviewer-v1."
-
-## Compared with spec-first tools
-
-Spec-first tools such as GitHub Spec Kit and Kiro also put a written specification before
-code. Doc-Driven Development puts its weight on a few other things:
-
-- The documents stay after the feature ships and remain the project's memory.
-- They live beside the code and move as ownership changes.
-- Every statement is marked as confirmed, proposed, or implemented.
-- Decisions are a visible checklist, and `TBD` is a normal, tracked state.
-- Each phase passes a test gate, and every plan ends with hardening and integration phases.
-- The handoff is part of the plan, so any agent or person can resume the work.
-- It needs plain Markdown only. The skills install into Claude Code and Codex.
 
 ## Tools in this repository
 
