@@ -31,9 +31,10 @@
 | ../test/ | 기능·경계·브라우저·설치 통합과 가상 예제 | Phase 5 및 Phase 6 자동 검증 구현 |
 | ../agent-kit/ | doc-driven 스킬·에이전트 룰 원본 | RQ-16 1단계 완료. 세 쌍·manifest·개발 검사 |
 | ../src/agent-kit/ | 스킬·룰 설치 판정·쓰기·업데이트 안내·에이전트용 도움말 | RQ-17·18 설치 명령·도움말과 업데이트 안내 구현 |
-| ../README.md | 저장소 소개·DDD 요약·빠른 시작·사용법 레퍼런스 | RQ-19 재구성 계획 |
-| ../METHOD.md | Doc-Driven Development 방법론 전문(영문) | RQ-19 신규 계획 |
-| ../CONTRIBUTING.md · ../CHANGELOG.md | 개발·검증 안내, 게시 버전별 변경 요약 | RQ-19 신규 계획 |
+| ../README.md | 저장소 소개·DDD 요약·빠른 시작·사용법 레퍼런스 | RQ-19 재구성 완료 |
+| ../METHOD.md | Doc-Driven Development 방법론 전문(영문) | RQ-19 작성 완료 |
+| ../CONTRIBUTING.md · ../CHANGELOG.md | 개발·검증 안내, 게시 버전별 변경 요약 | RQ-19 작성 완료 |
+| ../scripts/screenshot.js · ../.github/assets/ | README 캡처와 합성 예제로 다시 만드는 개발 스크립트 | RQ-19 추가 |
 
 설치되는 프로젝트는 입력 데이터의 소유자다. 도구의 설치 위치와 문서를 읽을
 프로젝트 위치를 구분한다.

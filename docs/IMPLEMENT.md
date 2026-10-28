@@ -635,27 +635,36 @@ npm pack --dry-run 45개 파일. 환경: Linux / Node 22.22.0 / npm 10.9.4.
 
 ### 구현
 
-- [ ] METHOD.md: 정의·원칙·4종 문서·흐름·작성 규칙·역할·문서 배치·spec-driven 도구와의 차이·블로그 링크.
-- [ ] README: RQ-19 계약의 순서로 재구성하고 기존 사용법을 Reference로 옮긴다. #configuration 앵커를 유지한다.
-- [ ] CONTRIBUTING.md: 개발·검사·브라우저/설치 통합·플랫폼·벤치마크·소스 tarball 안내를 README에서 옮긴다.
-- [ ] CHANGELOG.md: 게시한 0.1.0~0.3.0의 변경 요약. README의 버전별 신규 표시를 옮긴다.
-- [ ] agent-kit/README.md: 설치 명령 안내를 현재 동작에 맞추고 사본 관계 문구를 뺀다. 스킬 변경 시 METHOD 확인 단계를 넣는다.
-- [ ] package.json의 description·keywords.
-- [ ] 합성 예제 프로젝트로 문서 지도 캡처를 만들어 .github/assets/에 둔다.
+- [x] METHOD.md: 정의·원칙·4종 문서·흐름·작성 규칙·역할·문서 배치·spec-driven 도구와의 차이·블로그 링크.
+- [x] README: RQ-19 계약의 순서로 재구성하고 기존 사용법을 Reference로 옮긴다. #configuration 앵커를 유지한다.
+- [x] CONTRIBUTING.md: 개발·검사·브라우저/설치 통합·플랫폼·벤치마크·소스 tarball 안내를 README에서 옮긴다.
+- [x] CHANGELOG.md: 게시한 0.1.0~0.3.0의 변경 요약. README의 버전별 신규 표시를 옮긴다. 날짜는 npm 게시 시각이다.
+- [x] agent-kit/README.md: 설치 명령 안내를 현재 동작에 맞추고 사본 관계 문구를 뺀다. 스킬 변경 시 METHOD 확인 단계를 넣는다.
+- [x] package.json의 description·keywords.
+- [x] 합성 예제 프로젝트로 문서 지도 캡처를 만들어 .github/assets/document-map.png에 둔다.
+  재현용 개발 스크립트 scripts/screenshot.js를 추가했다(npm 패키지 제외). 같은 예제로 두 번 만든 PNG가 바이트 단위로 같다.
 
 ### Test Hardening
 
-- [ ] 이전 README의 모든 제목·표·명령이 README나 CONTRIBUTING에 남았는지 대조한다.
-- [ ] 오래된 문구를 검색한다: planned but not available, in this checkout, before it is published, 공개 안내의 Confluence·wiki.
-- [ ] METHOD의 규칙 문장을 세 스킬·룰의 해당 문장과 대조한다.
+- [x] 이전 README의 모든 제목·표·명령이 README나 CONTRIBUTING에 남았는지 대조한다.
+  이전 README의 비어 있지 않은 줄을 새 README·CONTRIBUTING·CHANGELOG와 줄 단위로 비교했다. 그대로 없는 48줄은 제목 단계 변경,
+  버전·checkout 표현 수정, 중복 redirects 안내의 링크 대체, 오래된 배포 문구 삭제였다. 빠진 문서 지도 소개 한 문장은 복원했다.
+- [x] 오래된 문구를 검색한다: planned but not available, in this checkout, before it is published, 공개 안내의 Confluence·wiki.
+  README·METHOD·CONTRIBUTING·CHANGELOG·agent-kit/README에서 0건. ctxbin은 설치 동작 설명 한 곳에만 남았다.
+- [x] METHOD의 규칙 문장을 세 스킬·룰의 해당 문장과 대조한다. 새 규칙을 만들지 않았고 역할·순서·승인 조건이 스킬과 같다.
 
 ### Integration Test
 
-- [ ] npm run check, npm test가 기준과 같다.
-- [ ] npm pack --dry-run: README·agent-kit/README 포함, METHOD·CONTRIBUTING·CHANGELOG·docs·캡처 제외, 파일 수 45개 유지.
-- [ ] 새 문서의 상대 링크·앵커와 GitHub 절대 링크의 대상 파일·제목을 확인한다.
-  docatlas로 이 저장소의 README·METHOD·CONTRIBUTING을 열어 참조 상태를 확인한다.
+- [x] npm run check, npm test가 기준과 같다. 문법 71개(scripts/screenshot.js 추가)·agent kit 세 쌍,
+  Node 155개 중 152개 통과·3개 건너뜀·실패 0.
+- [x] npm pack --dry-run: README·agent-kit/README 포함, METHOD·CONTRIBUTING·CHANGELOG·docs·.github·scripts 제외, 45개 파일·61,276 bytes.
+- [x] 새 문서의 상대 링크·앵커와 GitHub 절대 링크의 대상 파일·제목을 확인한다.
+  README·METHOD·CONTRIBUTING·CHANGELOG·agent-kit/README와 기준 4종의 링크 90개를 github-slugger 앵커로 확인했다. 문제 0.
+  docatlas 서버에 --docs-dir .로 이 저장소를 열어 다섯 문서를 읽었다. 참조 오류 없음. README 캡처는 외부 이미지라 정책대로 표시하지 않는다.
 - [ ] 이전 인계를 docs/handoff/로 옮긴 뒤 기준 4종의 링크·앵커를 확인한다.
+
+브라우저 UI·설치 통합(test:browser·test:integration)은 제품 코드와 화면을 바꾸지 않아 다시 실행하지 않았다.
+이 환경의 Playwright 1.64.1용 브라우저가 없어 캡처는 미리 설치된 Chromium(--executable-path)으로 만들었다.
 
 종료 기준: README 첫 화면에 DDD 정의와 세 구성·시작 명령이 있고, 기존 사용법 정보가 빠짐없이 새 위치에 있으며,
 검사·테스트·pack 결과가 기준과 같다. 제품 코드 변경은 없다. M-18의 사람 확인(GitHub·npm 화면)은 별도다.

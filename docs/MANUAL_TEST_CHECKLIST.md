@@ -320,7 +320,7 @@ DOCMAP_BROWSER_CHANNEL=chrome으로 설치 Chrome을 선택한다. 지원 환경
 - [ ] 공개 안내(README·METHOD·CONTRIBUTING·agent-kit 안내)에 Confluence·사내 사본 설명이 없다.
 
 통과: 처음 온 사람이 README 첫 화면에서 방법론과 시작 방법을 이해하고, 기존 사용자가 필요한 레퍼런스를 잃지 않는다.
-상태: 계획됨.
+상태: 문서 작성과 자동 확인 완료. 사람의 화면 확인은 미실행이다.
 
 ## Phase 1 자동 검증 대응
 
@@ -442,6 +442,18 @@ test/integration/package.test.js의 부모 1개·하위 3개, 총 4개가 Node 2
   2026-10-28 조회: registry latest 0.3.0, 빈 임시 폴더의 npx --yes docatlas@0.3.0 --version 출력 0.3.0.
 
 커밋·푸시·npm 인증·실제 publish는 사용자 실행 단계다. 상세 결과와 절차는 구현 계획의 현재 인계를 따른다.
+
+## 저장소 소개 자동 확인 — 2026-10-28
+
+아래는 M-18의 자동 근거이며 사람의 화면 확인 체크박스를 대신하지 않는다.
+
+| 인수 항목 | 자동 확인 | 결과 |
+| --- | --- | --- |
+| M-18 | 이전 README의 줄을 새 README·CONTRIBUTING·CHANGELOG와 대조 | 의도한 이동·수정 외 누락 1문장 발견 후 복원 |
+| M-18 | 공개 안내에서 오래된 설치 문구·Confluence·wiki·skill store 검색 | 0건 |
+| M-18 | 링크 90개의 대상 파일과 GitHub 앵커 | 문제 0 |
+| M-18 | docatlas 서버로 README·METHOD·CONTRIBUTING·CHANGELOG·agent-kit/README 읽기 | 참조 오류 없음 |
+| M-18 | npm pack --dry-run | 45개 파일, README 포함·새 안내 문서와 캡처 제외 |
 
 ## 릴리스 판정
 

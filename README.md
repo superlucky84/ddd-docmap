@@ -1,16 +1,101 @@
 # docatlas
 
-Local document maps for **Doc-Driven Development** projects.
+**The home of Doc-Driven Development:** a documentation-first workflow for building software
+with AI coding agents, the agent skills that run it, and a local map of the documents it produces.
 
-Find feature documentation spread across a repository, explore its hierarchy,
-and read Markdown without losing your place.
+> **DDD here means Doc-Driven Development**, not Domain-Driven Design.
 
-> Version 0.3.0 adds Python/Java generated-directory exclusions and the `docatlas agents`
-> command. To try this checkout before it is published, use the tarball instructions below.
+![docatlas showing a project's document map beside a design document](https://raw.githubusercontent.com/superlucky84/docatlas/main/.github/assets/document-map.png)
+
+## What is Doc-Driven Development?
+
+Agents and chat sessions forget; files do not. In Doc-Driven Development, four Markdown
+documents are the single source of truth for context, so any agent or person can continue
+the work from the documents alone.
+
+| Document | Holds |
+| --- | --- |
+| `REQUIREMENTS.md` | What to build: scope, success criteria, constraints, non-goals |
+| `DESIGN.md` | How to build it: architecture, contracts, and a decision checklist (`DC-1`, `DC-2`, …) |
+| `IMPLEMENT.md` | In what order: phases with entry criteria, baseline tests, exit criteria, and the current handoff |
+| `MANUAL_TEST_CHECKLIST.md` | How to accept it: release-facing checks with pass/fail criteria |
+
+The core rules:
+
+- Write the documents first, and update them before changing a contract in code.
+- Keep confirmed requests, design proposals, and implemented behavior apart.
+- Close each decision with a written rationale; anything undecided stays visibly `TBD`.
+- Build in phases, each with test evidence. End the plan with Test Hardening and Integration Test phases.
+- Keep one current handoff (done, next, blockers, latest commit) so another agent can resume.
+
+Documents live beside the code they describe, so a growing project has them in many folders.
+That is why this repository also ships a document map.
+
+Read the full method in [METHOD.md](https://github.com/superlucky84/docatlas/blob/main/METHOD.md)
+and the background essay
+[Doc-Driven Development With AI](https://subtleflo.com/2026/2/27/doc-driven-development-with-ai).
+
+## What's in this repository
+
+| Part | What it is | Start with |
+| --- | --- | --- |
+| The method | The workflow and its writing rules | [METHOD.md](https://github.com/superlucky84/docatlas/blob/main/METHOD.md) |
+| Agent kit | Designer, implementer, and reviewer skills and rules for Claude Code and Codex | `npx docatlas agents install` |
+| Document map | A local browser view of every document in a project | `npx docatlas` |
+
+## Quick start
+
+You need Node.js 22+ and npm.
+
+1. Install the designer skill and rule for Claude Code and Codex:
+
+   ```sh
+   npx docatlas agents install --dry-run   # preview; writes nothing
+   npx docatlas agents install
+   ```
+
+2. In a new agent session, start with the designer:
+
+   > Use doc-driven-designer-v1. I want to build … Ask me questions, then write REQUIREMENTS.md.
+
+3. Open the map of your project's documents:
+
+   ```sh
+   cd /path/to/project
+   npx docatlas
+   ```
+
+## Agent roles
+
+| Skill and rule | Role | Installed by default |
+| --- | --- | --- |
+| `doc-driven-designer-v1` | Co-writes the four documents with you and turns open questions into decisions | Yes |
+| `doc-driven-implementer-v1` | Implements one phase at a time with test evidence, synced documents, and a handoff | With `--all` or `--only` |
+| `doc-driven-reviewer-v1` | Reviews uncommitted changes read-only and returns a severity-ranked report | With `--all` or `--only` |
+
+The implementer asks after each phase whether to review it or continue, and the reviewer
+never changes files. See [Agent skills](#agent-skills) for install details and
+[agent-kit/](agent-kit/) for the exact rules.
+
+## Built with its own method
+
+docatlas is developed with Doc-Driven Development, and its planning documents are a working
+example. They are currently written in Korean.
+
+- [Requirements](https://github.com/superlucky84/docatlas/blob/main/docs/REQUIREMENTS.md): scope, agreed behavior, and proposed additions.
+- [Design](https://github.com/superlucky84/docatlas/blob/main/docs/DESIGN.md): architecture, document model, and open decisions.
+- [Implementation plan](https://github.com/superlucky84/docatlas/blob/main/docs/IMPLEMENT.md): phases, validation, and handoff.
+- [Manual checks](https://github.com/superlucky84/docatlas/blob/main/docs/MANUAL_TEST_CHECKLIST.md): acceptance scenarios.
+
+Clone this repository and run `npx docatlas` in it to explore them on the map.
+[AGENTS.md](https://github.com/superlucky84/docatlas/blob/main/AGENTS.md) holds the guidance
+coding agents follow here.
 
 ## Document map
 
-Run a CLI in a project to open its local document map:
+Find feature documentation spread across a repository, explore its hierarchy,
+and read Markdown without losing your place. Run a CLI in a project to open its
+local document map:
 
 1. Browse thin horizontal cards arranged by area and feature.
 2. Read a short description of each feature.
@@ -24,7 +109,7 @@ additional documents such as README or research notes. Defaults should work
 without rewriting existing documentation; optional configuration can refine
 labels, summaries, and discovery.
 
-## Run from a project root
+### Run from a project root
 
 Docatlas uses **the directory where you run the command** as its default project root.
 For example, running it in `/path/to/project` reads that project's documents.
@@ -34,7 +119,7 @@ The target can be a JavaScript, Python, Java/Spring, or other Markdown project.
 Your computer needs Node.js 22+ and npm; the target needs no `package.json`,
 Python package installation, Maven/Gradle plugin, or application build.
 
-### Without adding a project dependency
+#### Without adding a project dependency
 
 Change into the project you want to explore and run:
 
@@ -47,7 +132,7 @@ When Docatlas is not installed in the project, npx can download it to the npm ca
 and run it without adding a dependency to the project's package.json. If a matching
 local installation exists, npx uses that version.
 
-### With a project-local installation
+#### With a project-local installation
 
 For npm projects, install it as a development dependency, then run the local version:
 
@@ -79,29 +164,8 @@ An optional package script also provides `npm run docatlas` or `pnpm run docatla
 }
 ~~~
 
-### Try the next version from source
-
-Create a tarball from this source checkout after installing its dependencies:
-
-~~~sh
-npm pack --pack-destination /tmp
-~~~
-
-Then install it from your project's root:
-
-~~~sh
-cd /path/to/project
-pnpm add -D /tmp/docatlas-0.3.0.tgz
-pnpm docatlas
-~~~
-
-Or use npm:
-
-~~~sh
-cd /path/to/project
-npm install --save-dev /tmp/docatlas-0.3.0.tgz
-npx --no-install docatlas
-~~~
+To try unreleased changes from a source checkout, see
+[Try a source checkout](https://github.com/superlucky84/docatlas/blob/main/CONTRIBUTING.md#try-a-source-checkout-in-another-project).
 
 ### Options and shutdown
 
@@ -118,6 +182,8 @@ With `--no-open`, or if opening a browser fails, open the printed address manual
 Installed users can also pass options to `pnpm docatlas` or `npx --no-install docatlas`.
 Earlier `docmap` and `ddd-docmap` command names remain accepted for compatibility.
 
+### Navigate the map
+
 An arrow appears only when a group has child groups. Click it to expand those
 children. Click the title to show documents directly in that group. A group with
 its own Markdown and child directories supports both actions; a group with only
@@ -125,7 +191,9 @@ Markdown has no arrow. Counts describe the group's own documents. Empty director
 are omitted, so an on-disk subdirectory alone does not guarantee an arrow.
 On narrow screens, selecting a document switches to its reader, with a button back to the map.
 
-## Choose document locations
+## Reference
+
+### Choose document locations
 
 By default, Docatlas collects `.md` files under every `docs/` directory, including
 `docs/DESIGN.md` directly inside it. It also finds `REQUIREMENTS.md`, `DESIGN.md`,
@@ -160,19 +228,19 @@ scope. `--docs-dir .` also selects the project root.
 Neither option bypasses exclusions: **`node_modules/` and `.git/` at any depth are
 always skipped**, as are symbolic links and paths outside the project. `.gitignore`
 rules and configuration `exclude` apply before any include or CLI selection.
-Generated directories are excluded at any depth. Version 0.3.0's defaults are:
+Generated directories are excluded at any depth. The default exclusions are:
 
 | Category | Excluded directory names |
 | --- | --- |
-| Existing output/cache defaults | `dist`, `build`, `coverage`, `.docatlas`, `.ddd-docmap` |
+| Output/cache | `dist`, `build`, `coverage`, `.docatlas`, `.ddd-docmap` |
 | Python environments | `.venv`, `venv`, `.tox`, `.nox` |
 | Python caches/metadata | `__pycache__`, `.pytest_cache`, `.mypy_cache`, `.ruff_cache`, `.eggs`, `*.egg-info` |
 | Java build/dependency caches | `target`, `.gradle`, `.m2` |
 
-The Python/Java rows are additions in this checkout. They prevent dependency docs,
+The Python and Java rows were added in 0.3.0. They prevent dependency docs,
 test environments, and generated copies from appearing in the map or being watched.
 Ordinary source folders and names such as `env`, `bin`, `out`, `vendor`,
-`target-design`, and `venv-guide` retain their previous behavior.
+`target-design`, and `venv-guide` are not excluded.
 These are replaceable defaults, not fixed exclusions: an explicit `exclude` array
 replaces the entire list. Projects with an existing custom list must add any desired
 new patterns themselves. `.git` and `node_modules` remain fixed exclusions.
@@ -186,12 +254,12 @@ new patterns themselves. `.git` and `node_modules` remain fixed exclusions.
 | `--help`, `-h` | Show options and configuration guidance. |
 | `--version`, `-v` | Show the version actually running. |
 
-## Configuration
+### Configuration
 
 Create optional **`docatlas.config.json`** at the project root.
 If it is absent, Docatlas reads the legacy `ddd-docmap.config.json` instead.
 When both exist, only the new file is used; fields are not merged. An invalid new
-file reports its own error and does not fall back. Older releases recognized only
+file reports its own error and does not fall back. Releases before 0.2.0 recognized only
 the legacy filename. The JSON schema stays version 1.
 
 All paths use `/` and are relative to the project root. Configuration is data-only
@@ -252,7 +320,7 @@ give one group a clearer label:
 }
 ~~~
 
-The lists above show this checkout's defaults, with `documentation/**/*.md` and
+The lists above show the defaults, with `documentation/**/*.md` and
 `documentation/private/**` appended as project-specific examples.
 Omit either field to retain its defaults. For example,
 `{"version":1,"include":["documentation/**/*.md"]}` selects only that directory
@@ -278,7 +346,7 @@ the active configuration while preserving CLI selections. Invalid configuration 
 startup exits with an error. During an existing session, it retains the last good
 index and displays an update notice until corrected.
 
-## Reading and links
+### Reading and links
 
 The reader renders tables, fenced code, and read-only task checks, with an outline
 and an optional source view. Document links use the original file location.
@@ -289,7 +357,7 @@ Raw HTML is displayed as text. SVG and external images show an explanation.
 Code, unindexed Markdown, and missing references keep the current document open;
 code and attachment paths can be copied. External http/https links open in a separate tab.
 
-## Search and live updates
+### Search and live updates
 
 Search titles, feature names, paths, descriptions, and document text, including code.
 Space-separated terms use AND matching; English is case-insensitive and Korean text
@@ -309,27 +377,14 @@ clears its old body and explains what happened. Invalid configuration retains th
 last good index and shows an update notice until fixed. A reconnected tab catches up.
 Navigation state stays in each tab's memory.
 
-To register a previous path, add `redirects` to the project-root configuration:
+To keep an old path working after moving a document, register it in
+[`redirects`](#configuration) in the project-root configuration.
 
-~~~json
-{
-  "version": 1,
-  "redirects": {
-    "docs/old/DESIGN.md": "docs/current/DESIGN.md"
-  }
-}
-~~~
+### Agent skills
 
-An explicit previous path works in search, document URLs, and relative Markdown links,
-even when the old file no longer exists. Valid chains resolve to one current document;
-cycles, missing targets, and excluded sources produce collection notices.
-
-## Agent skills
-
-The package includes the doc-driven agent skills and rules used to write these documents
-(designer, implementer, and reviewer) in [agent-kit/](agent-kit/). `docatlas agents install`
-copies them to the folders that Claude Code and Codex read automatically. This command is available
-starting in version 0.3.0.
+The package includes the doc-driven agent skills and rules (designer, implementer, and
+reviewer) in [agent-kit/](agent-kit/). `docatlas agents install`, available since 0.3.0,
+copies them to the folders that Claude Code and Codex read automatically.
 
 ```sh
 npx docatlas agents install --dry-run   # preview; writes nothing
@@ -351,7 +406,7 @@ npx docatlas agents install             # install the designer skill and rule
   action, and exit code with the steps an agent should follow.
 - It never edits your documents, `AGENTS.md`, or `CLAUDE.md`.
 
-## Windows and other operating systems
+### Windows and other operating systems
 
 Use the same command from a native Windows PowerShell or Command Prompt:
 
@@ -383,76 +438,14 @@ Our injected-signal tests check application cleanup without claiming native cons
 | Windows | The platform workflow checks native paths, npm launchers and the browser; consult the latest CI run and verification notes. PowerShell/CMD, default-browser opening and physical Ctrl+C also need manual validation. |
 | UNC/network drives, WSL, Linux | No support claim from this work; validate separately. |
 
-The [platform workflow](https://github.com/superlucky84/docatlas/blob/main/.github/workflows/platform.yml)
-targets macOS and Windows with Node 22 and 24. Run `npm run test:platform` to check
-native Unicode/space paths, CRLF, source discovery, references/assets, live policy changes,
-controlled cleanup, and production tarball launchers. This does not replace manual OS acceptance.
-The platform suite installs its fresh tarball with `--prefer-offline`: cached data
-is reused and missing dependency metadata can be downloaded. It needs registry access
-on a fresh CI runner. Once installed, all launcher help/version checks run offline.
-The Windows workflow runs this platform suite and browser tests. The full `npm test`
-and original `test:integration` suite still contain POSIX symlink/signal assumptions;
-their Windows portability is not claimed by this work.
-
-## Development
-
 The declared minimum is Node.js 22. Packaged integration checks pass on Node.js
 22.12.0 and 24.22.1 on macOS 15.6.1. Node.js 22.0 and other OSes remain unverified.
+The [platform checks](https://github.com/superlucky84/docatlas/blob/main/CONTRIBUTING.md#platform-checks)
+describe the macOS and Windows CI.
 
-```sh
-git clone https://github.com/superlucky84/docatlas.git
-cd docatlas
-npm install --ignore-scripts
-npm run check
-npm test
-node bin/docatlas.js --help
-node bin/docatlas.js --version
-npm pack --dry-run
-```
+### Collector API
 
-The package name is `docatlas`, licensed under MIT. This checkout prepares `0.3.0`;
-publishing is a separate release step.
-
-## Browser checks
-
-The development-only Playwright tests need a browser:
-
-~~~sh
-npx playwright install chromium
-npm run test:browser
-~~~
-
-An existing Chrome installation can be used instead:
-
-~~~sh
-DOCMAP_BROWSER_CHANNEL=chrome npm run test:browser
-~~~
-
-Check the actual tarball in a separate production-only installation, using synthetic
-JavaScript and non-JavaScript projects:
-
-~~~sh
-DOCMAP_BROWSER_CHANNEL=chrome npm run test:integration
-~~~
-
-The integration check installs offline from the npm cache populated during development
-setup. Set `DOCMAP_NPM_CACHE` to use another cache. It checks the installed CLI and API,
-reading, search, live saves, independent shutdown, and original file hashes.
-
-Measure the synthetic 300-document project separately from other tests:
-
-~~~sh
-npm run benchmark
-npm run benchmark -- --browser
-~~~
-
-The browser benchmark uses installed Chrome by default; `DOCMAP_BROWSER_CHANNEL`
-can select another Playwright channel. Timings, idle CPU, and memory are local measurements.
-See the [recorded results and regression criteria](https://github.com/superlucky84/docatlas/blob/main/docs/IMPLEMENT.md#phase-5-완료-검증--2026-10-28).
-
-## Collector API
-
-After installing dependencies in this checkout, collect a project without a server:
+Collect a project from Node.js without starting a server:
 
 ~~~js
 import { collectProject } from 'docatlas';
@@ -475,18 +468,13 @@ See the [implemented collection contract](https://github.com/superlucky84/docatl
 The config supports version, include, exclude, groups, and redirects.
 Redirects are explicit project-relative Markdown paths; they are never inferred from prose.
 
-## Planning documents
+## Contributing
 
-Planning documents are currently written in Korean.
-
-- [Requirements](https://github.com/superlucky84/docatlas/blob/main/docs/REQUIREMENTS.md): scope, agreed behavior, and proposed additions.
-- [Design](https://github.com/superlucky84/docatlas/blob/main/docs/DESIGN.md): architecture, document model, and open decisions.
-- [Implementation plan](https://github.com/superlucky84/docatlas/blob/main/docs/IMPLEMENT.md): phases, validation, and handoff.
-- [Manual checks](https://github.com/superlucky84/docatlas/blob/main/docs/MANUAL_TEST_CHECKLIST.md): acceptance scenarios.
-
-See [AGENTS.md](https://github.com/superlucky84/docatlas/blob/main/AGENTS.md) for contributor and coding-agent guidance.
+[CONTRIBUTING.md](https://github.com/superlucky84/docatlas/blob/main/CONTRIBUTING.md) covers
+development setup, tests, browser and installed-package checks, platform CI, and benchmarks.
+Release notes are in [CHANGELOG.md](https://github.com/superlucky84/docatlas/blob/main/CHANGELOG.md).
+To change a skill or rule, follow [agent-kit/README.md](agent-kit/README.md).
 
 ## License
 
 [MIT](LICENSE). Copyright (c) 2026 superlucky84.
-
