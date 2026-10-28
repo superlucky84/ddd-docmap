@@ -17,7 +17,7 @@
 - 완료: 0.2.0의 추가 수집 옵션·설정 파일명·검색 경로 탐색을 사용자가 npm 배포했다.
   새 작업은 Python·Java 기본 제외와 Windows 점검의 0.2.1 후보이며 맨 아래 인계가 현재 상태다.
 - 완료: 검색 결과의 경로에서 트리 위치 찾기. 최신 문법 51개·Chrome 40개·설치 통합 4개 통과.
-- 진행 중: RQ-16·17·18 에이전트 스킬 관리와 설치. 자동 검증과 Windows/macOS CI를 마쳤고 PR #1에 올렸다. 사람의 M-16·17 인수와 병합·배포 결정이 남았다.
+- 진행 중: RQ-16·17·18 에이전트 스킬 관리와 설치. 자동 검증·Windows/macOS CI·Claude Code 실제 세션 확인을 마쳤고 PR #1에 올렸다. Codex 실제 세션 확인과 병합·배포 결정이 남았다.
 
 기술 선택은 각 단계에서 근거와 검증을 기록해 DC/IC를 해소한다.
 상세 계약을 바꾸면 요구사항·설계·단계·수동 기준을 같은 작업에서 갱신한다.
@@ -547,7 +547,8 @@ Windows 네이티브 Ctrl+C·기본 브라우저·PowerShell/CMD·UNC/네트워�
   프로젝트 스킬은 신뢰와 무관하게, 프로젝트 룰은 신뢰한 프로젝트에서만 읽고, 같은 이름 룰은 프로젝트가 우선이다.
   같은 이름 경고 문구를 확정하고 프로젝트 설치에 codex-trust 경고를 추가했다.
 - [x] platform CI의 Windows·macOS 실행: PR #1, run 40665207058, fa90bfd. 네 작업 모두 통과.
-- [ ] M-16·17 사람의 수동 인수: 실제 Claude Code·Codex 새 세션에서 설치된 스킬과 룰이 보이는지 확인한다.
+- [x] M-17 Claude Code: 사용자가 Claude Code 2.1.308 새 세션에서 프로젝트 룰이 전역보다 우선하고 같은 이름 스킬은 전역이 쓰임을 확인했다.
+- [ ] M-17 Codex 사람의 실제 세션 확인(자동 관찰은 DC-18). 나머지 M-16 수동 항목.
 
 기준 검증: npm run test:integration, npm run test:platform, npm pack --dry-run.
 종료 기준: 설치 tarball로 설치와 갱신이 재현되고 실제 클라이언트 로드 결과를 기록한다. 자동 부분과 Codex 관찰은 충족했다.
@@ -937,7 +938,8 @@ registry와 실행 버전이 0.2.0인지 확인하고 새 설정·수집 옵션�
 - 에이전트 스킬: 작업 브랜치 feat/agent-kit. 계획 cc9e98d, 1단계 b85e00e, 2단계 59a561e, 3단계 49143c0, 4단계 ead614f,
   Test Hardening 5bb8c7a, Integration Test fa90bfd. 사용자 요청으로 push했고 PR #1(https://github.com/superlucky84/docatlas/pull/1)을 열었다.
   PR의 platform CI 네 작업이 통과했다. 사용자는 앞 단계를 리뷰 없이 진행하기로 했다.
-- 다음: 사람의 M-16·17 인수(실제 Claude Code·Codex 새 세션), PR 병합 결정, 배포 시 버전(0.3.0 제안)·npm publish·Confluence 갱신.
+- 다음: Codex 실제 세션 확인과 남은 M-16 수동 항목, PR 병합 결정, 배포 시 버전(0.3.0 제안)·npm publish·Confluence 갱신.
+  Claude Code 실제 세션 확인은 2026-10-28 사용자가 마쳤다(M-17).
   별도로 실제 Windows 콘솔 Ctrl+C·PowerShell/CMD·기본 브라우저 인수와 필요 시 npm 배포·팀 가이드 갱신.
 - 남은 일: Confluence 팀 페이지는 이전 designer 1.0.0이다. 갱신 시점은 사용자가 정한다.
 - 차단: 없음.
