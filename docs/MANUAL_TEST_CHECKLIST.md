@@ -82,6 +82,7 @@ DOCMAP_BROWSER_CHANNEL=chrome으로 설치 Chrome을 선택한다. 지원 환경
 - [ ] docs 밖 표준 문서와 README 기반 공통 문서가 포함된다.
 - [ ] 루트 README·의존 패키지·기본 산출물은 기본 발견에서 제외된다.
 - [ ] Python 가상환경/캐시와 Java target/.gradle/.m2의 중첩 docs·표준 문서가 기본 제외된다.
+- [ ] 프로젝트 안 conda 환경 .conda의 패키지 문서가 기본 제외된다(DC-24, 0.3.0 이후 배포).
 - [ ] 일반 소스와 env/bin/out/vendor·target-design/venv-guide의 문서는 과도하게 제외되지 않는다.
 
 통과: 파일 수와 원본 상대 경로가 기대값과 일치한다. 상태: 미실행.

@@ -239,6 +239,9 @@ Phase 4에서 PR-02·05·08의 검색·변경 감지·명시적인 문서 이동
 - Python 기본 제외 추가: .venv, venv, __pycache__, .pytest_cache, .mypy_cache, .ruff_cache, .tox, .nox, .eggs, *.egg-info.
 - Java 기본 제외 추가: target, .gradle, .m2. 기존 build 등의 제외를 유지한다. env/bin/out/vendor처럼 일반 업무 경로일 수 있는 이름은 추가하지 않는다.
 - 새 항목은 대체 가능한 기본 exclude다. 기존 .git/node_modules 고정 제외·.gitignore·심볼릭 링크·루트 경계는 유지한다.
+- 확인됨(2026-10-28, DC-24): 프로젝트 안에 만든 conda 환경 .conda(VS Code가 쓰는 폴더 이름)도 기본 제외에 넣는다.
+  프로젝트 안 conda 환경의 패키지 문서가 지도에 섞이는 것을 재현했다. env처럼 일반 이름일 수 있는 폴더는 넣지 않고
+  .gitignore나 exclude를 안내한다. 0.3.0 이후 다음 배포에 포함되며, 이 변경은 PR #2 위에 쌓은 별도 PR이다.
 - Windows 경로/명령 사용법과 로컬에서 확인 가능한 자동 검증을 보강하고 Windows CI를 준비한다.
   현재 환경은 macOS이므로 실제 Windows·PowerShell/CMD·Ctrl+C 인수와 OS 지원 확정은 미실행/TBD로 구분한다.
 - 0.2.0은 사용자 배포 완료다. 이번 변경은 다음 후보 0.2.1이며 실제 배포·원격 CI 실행은 이번 로컬 작업에서 수행하지 않는다.

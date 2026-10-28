@@ -156,6 +156,8 @@ redirects는 이전 Markdown 상대 경로를 현재 Markdown 상대 경로에 �
 - 기본 exclude에 **/.venv/**, **/venv/**, **/__pycache__/**, **/.pytest_cache/**,
   **/.mypy_cache/**, **/.ruff_cache/**, **/.tox/**, **/.nox/**, **/.eggs/**, **/*.egg-info/**,
   **/target/**, **/.gradle/**, **/.m2/**를 추가한다. 모든 깊이에 적용하고 기존 기본값을 유지한다.
+- DC-24: 0.3.0 이후 기본 exclude에 **/.conda/**를 더한다. 같은 규칙(모든 깊이·대소문자 무시·대체 가능한 기본값)을 따른다.
+  conda 환경을 이름으로 알아내는 다른 방법(conda-meta 폴더 감지 등)은 쓰지 않는다. env 같은 일반 이름은 계속 제외하지 않는다.
 - 고정 제외로 승격하지 않는다. include/--docs-dir/--all-md는 기본 제외를 우회하지 않으며,
   명시적 exclude 배열은 기존 계약대로 기본 목록을 대체한다. exclude: [] 재포함도 검증한다.
 - 소스 언어·패키지 manifest의 유무로 문서를 분류하지 않는다. Python/Java/Gradle 코드·설정을 실행하지 않는다.
@@ -667,6 +669,7 @@ README 순서:
   저장소 루트 docatlas.config.json의 include를 docs/**/*.md로 한정해 이 저장소의 지도에서 예제를 뺀다. M-18.
 - [x] DC-22: 2026-10-28 사용자 선택. 프로젝트 적용은 강제 규칙이 아니라 선택지로 안내하고,
   AGENTS.md·CLAUDE.md 권장 예시는 출발점으로 보여 준다. M-18.
+- [x] DC-24: 2026-10-28 사용자 선택. 기본 exclude에 **/.conda/**를 더하고 다음 배포에 포함한다. M-01, M-09.
 - [x] DC-23: 2026-10-28 사용자 설명. 스펙 주도 개발과의 공통점을 인정하고, 중심이 문서와 그 관리라는 철학 차이를
   METHOD 두 언어와 README에 설명한다. M-18.
 - [x] DC-11: 프로젝트별 설치와 docmap/ddd-docmap 공통 진입점을 구현하고 설치 검증을 통과했다.

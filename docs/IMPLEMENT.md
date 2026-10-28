@@ -762,6 +762,30 @@ npm pack --dry-run 45개 파일. 이 저장소의 문서 지도는 docs/의 5개
 
 종료 기준: 스펙 주도 개발과의 공통점과 차이, Linux·WSL·conda 안내가 문서에 있고 기존 검사가 통과한다. 제품 코드 변경은 없다.
 
+## .conda 기본 제외 — 진행 중
+
+대응: RQ-14 / DC-24 / M-01·09.
+진입: 사용자 선택(2026-10-28)을 기준 4종에 기록했다. PR #2 위에 쌓은 브랜치 claude/conda-default-exclusion, 기준 커밋 99a4c20.
+기준 검증(변경 전): 문법 72개·agent kit 세 쌍, Node 157개 중 154개 통과·3개 건너뜀·실패 0, 플랫폼 6개 통과.
+프로젝트 안 .conda·env 아래 패키지 문서가 기본 수집에 포함되는 것을 재현했다.
+
+### 구현
+
+- [ ] src/collector/config.js의 기본 exclude에 **/.conda/**를 더한다.
+- [ ] README의 기본 제외 표·설정 예제·conda 안내, CHANGELOG의 Unreleased 항목.
+
+### Test Hardening
+
+- [ ] 언어 예제에 루트·중첩 .conda 문서를 더하고, 탐색하지 않는 디렉터리 검사와 대소문자 무시 검사에 .conda를 넣는다.
+- [ ] exclude: [] 대체로 .conda 문서가 다시 포함되는 기존 검사가 그대로 통과한다.
+
+### Integration Test
+
+- [ ] npm run check, npm test, npm run test:platform(설치된 tarball에서 .conda 제외), npm pack --dry-run.
+- [ ] PR #2를 기준으로 하는 PR을 만든다. 실제 배포는 사용자 단계다.
+
+종료 기준: .conda 문서가 모든 깊이에서 기본 제외되고 env 등 일반 이름은 그대로이며 기존 검사가 통과한다.
+
 ## 검증 예제와 기록
 
 F-01~08의 구체적인 구성은 [수동 검증의 가상 프로젝트](./MANUAL_TEST_CHECKLIST.md#가상-프로젝트)를 따른다.
