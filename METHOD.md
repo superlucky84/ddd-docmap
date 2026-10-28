@@ -49,6 +49,35 @@ who knows it, is the point; a precise spec is one of its results.
 So to "Isn't this spec-driven development?": it includes it, but the center is the documents
 and how they are managed, not the spec.
 
+### Same moment, two lenses
+
+A session ends halfway through Phase 3 of a checkout feature, and a new agent picks up the work.
+
+- **With only a specification,** the agent knows what checkout should do. It does not know which
+  parts are done, why taxes come from the pricing service, that the retry policy is still
+  undecided, or what proved Phase 2. It has to rebuild that from the code, or guess.
+- **With the document set,** it reads the handoff (done, next, blockers), sees that DC-3 is still
+  `TBD`, checks the Phase 3 checklist and its test evidence, and continues with decline handling
+  instead of inventing a retry policy.
+
+The specification says what to build. The documents also say where the work stands and why.
+The sample project is paused at this exact moment; see its
+[checkout handoff](examples/sample-shop/docs/checkout/IMPLEMENT.md#handoff).
+
+### Where it comes from
+
+Little here is new on its own. Doc-Driven Development combines older habits:
+
+- Writing requirements and design before code, which it shares with spec-driven development.
+- [Architecture decision records](https://adr.github.io/), popularized by Michael Nygard in 2011,
+  which keep each decision with its context and rationale.
+- [Readme Driven Development](https://tom.preston-werner.com/2010/08/23/readme-driven-development.html),
+  described by Tom Preston-Werner in 2010, which writes the description before the code.
+- Handoff notes, which teams have long left for whoever works next.
+
+What it adds is a way to run these habits with AI agents, and a choice of center: one living
+document set that people and agents share, kept current and kept tidy.
+
 ## The document set
 
 | Document | Answers | Contains |

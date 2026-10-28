@@ -762,6 +762,13 @@ npm pack --dry-run 45개 파일. 이 저장소의 문서 지도는 docs/의 5개
 
 종료 기준: 스펙 주도 개발과의 공통점과 차이, Linux·WSL·conda 안내가 문서에 있고 기존 검사가 통과한다. 제품 코드 변경은 없다.
 
+후속 보강(2026-10-28 사용자 요청):
+
+- [x] METHOD 두 언어에 "같은 순간, 두 관점"과 "어디에서 왔나" 하위 절을 더한다. 예시는 예제 checkout 인계·DC-3와 맞춘다.
+  외부 링크(adr.github.io, Readme Driven Development 원문)는 주소와 저자·연도를 확인했다.
+- [x] 두 METHOD 구조 대조, 링크 검사(예제 인계 앵커 포함), npm run check·npm test.
+  구조 동일(제목 16개·글머리 38·링크 11개), 링크 117개 문제 0, Node 154개 통과·3개 건너뜀·실패 0.
+
 ## .conda 기본 제외 — 완료(배포 전)
 
 대응: RQ-14 / DC-24 / M-01·09.
@@ -1030,4 +1037,5 @@ npm ci가 받아 둔 잠금파일의 tarball만으로는 새 의존성 트리를
   M-18 사람 확인(GitHub 첫 화면, 한국어판, 예제 열기, 다음 게시 후 npm 페이지의 캡처·링크).
   기존 남은 일: Codex 실제 세션과 M-16 수동 항목, Windows 콘솔·기본 브라우저·Node 22.0 인수.
 - 차단: 없음. README 캡처는 GitHub main의 절대 URL이라 main에 반영되기 전에는 브랜치 화면에서 보이지 않는다.
-- 최신 커밋: 작업 브랜치 claude/tender-gates-sa5kn8. 이 인계 직전 커밋은 4e2eec4이며 실제 최신 SHA는 git log -1로 확인한다.
+- 최신 커밋: PR #2는 claude/tender-gates-sa5kn8(3929473), PR #3은 그 위의 claude/conda-default-exclusion이다.
+  PR #2의 최신 커밋을 PR #3에 병합했다. 실제 최신 SHA는 각 브랜치에서 git log -1로 확인한다.
