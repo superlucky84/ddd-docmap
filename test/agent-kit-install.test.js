@@ -4,7 +4,7 @@ import fs from 'node:fs/promises';
 import path from 'node:path';
 import { spawnSync } from 'node:child_process';
 import {
-  INSTALL_OPTIONS, agentsHelp, applyPlan, loadKit, planInstall, runAgents, selectItems
+  INSTALL_OPTIONS, KIT_DIRECTORY, agentsHelp, applyPlan, loadKit, planInstall, runAgents, selectItems
 } from '../src/agent-kit/index.js';
 import { OLD_SKILL, createWorkspace, ruleText, snapshot, writeKit } from './helpers/agent-kit.js';
 import { cliPath } from './helpers/cli.js';
@@ -39,11 +39,22 @@ test('the agents help covers every install option, action and exit code', async 
   const documented = new Set([...help.split('Options:')[1].split('Output lines')[0].matchAll(/--([a-z-]+)/g)].map(match => match[1]));
   assert.deepEqual([...documented].sort(), Object.keys(INSTALL_OPTIONS).sort());
   for (const text of ['--dry-run [options]', 'ask for approval', 'skip-modified', 'skip-downgrade', 'skip-managed', 'blocked',
-    '  0  Done', '  1  Failed', '  2  Invalid', '  3  Done, but', 'doc-driven-designer-v1', 'default', 'with --all or --only']) {
+    '  0  Done', '  1  Failed', '  2  Invalid', '  3  Done, but', 'doc-driven-designer-v1', 'default', 'with --all or --only',
+    'ask whether to add the implementer and reviewer',
+    'tell the user which files were skipped or blocked', 'Never add --force on your own',
+    'If you are an agent other than Claude Code or Codex', 'https://github.com/superlucky84/docatlas/tree/main/agent-kit',
+    path.join(KIT_DIRECTORY, 'skills', '<name>', 'SKILL.md'), path.join(KIT_DIRECTORY, 'agents', '<name>.md')]) {
     assert.ok(help.includes(text), text);
   }
   const main = spawnSync(process.execPath, [cliPath, '--help'], { encoding: 'utf8' });
   assert.match(main.stdout, /docatlas agents help {2,}Steps for people and AI agents/);
+});
+
+test('the help shows the kit sources that this run actually uses', async t => {
+  const workspace = await setup(t);
+  const result = await agents(workspace, ['help']);
+  assert.equal(result.code, 0);
+  assert.ok(result.stdout.includes(path.join(workspace.kitDir, 'skills', '<name>', 'SKILL.md')), result.stdout);
 });
 
 test('a dry run prints the plan and writes nothing', async t => {
@@ -130,11 +141,11 @@ test('invalid arguments exit 2 and an empty home asks for --target', async t => 
     [[], /Missing agents command/],
     [['remove'], /Unknown agents command: remove/],
     [['install', 'extra'], /positional/i],
-    [['install', '--target', 'cursor'], /--target must be one of: claude, codex, all/],
+    [['install', '--target', 'cursor'], /--target must be one of: claude, codex, all[\s\S]*other than Claude Code or Codex/],
     [['install', '--all', '--only', 'sample-reviewer'], /either all items or named items/],
     [['install', '--only', 'missing', '--target', 'claude'], /Unknown agent kit item: missing/],
     [['install', '--root', 'missing'], /Project root not found/],
-    [['install'], /Choose clients with --target claude, codex or all/]
+    [['install'], /Choose clients with --target claude, codex or all[\s\S]*other than Claude Code or Codex/]
   ]) {
     const result = await agents(workspace, args);
     assert.equal(result.code, 2, JSON.stringify(args));

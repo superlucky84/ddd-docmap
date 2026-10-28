@@ -826,6 +826,64 @@ npm pack --dry-run 45개 파일. 이 저장소의 문서 지도는 docs/의 5개
 
 종료 기준: README가 핵심과 링크만 담고, 이전 정보가 모두 새 위치에 있으며, 검사가 통과한다.
 
+## implementer·reviewer 설치 안내 — 완료(배포 전)
+
+대응: RQ-17·18 / DC-26 / M-16.
+진입: 사용자 결정(2026-10-28)을 기준 4종에 기록했다. PR #2·#3이 main에 병합됐고, 작업 브랜치를 main(18ef3ad)으로 빨리 감기했다.
+기준 검증: 문법 72개·agent kit 세 쌍, Node 157개 중 154개 통과·3개 건너뜀(root 권한)·실패 0.
+
+### 구현
+
+- [x] src/agent-kit/command.js 에이전트용 도움말: 설치 대상을 정하지 않은 요청이면 implementer·reviewer 포함 여부를 먼저 묻는 1단계.
+- [x] README 빠른 시작에 --all 한 줄, agent-kit/README.md 설치 절에 기본이 designer인 이유.
+  에이전트가 실제로 묻는지는 사람이 확인하지 않았으므로 "도움말이 묻도록 안내한다"로 표현했다.
+- [x] CHANGELOG Unreleased 항목.
+
+### Test Hardening
+
+- [x] test/agent-kit-install.test.js의 도움말 검사에 새 단계 문구를 더한다. 바꾸기 전에는 실패하고 바꾼 뒤 통과하는지 확인한다.
+  도움말 변경 전 1개 실패, 변경 후 설치 테스트 8개 모두 통과.
+
+### Integration Test
+
+- [x] npm run check, npm test, npm run test:platform, 실제 docatlas agents help 출력, 링크 검사. 새 PR을 만든다.
+  문법 72개·agent kit 세 쌍, Node 157개 중 154개 통과·3개 건너뜀·실패 0, 플랫폼 6개, pack 45개 파일, 링크 83개 문제 0.
+
+종료 기준: 도움말·README·agent-kit 안내가 같은 내용을 말하고 기존 검사가 통과한다. 기본 설치 동작은 바뀌지 않는다.
+
+후속(2026-10-28 사용자 요청, 같은 PR #4):
+
+- [x] 도움말 5단계: 종료 코드 3이면 건너뛰거나 막힌 파일과 이유를 묻지 않아도 알린다. --force 규칙을 "스스로 붙이지 않는다"로 강화한다.
+  agent-kit 안내와 CHANGELOG에도 같은 내용을 반영했다.
+- [x] 도움말 테스트에 두 문구를 더하고, 바꾸기 전 실패·바꾼 뒤 통과를 확인한다. npm run check·npm test·플랫폼.
+  변경 전 도움말 테스트 1개 실패, 변경 후 설치 테스트 8개 통과. Node 157개 중 154개 통과·3개 건너뜀·실패 0, 플랫폼 6개, pack 45개 파일.
+
+## Claude Code·Codex 밖 에이전트 안내 — 완료(배포 전)
+
+대응: RQ-17·18 / DC-27 / M-16. 같은 PR #4.
+진입: 사용자 결정(2026-10-28)을 기준 4종에 기록했다. 기준 커밋 0457172.
+기준 관찰: 클라이언트 폴더가 없는 홈에서 install은 "--target claude, codex or all을 고르라"는 오류(종료 2)만 내고,
+--target cursor는 허용 목록만 알려 준다. 도움말에는 원본 파일 위치와 다른 에이전트 안내가 없다.
+
+### 구현
+
+- [x] agentsHelp(kit, kitDir)에 다른 에이전트 절과 원본 경로·GitHub 주소. runAgents는 kitDir를 넘긴다.
+  설치한 tarball에서 도움말이 그 설치본의 node_modules/docatlas/agent-kit 경로를 보여 주고, 그 아래 세 스킬 폴더가 있다.
+- [x] 클라이언트 폴더 없음·알 수 없는 --target 오류에 다른 에이전트 안내 문장.
+- [x] agent-kit/README.md 안내, CHANGELOG Unreleased.
+
+### Test Hardening
+
+- [x] 도움말 테스트: 절 제목·GitHub 주소·기본 키트 경로. runAgents의 kitDir가 도움말 경로에 반영되는지. 두 오류의 안내 문장.
+  바꾸기 전 3개 실패, 바꾼 뒤 설치 테스트 9개 모두 통과.
+
+### Integration Test
+
+- [x] npm run check, npm test, npm run test:platform, 실제 도움말·오류 출력, 링크 검사.
+  문법 72개·agent kit 세 쌍, Node 158개 중 155개 통과·3개 건너뜀·실패 0, 플랫폼 6개, pack 45개 파일, 링크 83개 문제 0.
+
+종료 기준: 다른 에이전트가 도움말이나 오류만 읽고 원본 위치와 할 일을 알 수 있고, Claude Code·Codex 설치 동작은 그대로다.
+
 ## 검증 예제와 기록
 
 F-01~08의 구체적인 구성은 [수동 검증의 가상 프로젝트](./MANUAL_TEST_CHECKLIST.md#가상-프로젝트)를 따른다.
@@ -1045,27 +1103,11 @@ npm ci가 받아 둔 잠금파일의 tarball만으로는 새 의존성 트리를
 이 프로젝트의 현재 인계는 이 블록 하나다. 작업을 멈출 때 이 블록을 바꾸며 이전 내용은 git 이력에 남는다.
 2026-10-28 이전의 인계와 검증 기록은 [인계 이력](./handoff/HISTORY.md#구현-계획에서-옮긴-기록)에 있다.
 
-- 완료(RQ-19·DC-20): README를 DDD 본거지 소개로 재구성하고 METHOD.md·CONTRIBUTING.md·CHANGELOG.md를 추가했다.
-  agent-kit/README.md의 설치 안내와 package.json의 description·keywords를 고쳤고, 합성 예제 캡처와 scripts/screenshot.js를 추가했다.
-  기준 4종의 이전 인계 33개 절을 docs/handoff/HISTORY.md로 옮겼고, 적용이 끝난 phase5-wip.patch를 삭제했다.
-- 검증: 문법 71개·agent kit 세 쌍, Node 155개 중 152개 통과·3개 건너뜀(root 권한)·실패 0, pack 45개 파일.
-  공개 안내·기준 4종·인계 이력의 링크와 앵커를 확인했다. 옮긴 333줄은 제목 단계와 링크 외에는 그대로다.
-- 이전 상태 유지: 0.3.0은 npm에 게시됐다(2026-10-28 registry latest 확인). PR #1 병합 이후 제품 코드는 바뀌지 않았다.
-- 완료(DC-21, 후속 요청): METHOD.ko.md, examples/sample-shop/ 예제, 저장소 지도를 docs/로 한정하는 docatlas.config.json,
-  예제·저장소 지도 테스트(test/examples.test.js)를 추가했다. README 캡처는 이제 예제에서 만든다.
-  검증: 문법 72개, Node 157개 중 154개 통과·3개 건너뜀·실패 0, pack 45개 파일, 링크 132개 문제 0.
-- 완료(DC-22): METHOD 두 언어에 프로젝트 적용 절(세 단계 선택지와 가벼운 AGENTS.md 예시), README 안내, 예제 AGENTS.md.
-  검증: Node 157개 중 154개 통과·3개 건너뜀·실패 0, 플랫폼 6개 통과, pack 45개 파일, 링크 136개 문제 0.
-  이어서 사용자 설명대로 문서 관리 절을 더해, 사람이 문서 분포와 내용을 파악해 에이전트에게 정리를 시키는 뷰어로 docatlas를 소개했다.
-- 완료(DC-23): METHOD 두 언어에 스펙 주도 개발과의 관계 절, README에 그 요약과 Linux·WSL 지원 상태·conda 환경 안내를 넣었다.
-  Linux 근거: Ubuntu 24.04 / Node 22.22.0에서 Node 154개·플랫폼 6개·브라우저 40개 통과. WSL은 직접 실행하지 않았다.
-- 완료(DC-25): README를 핵심과 링크만 남기도록 줄이고(512 → 132줄) 사용 레퍼런스를 guide/ 세 문서와 agent-kit/README.md로 옮겼다.
-- 완료(DC-24, 별도 브랜치 claude/conda-default-exclusion): 기본 exclude에 **/.conda/**를 더했다. README·CHANGELOG(Unreleased) 반영.
-  검증: Node 154개 통과·3개 건너뜀·실패 0, 플랫폼 6개 통과, pack 45개 파일.
-- 다음: [PR #2](https://github.com/superlucky84/docatlas/pull/2)는 f9e691e 시점에 main에 병합됐다(병합 커밋 368370c).
-  그 뒤 올린 문서 커밋 7개(스펙 주도 개발과의 관계, Linux·WSL 안내, README 축약과 guide/)와 .conda·CLI 도움말 변경은
-  모두 main을 향한 [PR #3](https://github.com/superlucky84/docatlas/pull/3)에 있다. PR #3을 병합하면 끝난다.
-  .conda와 CLI 도움말 링크는 다음 npm 배포(0.3.0 이후)에 포함된다. 배포는 사용자 단계다.
-- 차단: 없음. README 캡처는 PR #2 병합으로 main에 있다.
-- 최신 커밋: PR #3 브랜치 claude/conda-default-exclusion(main으로 병합 시험 결과 충돌 없음, Node 154개 통과).
-  이후 새 작업은 병합된 main에서 다시 시작한다. 실제 최신 SHA는 git log -1로 확인한다.
+- 완료: RQ-19 저장소 소개(DC-20~25)와 .conda 기본 제외(DC-24)·CLI 도움말 링크가 PR #2·#3으로 main에 병합됐다(18ef3ad).
+  자세한 근거는 위의 각 작업 절에 있다. .conda와 CLI 도움말 링크는 아직 npm에 배포되지 않았다(CHANGELOG Unreleased).
+- 완료(DC-26): 에이전트용 도움말 1단계(설치 대상 미지정 시 implementer·reviewer 포함 여부 묻기)와 5단계(건너뛴 파일 알리기),
+  --force는 사용자 허락 때만이라는 규칙, README --all 안내, Claude Code·Codex 밖 에이전트 안내(DC-27),
+  agent-kit 안내의 기본 설치 이유. 작업 브랜치 claude/tender-gates-sa5kn8를 main에서 다시 시작했다.
+- 다음: DC-26 PR 검토와 병합, 이후 다음 npm 배포(사용자 단계). M-16·M-18 사람 확인과 Codex 실제 세션, Windows 콘솔·Node 22.0 인수는 남아 있다.
+- 차단: 없음.
+- 최신 커밋: main 18ef3ad 위의 작업 브랜치. 실제 최신 SHA는 git log -1로 확인한다.

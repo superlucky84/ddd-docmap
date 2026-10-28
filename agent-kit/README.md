@@ -23,6 +23,18 @@ npx docatlas agents install             # designer skill and rule
 npx docatlas agents install --all       # all three
 ```
 
+The designer is the default because every piece of work starts with it. The implementer and
+reviewer run only when you ask for them, so install them with `--all` or `--only <name>` when you
+want them. When you ask an AI agent to install without saying which, `docatlas agents help`
+tells it to ask you first. The same help tells it to report any skipped files and to use
+`--force` only when you say so.
+
+The command installs for Claude Code and Codex only. Other agents can still use the kit: the
+skills and rules are plain Markdown in this folder, and `docatlas agents help` prints their
+location in the installed package. An agent should ask you where its client keeps rules or skills
+and adapt the files there. docatlas does not track or update those copies, so repeat this after
+updating docatlas.
+
 - The default installs `doc-driven-designer-v1` into your home folder: `~/.claude/skills`,
   `~/.claude/agents`, `~/.agents/skills`, and `~/.codex/agents`, for the clients whose folders exist.
   Add `--all` or `--only <name>` for the implementer and reviewer, `--target` to choose clients, and

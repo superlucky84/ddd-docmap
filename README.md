@@ -54,6 +54,9 @@ You need Node.js 22+ and npm.
    npx docatlas agents install
    ```
 
+   The implementer and reviewer are optional. Add `--all` to install them too
+   ([why](agent-kit/README.md#install)).
+
 2. In a new agent session, start with the designer:
 
    > Use doc-driven-designer-v1. I want to build … Ask me questions, then write REQUIREMENTS.md.
