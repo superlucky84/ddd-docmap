@@ -540,3 +540,10 @@ README의 기본 사용 명령은 docatlas다. 프로젝트 루트에서의 npx 
 - 다음: 별도 커밋·푸시 후 Windows CI와 실제 콘솔 인수, 이후 별도 0.2.1 배포/팀 가이드 반영. 기술적 차단 없음.
 - 최신 확인 커밋: 1ec2bd6. 이번 후보는 미커밋·미배포이며 로컬 결과를 Windows 결과로 해석하지 않는다.
 - 최신 구현 커밋: e9977a4. 새 GitHub main의 README·manifest에서 이름과 실행 계약을 재확인했다.
+
+## 0.2.1 커밋·푸시 인계 — 2026-10-28
+
+- DC-15 구현·플랫폼 테스트와 CI를 3eeda0c에 커밋했고 사용자 요청으로 main에 푸시한다.
+- checkout/setup-node의 v7 action.yml을 실제 GitHub 태그에서 확인했다.
+- 플랫폼 CI 상태: https://github.com/superlucky84/docatlas/actions/workflows/platform.yml. Windows 결과와 실제 콘솔/브라우저 인수는 구분한다.
+- 최신 구현 커밋: 3eeda0c. 기술적 차단 없음. npm 0.2.1은 미배포이며 이후 사용자 배포 범위로 남긴다.

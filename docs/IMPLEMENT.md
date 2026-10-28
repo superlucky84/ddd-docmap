@@ -775,3 +775,12 @@ registry와 실행 버전이 0.2.0인지 확인하고 새 설정·수집 옵션�
 - Windows/macOS Node 22/24 workflow는 작성했으나 원격 실행 전이다. 실제 Windows·콘솔·기본 브라우저 지원 확정은 TBD다.
 - 다음: 별도 커밋·푸시 후 Windows CI/실제 인수, 필요 시 별도 0.2.1 배포. 배포 후 팀 가이드의 기본 제외 목록도 갱신한다.
 - 기술적 차단 없음. 최신 확인 커밋은 1ec2bd6이다. 이번 후보는 미커밋·미배포이며 Confluence는 변경하지 않았다.
+
+## 0.2.1 커밋·푸시 최신 인계 — 2026-10-28
+
+- 구현 커밋: 3eeda0c(feat: add Python and Java exclusions and platform CI). 총 15개 파일을 커밋했다.
+- 사용자 요청으로 이 인계까지 main에 푸시한다. 기존 문법 54개·Node 115개·Chrome 40개·설치 통합 4개·플랫폼 6개 검증을 근거로 삼으며 구현은 추가 변경하지 않았다.
+- 원격 main과 차이가 없음을 fetch로 확인했고 checkout/setup-node v7의 action.yml도 GitHub에서 확인했다.
+- CI 상태 확인: https://github.com/superlucky84/docatlas/actions/workflows/platform.yml. 원격 결과를 로컬 macOS 결과와 분리한다.
+- 다음: Windows/macOS Node 22/24 CI 결과 확인·실제 Windows 콘솔/브라우저 인수, 이후 별도 0.2.1 배포·팀 가이드 갱신.
+- 최신 구현 커밋: 3eeda0c. 푸시 범위의 기술적 차단 없음. npm publish와 Confluence 수정은 이번 요청에 포함하지 않는다.

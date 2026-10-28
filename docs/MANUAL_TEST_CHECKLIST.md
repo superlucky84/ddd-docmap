@@ -439,3 +439,10 @@ Phase 3은 기본 탐색·읽기의 첫 검토 시점이다. 전체 제품 릴�
 - Windows/macOS Node 22/24 CI는 준비했다. 실제 Windows 실행과 물리적 Ctrl+C·PowerShell/CMD·기본 브라우저·UNC는 미검증/TBD이며 위 수동 체크박스를 완료로 표시하지 않는다.
 - 다음: 별도 커밋·푸시 후 Windows CI/실제 인수와 별도 0.2.1 배포·팀 가이드 반영. 기술적 차단 없음.
 - 최신 확인 커밋: 1ec2bd6. 이번 변경은 미커밋·미배포다. 기존 전체 Node/설치 통합의 POSIX 전제도 Windows 플랫폼 부분 검증과 구분한다.
+
+## 0.2.1 커밋·푸시 인계 — 2026-10-28
+
+- 검증한 구현·플랫폼 검증·CI를 3eeda0c에 커밋했고 사용자 요청으로 main에 푸시한다.
+- 기존 자동 검증과 미실행 수동 체크박스를 유지한다. Windows CI와 실제 콘솔/브라우저 인수는 각각 실행 결과를 확인한다.
+- CI 상태: https://github.com/superlucky84/docatlas/actions/workflows/platform.yml.
+- 최신 구현 커밋: 3eeda0c. 기술적 차단 없음. 0.2.1 배포와 팀 가이드 반영은 이후 별도 작업이다.
