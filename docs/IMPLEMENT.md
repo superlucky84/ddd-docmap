@@ -17,7 +17,7 @@
 - 완료: 0.2.0의 추가 수집 옵션·설정 파일명·검색 경로 탐색을 사용자가 npm 배포했다.
   새 작업은 Python·Java 기본 제외와 Windows 점검의 0.2.1 후보이며 맨 아래 인계가 현재 상태다.
 - 완료: 검색 결과의 경로에서 트리 위치 찾기. 최신 문법 51개·Chrome 40개·설치 통합 4개 통과.
-- 진행 중: RQ-16·17·18 에이전트 스킬 관리와 설치. 1~4단계(원본·판정·설치 명령과 도움말·업데이트 안내)를 완료했고 다음은 Test Hardening이다.
+- 진행 중: RQ-16·17·18 에이전트 스킬 관리와 설치. 1~4단계와 Test Hardening을 완료했고 다음은 Integration Test다.
 
 기술 선택은 각 단계에서 근거와 검증을 기록해 DC/IC를 해소한다.
 상세 계약을 바꾸면 요구사항·설계·단계·수동 기준을 같은 작업에서 갱신한다.
@@ -413,11 +413,11 @@ Confluence의 다른 문서가 함께 게시되지 않도록 원본 publish/sync
 Windows workflow는 test:platform과 test:browser를 실행한다. full npm test/test:integration은 POSIX 전제가 남아 별도 이식 대상이다.
 Windows 네이티브 Ctrl+C·기본 브라우저·PowerShell/CMD·UNC/네트워크 드라이브는 실제 인수 전 미검증이다.
 
-## 에이전트 스킬 관리와 설치 — 4단계 완료
+## 에이전트 스킬 관리와 설치 — Test Hardening 완료
 
-대응: RQ-16·17·18 / PR-09·10 / DC-16~19 / M-16·17. 기준 커밋 d71ee97, 계획 cc9e98d, 1단계 b85e00e, 2단계 59a561e, 3단계 49143c0.
-다음 후보 버전 0.3.0은 제안이며 package.json은 아직 0.2.1이다.
-상태: 설치 명령·도움말·업데이트 안내가 동작한다. 남은 단계는 Test Hardening과 Integration Test다.
+대응: RQ-16·17·18 / PR-09·10 / DC-16~19 / M-16·17. 기준 커밋 d71ee97, 계획 cc9e98d, 1단계 b85e00e, 2단계 59a561e,
+3단계 49143c0, 4단계 ead614f. 다음 후보 버전 0.3.0은 제안이며 package.json은 아직 0.2.1이다.
+상태: 설치 명령·도움말·업데이트 안내가 동작하고 실패·동시 실행·경로 경계를 보강했다. 남은 단계는 Integration Test다.
 
 진입 조건: DC-19 공개 범위 확인. 2026-10-28 사용자 확인으로 충족했다.
 
@@ -511,13 +511,31 @@ Windows 네이티브 Ctrl+C·기본 브라우저·PowerShell/CMD·UNC/네트워�
 | DOCMAP_NPM_CACHE=/private/tmp/ddd-docmap-phase1-npm-cache npm test | 149개 통과. agent-kit-notice.test.js 6개 포함, 기존 CLI·수명주기·종료 테스트 그대로 통과 |
 | npm pack --dry-run | 45개 파일. src/agent-kit/notice.js 추가 |
 
-### Test Hardening
+### Test Hardening: 완료
 
-- [ ] 쓰기 권한 없음·부분 실패 복구·동시 실행·Windows %USERPROFILE%·한글/공백 경로·CRLF 원본·심볼릭 링크 상위 디렉터리를 확인한다.
-- [ ] 이전 docatlas 버전에서 실행해도 높은 버전을 낮추지 않고, ctxbin 관리 사본을 건드리지 않는다.
+- [x] 실패 복구: --force로 고친 파일을 교체한 뒤 쓰기 권한 없는 폴더에서 실패해도, 고친 파일을 원래 내용·권한으로 되돌리고 백업을 남긴다.
+- [x] 동시 실행: 찾은 문제 — 실패한 실행의 복구가 다른 실행이 쓴 파일을 지울 수 있었다. <base>/.docatlas/install.lock 잠금을 추가했다.
+  잠금이 있으면 아무것도 바꾸지 않고 종료 1. 세 실행을 동시에 돌려도 결과는 한 벌이고 임시 파일·잠금이 남지 않는다.
+- [x] 권한: 찾은 문제 — 교체한 파일의 권한 비트가 기본값으로 바뀌었다. 교체와 복구 때 기존 권한을 유지한다.
+- [x] 한글/공백이 든 HOME·프로젝트와 CRLF 원본: LF로 설치되고 재실행은 unchanged, 프로젝트 설치는 같은 이름 경고 4개를 낸다.
+- [x] 판정 뒤 생긴 심볼릭 링크: 쓰기 전에 멈추고 아무것도 바꾸지 않는다.
+- [x] 이전 docatlas는 높은 버전 설치본을 낮추지 않고(skip-downgrade, 종료 3), ctxbin 관리 사본은 건드리지도 기록하지도 않는다.
+- [x] test:platform: production tarball의 npm 실행기로 한글·공백 HOME(HOME·USERPROFILE 지정)에 미리보기·설치·재실행을 검증한다. macOS 통과.
+- [ ] 같은 플랫폼 검증의 Windows 실행. platform CI는 main push와 PR에서 돌므로 PR 또는 main 반영 때 확인한다.
 
 기준 검증: npm test, npm run test:platform.
-종료 기준: 어떤 실패에서도 사용자가 고친 파일이 사라지지 않고 백업으로 복원할 수 있다.
+종료 기준: 어떤 실패에서도 사용자가 고친 파일이 사라지지 않고 백업으로 복원할 수 있다. macOS에서 충족했다.
+
+#### Test Hardening 검증 — 2026-10-28
+
+환경: macOS / Node 22.12.0.
+
+| 명령/범위 | 결과 |
+| --- | --- |
+| npm run check | JavaScript 69개 문법, agent kit 세 쌍 검사 통과 |
+| DOCMAP_NPM_CACHE=/private/tmp/ddd-docmap-phase1-npm-cache npm test | 155개 통과. agent-kit-hardening.test.js 6개 포함 |
+| DOCMAP_NPM_CACHE=/private/tmp/ddd-docmap-phase1-npm-cache npm run test:platform | 6개 통과. tarball npm 실행기로 한글·공백 HOME에 agents 미리보기·설치·재실행 포함 |
+| npm pack --dry-run | 45개 파일 |
 
 ### Integration Test
 
@@ -896,13 +914,13 @@ registry와 실행 버전이 0.2.0인지 확인하고 새 설정·수집 옵션�
 
 - 완료: 0.2.1의 Python·Java 기본 제외·플랫폼 테스트와 캐시 전제 보정. 최신 구현 커밋은 967c175이며 main에 푸시했다.
 - run 40657181408의 macOS/Windows × Node 22/24 네 작업이 모두 성공했다. 원인·재현·작업별 결과는 아래 플랫폼 CI 캐시 전제 보정 기록에 있다.
-- 에이전트 스킬: 작업 브랜치 feat/agent-kit. 계획 cc9e98d, 1단계 b85e00e, 2단계 59a561e, 3단계 49143c0. 4단계 업데이트 안내는 미커밋이다.
-  사용자는 1~3단계를 리뷰 없이 진행하기로 했다. 검증은 위 1~4단계 기록을 따른다.
-- 다음: 4단계 리뷰 여부를 사용자에게 확인한 뒤 Test Hardening, 이후 Integration Test(실제 Claude·Codex 확인 포함).
+- 에이전트 스킬: 작업 브랜치 feat/agent-kit. 계획 cc9e98d, 1단계 b85e00e, 2단계 59a561e, 3단계 49143c0, 4단계 ead614f.
+  Test Hardening(잠금·권한 유지와 테스트)은 미커밋이다. 사용자는 1~4단계를 리뷰 없이 진행하기로 했다.
+- 다음: Test Hardening 리뷰 여부를 사용자에게 확인한 뒤 Integration Test(설치 통합, 실제 Claude·Codex 로드와 DC-18, Windows CI).
   별도로 실제 Windows 콘솔 Ctrl+C·PowerShell/CMD·기본 브라우저 인수와 필요 시 npm 배포·팀 가이드 갱신.
 - 남은 일: Confluence 팀 페이지는 이전 designer 1.0.0이다. 갱신 시점은 사용자가 정한다.
 - 차단: 없음. DC-18은 Integration Test의 실제 Codex 확인에서 해소한다.
-- 최신 커밋: 49143c0. 4단계 변경은 미커밋이다. npm 0.2.1은 미배포이며 Confluence는 읽기만 했다.
+- 최신 커밋: ead614f. Test Hardening 변경은 미커밋이다. npm 0.2.1은 미배포이며 Confluence는 읽기만 했다.
   문서만 바뀐 인계 커밋은 CI를 재실행하지 않는다.
 
 ## 플랫폼 CI 캐시 전제 보정 — 검증 완료

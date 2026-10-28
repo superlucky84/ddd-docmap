@@ -403,6 +403,8 @@ test/integration/package.test.js의 부모 1개·하위 3개, 총 4개가 Node 2
 | M-16 | 판정 순서 create~skip-modified·--force 백업 표시·같은 이름 경고·링크 차단·판정 무쓰기 | agent-kit-plan.test.js |
 | M-16 | dry-run 무쓰기·설치 기록·재실행 무변경·수정본 보호와 백업·프로젝트 설치·인자 오류·실패 복구·도움말-옵션 대조 | agent-kit-install.test.js |
 | M-17 | 낡은 기록의 한 줄 안내·범위별 미리보기 명령·기록 없음/최신/읽기 실패 무안내·실제 CLI의 출력 순서·종료·무쓰기 | agent-kit-notice.test.js |
+| M-16 | 강제 교체 후 실패 복구와 백업·권한 유지·설치 잠금과 동시 실행·한글/공백·CRLF·판정 후 링크·낮은 버전·ctxbin 사본 | agent-kit-hardening.test.js |
+| M-16 | production tarball의 npm 실행기로 한글·공백 HOME에 미리보기·설치·재실행 (macOS 통과, Windows는 CI 확인 전) | platform.test.js |
 
 ## 릴리스 판정
 
