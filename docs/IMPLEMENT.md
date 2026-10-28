@@ -705,7 +705,7 @@ npm pack --dry-run 45개 파일. 이 저장소의 문서 지도는 docs/의 5개
 
 종료 기준: 한국어판과 예제가 있고, 예제는 --root로 열리며 저장소 지도에는 섞이지 않는다. 기존 검사·테스트가 통과한다.
 
-## 프로젝트 적용 안내와 PR — 진행 중
+## 프로젝트 적용 안내와 PR — 완료(CI 확인 대기)
 
 대응: RQ-19 / DC-22 / M-18.
 진입: 사용자 결정(2026-10-28)을 기준 4종에 기록했다. 기준 커밋 fb2a87c.
@@ -728,6 +728,7 @@ npm pack --dry-run 45개 파일. 이 저장소의 문서 지도는 docs/의 5개
 - [x] npm run check, npm test, npm run test:platform, npm pack --dry-run, 링크 검사.
   문법 72개·agent kit 세 쌍, Node 157개 중 154개 통과·3개 건너뜀·실패 0, 플랫폼 6개 통과, pack 45개 파일, 링크 136개 문제 0.
 - [ ] main 대상 PR을 만들고 플랫폼 CI 결과를 확인한다.
+  [PR #2](https://github.com/superlucky84/docatlas/pull/2)를 만들었다. 원격 CI 결과 확인과 병합은 남아 있다.
 
 종료 기준: 적용 범위를 고를 수 있다는 안내와 예시가 있고, 기존 검사가 통과하며, PR이 열려 있다.
 
@@ -959,8 +960,11 @@ npm ci가 받아 둔 잠금파일의 tarball만으로는 새 의존성 트리를
 - 완료(DC-21, 후속 요청): METHOD.ko.md, examples/sample-shop/ 예제, 저장소 지도를 docs/로 한정하는 docatlas.config.json,
   예제·저장소 지도 테스트(test/examples.test.js)를 추가했다. README 캡처는 이제 예제에서 만든다.
   검증: 문법 72개, Node 157개 중 154개 통과·3개 건너뜀·실패 0, pack 45개 파일, 링크 132개 문제 0.
-- 다음: 사용자 검토 후 main 반영. GitHub 저장소 About·topics 설정은 사용자가 한다.
+- 완료(DC-22): METHOD 두 언어에 프로젝트 적용 절(세 단계 선택지와 가벼운 AGENTS.md 예시), README 안내, 예제 AGENTS.md.
+  검증: Node 157개 중 154개 통과·3개 건너뜀·실패 0, 플랫폼 6개 통과, pack 45개 파일, 링크 136개 문제 0.
+- 다음: [PR #2](https://github.com/superlucky84/docatlas/pull/2)의 CI 확인과 사용자 검토 후 main 병합.
+  GitHub 저장소 About·topics 설정은 사용자가 한다.
   M-18 사람 확인(GitHub 첫 화면, 한국어판, 예제 열기, 다음 게시 후 npm 페이지의 캡처·링크).
   기존 남은 일: Codex 실제 세션과 M-16 수동 항목, Windows 콘솔·기본 브라우저·Node 22.0 인수.
 - 차단: 없음. README 캡처는 GitHub main의 절대 URL이라 main에 반영되기 전에는 브랜치 화면에서 보이지 않는다.
-- 최신 커밋: 작업 브랜치 claude/tender-gates-sa5kn8. 이 인계 직전 커밋은 15338e9이며 실제 최신 SHA는 git log -1로 확인한다.
+- 최신 커밋: 작업 브랜치 claude/tender-gates-sa5kn8. 이 인계 직전 커밋은 2a77a63이며 실제 최신 SHA는 git log -1로 확인한다.
