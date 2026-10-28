@@ -14,6 +14,8 @@ Agent skill and rule versions are tracked separately in
 - `docatlas agents help` tells AI agents to ask whether to add the implementer and reviewer
   when the user did not say what to install, to report skipped or blocked files after an
   install, and never to add `--force` without the user's permission.
+- For agents other than Claude Code and Codex, `docatlas agents help` prints where the skill and
+  rule sources are, and the "no client folder" and unknown `--target` errors point to it.
 
 ## 0.3.0 — 2026-10-28
 

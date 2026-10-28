@@ -3,7 +3,7 @@ import os from 'node:os';
 import path from 'node:path';
 import { parseArgs } from 'node:util';
 import { applyPlan } from './install.js';
-import { AgentKitError, loadKit } from './kit.js';
+import { AgentKitError, KIT_DIRECTORY, loadKit } from './kit.js';
 import { CLIENTS, detectClients, planInstall, selectItems } from './plan.js';
 
 export const INSTALL_OPTIONS = {
@@ -22,8 +22,9 @@ export const EXIT = { OK: 0, FAILED: 1, USAGE: 2, NEEDS_DECISION: 3 };
 
 const TARGETS = [...CLIENTS, 'all'];
 const DECISIONS = new Set(['skip-modified', 'skip-downgrade', 'skip-managed', 'blocked']);
+const OTHER_AGENTS = 'If you are an agent other than Claude Code or Codex, do not pick a --target; see docatlas agents help.';
 
-export function agentsHelp(kit) {
+export function agentsHelp(kit, kitDir = KIT_DIRECTORY) {
   const items = kit
     ? kit.items.map(item => '  ' + item.name.padEnd(27) + item.version.padEnd(8) + (item.default ? 'default' : 'with --all or --only'))
     : ['  (the agent kit could not be read)'];
@@ -40,6 +41,14 @@ export function agentsHelp(kit) {
     '  Never add --force on your own. Use it only after the user says to replace the skipped files;',
     '  it backs them up first.',
     '  The command never asks questions. Read its output lines and exit code.', '',
+    'If you are an agent other than Claude Code or Codex:',
+    '  This command installs only for Claude Code and Codex. Do not pick a --target for them;',
+    '  you would not read those folders. Use the Markdown sources instead:',
+    '    ' + path.join(kitDir, 'skills', '<name>', 'SKILL.md') + '  (skill)',
+    '    ' + path.join(kitDir, 'agents', '<name>.md') + '  (agent rule)',
+    '  Online: https://github.com/superlucky84/docatlas/tree/main/agent-kit (main may be newer).',
+    '  Ask the user where your client keeps rules or skills, adapt the files there, and tell them',
+    '  that docatlas will not track or update those copies, so repeat this after updating docatlas.', '',
     'Usage:',
     '  docatlas agents install [--project] [--root <dir>] [--target claude|codex|all]',
     '                          [--all | --only <name>] [--dry-run] [--force]',
@@ -103,7 +112,7 @@ export async function runAgents(args, {
   const loadForHelp = () => loadKit(kitDir).catch(() => null);
   const [command, ...rest] = args;
   if (command === 'help' || command === '--help' || command === '-h') {
-    stdout.write(agentsHelp(await loadForHelp()));
+    stdout.write(agentsHelp(await loadForHelp(), kitDir ?? KIT_DIRECTORY));
     return EXIT.OK;
   }
   if (command !== 'install') {
@@ -116,11 +125,11 @@ export async function runAgents(args, {
     return usage(error.message);
   }
   if (values.help) {
-    stdout.write(agentsHelp(await loadForHelp()));
+    stdout.write(agentsHelp(await loadForHelp(), kitDir ?? KIT_DIRECTORY));
     return EXIT.OK;
   }
   if (values.target !== undefined && !TARGETS.includes(values.target)) {
-    return usage('--target must be one of: ' + TARGETS.join(', '));
+    return usage('--target must be one of: ' + TARGETS.join(', ') + '\n' + OTHER_AGENTS);
   }
   let root;
   try {
@@ -146,7 +155,8 @@ export async function runAgents(args, {
     ? await detectClients(homeFolder)
     : values.target === 'all' ? CLIENTS : [values.target];
   if (clients.length === 0) {
-    return usage('No Claude Code or Codex folder was found in ' + homeFolder + '. Choose clients with --target claude, codex or all.');
+    return usage('No Claude Code or Codex folder was found in ' + homeFolder +
+      '. Choose clients with --target claude, codex or all.\n' + OTHER_AGENTS);
   }
   const dryRun = values['dry-run'] === true;
   let plan;
