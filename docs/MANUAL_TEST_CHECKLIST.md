@@ -209,7 +209,7 @@ DOCMAP_BROWSER_CHANNEL=chrome으로 설치 Chrome을 선택한다. 지원 환경
 - [ ] 개발 의존성으로 설치한 프로젝트 루트에서 npx --no-install docatlas 또는 pnpm docatlas로 실행한다.
 - [ ] docatlas와 기존 docmap·ddd-docmap의 도움말·버전·옵션 동작이 같다.
 - [ ] 설치 단계의 manifest/lockfile/node_modules 변경 이후 실행 중 의도하지 않은 쓰기가 없다.
-- [ ] 설치할 후보 버전(현재 docatlas@0.2.1)의 이름·버전·MIT LICENSE·세 bin 이름과 GitHub 저장소 링크를 확인한다.
+- [ ] 설치할 후보 버전(현재 docatlas@0.3.0)의 이름·버전·MIT LICENSE·세 bin 이름과 GitHub 저장소 링크를 확인한다.
 - [ ] npm tarball에 README·LICENSE·실행 파일·런타임 자산을 포함하고 개발 문서/보존 패치는 제외한다.
 - [ ] 브라우저의 docatlas 브랜드·제목과 실제 설치된 docatlas의 cwd 실행을 확인한다.
 - [ ] README가 미설치 npx·npm/pnpm 로컬 설치·배포 전 tarball을 구분하고 현재 cwd 루트와 옵션·종료를 설명한다.
@@ -413,6 +413,20 @@ test/integration/package.test.js의 부모 1개·하위 3개, 총 4개가 Node 2
 | M-16 | 강제 교체 후 실패 복구와 백업·권한 유지·설치 잠금과 동시 실행·한글/공백·CRLF·판정 후 링크·낮은 버전·ctxbin 사본 | agent-kit-hardening.test.js |
 | M-16 | production tarball의 npm 실행기로 한글·공백 HOME에 미리보기·설치·재실행 (macOS 로컬, PR #1 CI의 macOS·Windows 통과) | platform.test.js |
 | M-16·17 | F-09: 개발 의존성 설치본으로 도움말→미리보기→설치→재실행, 프로젝트 --all 설치와 경고, 문서 무변경, 낡은 기록 안내→갱신 후 사라짐, 수정본 종료 3과 --force 백업 | integration/agent-kit.test.js |
+
+## 0.3.0 배포 준비 확인 — 2026-10-28
+
+사용자 요청: PR #1이 병합된 main에서 0.3.0으로 올리고 npm 게시 순서를 안내한다.
+이번 작업은 게시 준비까지이며 아래 자동 확인은 기존 수동 인수 체크박스를 대신하지 않는다.
+
+- [x] main이 PR #1 병합 커밋 47ff79a를 포함하고 변경 전 작업 트리가 깨끗하다.
+- [x] 변경 전 npm run check: JavaScript 70개·agent kit 세 쌍 통과.
+- [x] npm registry latest는 0.2.0이고 0.3.0은 미게시임을 조회한다.
+- [x] manifest·lockfile·세 bin이 0.3.0을 표시하고 README의 tarball 예제가 일치한다.
+- [x] Node 테스트 155개·설치 통합 5개 통과. 문법 70개·agent kit 세 쌍·pack/publish dry-run 통과, 45파일에 agent-kit/ 포함.
+- [ ] 사용자가 게시 후 npm view docatlas@0.3.0 version과 npx --yes docatlas@0.3.0 --version을 확인한다.
+
+커밋·푸시·npm 인증·실제 publish는 사용자 실행 단계다. 상세 결과와 절차는 구현 계획의 현재 인계를 따른다.
 
 ## 릴리스 판정
 

@@ -5,9 +5,8 @@ Local document maps for **Doc-Driven Development** projects.
 Find feature documentation spread across a repository, explore its hierarchy,
 and read Markdown without losing your place.
 
-> Docatlas is published on npm. This checkout adds Python/Java generated-directory
-> exclusions and the `docatlas agents` command for the next release. Neither is published yet;
-> use the tarball instructions below to try this checkout.
+> Version 0.3.0 adds Python/Java generated-directory exclusions and the `docatlas agents`
+> command. To try this checkout before it is published, use the tarball instructions below.
 
 ## Document map
 
@@ -92,7 +91,7 @@ Then install it from your project's root:
 
 ~~~sh
 cd /path/to/project
-pnpm add -D /tmp/docatlas-0.2.1.tgz
+pnpm add -D /tmp/docatlas-0.3.0.tgz
 pnpm docatlas
 ~~~
 
@@ -100,7 +99,7 @@ Or use npm:
 
 ~~~sh
 cd /path/to/project
-npm install --save-dev /tmp/docatlas-0.2.1.tgz
+npm install --save-dev /tmp/docatlas-0.3.0.tgz
 npx --no-install docatlas
 ~~~
 
@@ -161,7 +160,7 @@ scope. `--docs-dir .` also selects the project root.
 Neither option bypasses exclusions: **`node_modules/` and `.git/` at any depth are
 always skipped**, as are symbolic links and paths outside the project. `.gitignore`
 rules and configuration `exclude` apply before any include or CLI selection.
-Generated directories are excluded at any depth. The next release's defaults are:
+Generated directories are excluded at any depth. Version 0.3.0's defaults are:
 
 | Category | Excluded directory names |
 | --- | --- |
@@ -329,8 +328,8 @@ cycles, missing targets, and excluded sources produce collection notices.
 
 The package includes the doc-driven agent skills and rules used to write these documents
 (designer, implementer, and reviewer) in [agent-kit/](agent-kit/). `docatlas agents install`
-copies them to the folders that Claude Code and Codex read automatically. This command is new in
-this checkout and is not published yet.
+copies them to the folders that Claude Code and Codex read automatically. This command is available
+starting in version 0.3.0.
 
 ```sh
 npx docatlas agents install --dry-run   # preview; writes nothing
@@ -411,8 +410,8 @@ node bin/docatlas.js --version
 npm pack --dry-run
 ```
 
-The package name is `docatlas`, licensed under MIT. This checkout prepares `0.2.1`;
-the next version has not been published by this change.
+The package name is `docatlas`, licensed under MIT. This checkout prepares `0.3.0`;
+publishing is a separate release step.
 
 ## Browser checks
 

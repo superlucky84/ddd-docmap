@@ -15,9 +15,10 @@
 - 진행 중: Phase 6 Integration Test. 별도 설치 자동 검증은 Node 22.12.0·24.22.1에서 통과했다.
   전체 수동 인수·선언한 Node 22.0·최종 지원 OS 검증은 남아 있다.
 - 완료: 0.2.0의 추가 수집 옵션·설정 파일명·검색 경로 탐색을 사용자가 npm 배포했다.
-  새 작업은 Python·Java 기본 제외와 Windows 점검의 0.2.1 후보이며 맨 아래 인계가 현재 상태다.
+  Python·Java 기본 제외와 에이전트 스킬 설치를 포함한 다음 후보는 사용자 요청으로 0.3.0이다. 현재 인계가 최신 상태다.
 - 완료: 검색 결과의 경로에서 트리 위치 찾기. 최신 문법 51개·Chrome 40개·설치 통합 4개 통과.
-- 진행 중: RQ-16·17·18 에이전트 스킬 관리와 설치. 자동 검증·Windows/macOS CI·Claude Code 실제 세션 확인을 마쳤고 PR #1에 올렸다. Codex 실제 세션 확인과 병합·배포 결정이 남았다.
+- 완료: RQ-16·17·18 에이전트 스킬 관리와 설치의 구현·자동 검증·Windows/macOS CI·Claude Code 실제 세션 확인과 PR #1 병합.
+  Codex 실제 세션 확인과 남은 수동 인수는 별도다. 0.3.0 배포 준비·로컬 검증을 마쳤고 실제 npm 게시는 사용자 실행 단계다.
 
 기술 선택은 각 단계에서 근거와 검증을 기록해 DC/IC를 해소한다.
 상세 계약을 바꾸면 요구사항·설계·단계·수동 기준을 같은 작업에서 갱신한다.
@@ -416,7 +417,7 @@ Windows 네이티브 Ctrl+C·기본 브라우저·PowerShell/CMD·UNC/네트워�
 ## 에이전트 스킬 관리와 설치 — Integration Test 자동 검증 완료
 
 대응: RQ-16·17·18 / PR-09·10 / DC-16~19 / M-16·17. 기준 커밋 d71ee97, 계획 cc9e98d, 1단계 b85e00e, 2단계 59a561e,
-3단계 49143c0, 4단계 ead614f, Test Hardening 5bb8c7a. 다음 후보 버전 0.3.0은 제안이며 package.json은 아직 0.2.1이다.
+3단계 49143c0, 4단계 ead614f, Test Hardening 5bb8c7a. 다음 후보 버전은 사용자 요청으로 0.3.0으로 확정했다.
 상태: 설치 tarball로 전 과정을 자동 검증했고 DC-18을 해소했다. PR #1의 Windows/macOS CI가 통과했다. 사람의 M-16·17 인수가 남았다.
 
 진입 조건: DC-19 공개 범위 확인. 2026-10-28 사용자 확인으로 충족했다.
@@ -566,6 +567,59 @@ Windows 네이티브 Ctrl+C·기본 브라우저·PowerShell/CMD·UNC/네트워�
 | npm pack --dry-run | 45개 파일 |
 | codex debug prompt-input 관찰 | 위 DC-18 결과. 실제 HOME과 Codex 설정은 쓰지 않았다 |
 | [platform CI 40665207058](https://github.com/superlucky84/docatlas/actions/runs/40665207058) | macOS·Windows × Node 22/24 네 작업 통과. 각 작업 문법·agent kit 검사, 플랫폼 6개(tarball npm 실행기로 한글·공백 HOME에 agents 설치 포함), pack 45파일. Windows는 USERPROFILE과 .cmd 실행기 경로 |
+
+## 0.3.0 배포 준비 — 완료
+
+대응: RQ-10·14·16~18 / DC-12·15~19 / M-11·16·17.
+진입: 작업 트리가 깨끗하고 PR #1 병합 커밋 47ff79a로 main을 fast-forward했다.
+기준 검증: 변경 전 npm run check 통과(JavaScript 70개·agent kit 세 쌍), npm registry latest 0.2.0·0.3.0 미게시 확인.
+
+- [x] manifest·lockfile을 npm version 0.3.0 --no-git-tag-version --ignore-scripts로 갱신한다.
+- [x] README의 후보 버전·tarball 예제와 기준 4종의 최신 결정을 맞춘다.
+- [x] npm run check, npm test, 설치 통합, pack/publish dry-run과 CLI 버전을 확인한다.
+- [x] 실제 npm 게시 전 커밋·푸시, 인증, dry-run, publish, registry/실행 확인 순서를 안내한다.
+
+종료 기준: 0.3.0 후보에 agent-kit/와 런타임이 포함되고 검증 결과·미게시 상태가 명확하다.
+기존 Test Hardening·Integration Test 단계와 미완료 수동 인수는 유지한다.
+실제 npm publish·커밋·푸시·태그 생성은 이번 요청에서 실행하지 않는다.
+
+검증 환경: macOS / Node 22.12.0 / npm 11.20.0 / Chrome 156.0.8078.48.
+
+| 명령/범위 | 결과 |
+| --- | --- |
+| npm run check | JavaScript 70개·agent kit 1.0.0 세 쌍 통과 |
+| DOCMAP_NPM_CACHE=/private/tmp/ddd-docmap-phase1-npm-cache npm test | 155개 통과. 플랫폼 production tarball 검사와 세 npm 실행기의 0.3.0 출력 포함 |
+| DOCMAP_BROWSER_CHANNEL=chrome DOCMAP_NPM_CACHE=/private/tmp/ddd-docmap-phase1-npm-cache npm run test:integration | 5개 통과. agent 설치·갱신·수정본 보호와 문서 탐색·읽기·감지·종료·원본 보존 |
+| npm pack --dry-run / npm publish --dry-run | docatlas@0.3.0, 45개 파일, 60,990 bytes. 스킬·룰 세 쌍과 manifest·런타임 포함, 개발 문서·테스트 제외. 실제 게시 없음 |
+| CLI / manifest / lockfile | 0.3.0 일치. 의존성·agent kit 버전·원본 해시는 변경하지 않음 |
+
+### 사용자가 실행할 0.3.0 배포 절차
+
+main의 이번 변경을 커밋·푸시하고 플랫폼 CI 성공을 확인한 뒤 npm에 게시한다.
+package.json은 이미 0.3.0이므로 npm version을 다시 실행하지 않는다.
+
+```sh
+git add package.json package-lock.json README.md docs/REQUIREMENTS.md docs/DESIGN.md docs/IMPLEMENT.md docs/MANUAL_TEST_CHECKLIST.md
+git commit -m "chore: prepare 0.3.0 release"
+git push origin main
+```
+
+CI: https://github.com/superlucky84/docatlas/actions/workflows/platform.yml.
+인증 확인이 실패하면 npm login --registry=https://registry.npmjs.org/로 로그인한 뒤 계속한다.
+
+```sh
+npm whoami --registry=https://registry.npmjs.org/
+npm publish --dry-run --access public --registry=https://registry.npmjs.org/
+npm publish --access public --registry=https://registry.npmjs.org/
+npm view docatlas version --registry=https://registry.npmjs.org/
+npm view docatlas@0.3.0 version --registry=https://registry.npmjs.org/
+npx --yes docatlas@0.3.0 --version
+npx --yes docatlas@0.3.0 agents help
+```
+
+로그인·게시 시 표시되는 브라우저/2FA 절차를 따른다. registry와 실제 CLI에서 0.3.0을 확인한다.
+선택적으로 게시 성공 후 git tag v0.3.0, git push origin v0.3.0으로 버전 태그를 남긴다.
+공식 절차: https://docs.npmjs.com/creating-and-publishing-unscoped-public-packages/.
 
 ## 검증 예제와 기록
 
@@ -933,18 +987,17 @@ registry와 실행 버전이 0.2.0인지 확인하고 새 설정·수집 옵션�
 
 ## 현재 인계 — 2026-10-28
 
-- 완료: 0.2.1의 Python·Java 기본 제외·플랫폼 테스트와 캐시 전제 보정. 최신 구현 커밋은 967c175이며 main에 푸시했다.
-- run 40657181408의 macOS/Windows × Node 22/24 네 작업이 모두 성공했다. 원인·재현·작업별 결과는 아래 플랫폼 CI 캐시 전제 보정 기록에 있다.
-- 에이전트 스킬: 작업 브랜치 feat/agent-kit. 계획 cc9e98d, 1단계 b85e00e, 2단계 59a561e, 3단계 49143c0, 4단계 ead614f,
-  Test Hardening 5bb8c7a, Integration Test fa90bfd. 사용자 요청으로 push했고 PR #1(https://github.com/superlucky84/docatlas/pull/1)을 열었다.
-  PR의 platform CI 네 작업이 통과했다. 사용자는 앞 단계를 리뷰 없이 진행하기로 했다.
-- 다음: Codex 실제 세션 확인과 남은 M-16 수동 항목, PR 병합 결정, 배포 시 버전(0.3.0 제안)·npm publish·Confluence 갱신.
-  Claude Code 실제 세션 확인은 2026-10-28 사용자가 마쳤다(M-17).
-  별도로 실제 Windows 콘솔 Ctrl+C·PowerShell/CMD·기본 브라우저 인수와 필요 시 npm 배포·팀 가이드 갱신.
-- 남은 일: Confluence 팀 페이지는 이전 designer 1.0.0이다. 갱신 시점은 사용자가 정한다.
-- 차단: 없음.
-- 최신 구현 커밋: fa90bfd(PR #1). 이 인계는 문서 커밋으로 추가한다. npm 0.2.1은 미배포이며 Confluence는 읽기만 했다.
-  문서만 바뀐 인계 커밋은 CI를 재실행하지 않는다.
+- 완료: PR #1 병합을 확인하고 main을 origin/main의 47ff79a로 동기화했다.
+  Python·Java 기본 제외와 에이전트 스킬 설치의 기존 자동 검증·Windows/macOS CI·Claude Code 실제 세션 인수 기록을 유지한다.
+- 사용자 결정: 0.3.0으로 올리고 npm 게시 방법을 안내한다. 실제 게시·커밋·푸시는 사용자 실행 단계다.
+- 완료: manifest·lockfile·README·기준 4종을 0.3.0 후보에 맞췄다.
+  문법 70개·agent kit 세 쌍·Node 테스트 155개·설치 통합 5개·pack/publish dry-run이 통과했다.
+- 다음: 사용자가 커밋·푸시 → CI 확인 → npm 인증 → dry-run → publish → registry와 실제 CLI 확인을 실행한다.
+  상세 명령은 위 0.3.0 배포 절차를 따른다. npm version을 다시 실행할 필요는 없다.
+- 별도 남은 일: Codex 실제 세션·M-16 수동 항목, Windows 콘솔/기본 브라우저·Node 22.0 인수,
+  Confluence 팀 페이지 갱신(시점은 사용자 결정). 자동 검증과 수동 인수는 구분한다.
+- 차단: 없음. 조회 시 npm latest는 0.2.0이며 0.3.0은 미게시다.
+- 최신 확인 커밋: 47ff79a(PR #1 병합). 이번 배포 준비 변경은 미커밋이다.
 
 ## 플랫폼 CI 캐시 전제 보정 — 검증 완료
 
