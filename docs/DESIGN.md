@@ -556,3 +556,8 @@ README의 기본 사용 명령은 docatlas다. 프로젝트 루트에서의 npx 
 - test:integration은 사전에 준비한 캐시에서의 엄격한 오프라인 설치를 계속 검증한다.
 - CI push/PR의 docs/**만 바뀐 인계 커밋은 플랫폼 재실행을 생략하고 README·코드·테스트·workflow 변경은 실행한다.
   설치·브라우저 검사를 생략해 통과시키지 않는다. Windows 콘솔/브라우저 수동 인수와 자동 CI 결과는 별도다.
+
+검증 근거: 967c175의 [run 40657181408](https://github.com/superlucky84/docatlas/actions/runs/40657181408)에서 macOS/Windows Node 22/24 네 작업이 모두 성공했다.
+각 작업의 플랫폼 6개·실제 브라우저 40개·pack 29파일·문법 54개를 로그로 확인했다. Windows의 네이티브 경로와 npm .cmd 실행기도 통과했다.
+로컬의 새 캐시 재현은 수정 전 5/6 통과와 ENOTCACHED, 수정 후 6/6 통과다. 다음은 실제 콘솔/기본 브라우저 인수와 별도 배포다.
+최신 구현 커밋은 967c175이며 기술적 차단은 없다. Windows 전체 POSIX 기반 테스트나 수동 인수가 완료된 것으로 확대하지 않는다.

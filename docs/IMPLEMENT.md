@@ -776,16 +776,17 @@ registry와 실행 버전이 0.2.0인지 확인하고 새 설정·수집 옵션�
 - 다음: 별도 커밋·푸시 후 Windows CI/실제 인수, 필요 시 별도 0.2.1 배포. 배포 후 팀 가이드의 기본 제외 목록도 갱신한다.
 - 기술적 차단 없음. 최신 확인 커밋은 1ec2bd6이다. 이번 후보는 미커밋·미배포이며 Confluence는 변경하지 않았다.
 
-## 0.2.1 커밋·푸시 최신 인계 — 2026-10-28
+## 현재 인계 — 2026-10-28
 
-- 구현 커밋: 3eeda0c(feat: add Python and Java exclusions and platform CI). 총 15개 파일을 커밋했다.
-- 사용자 요청으로 이 인계까지 main에 푸시한다. 기존 문법 54개·Node 115개·Chrome 40개·설치 통합 4개·플랫폼 6개 검증을 근거로 삼으며 구현은 추가 변경하지 않았다.
-- 원격 main과 차이가 없음을 fetch로 확인했고 checkout/setup-node v7의 action.yml도 GitHub에서 확인했다.
-- CI 상태 확인: https://github.com/superlucky84/docatlas/actions/workflows/platform.yml. 원격 결과를 로컬 macOS 결과와 분리한다.
-- 다음: Windows/macOS Node 22/24 CI 결과 확인·실제 Windows 콘솔/브라우저 인수, 이후 별도 0.2.1 배포·팀 가이드 갱신.
-- 최신 구현 커밋: 3eeda0c. 푸시 범위의 기술적 차단 없음. npm publish와 Confluence 수정은 이번 요청에 포함하지 않는다.
+- 완료: 0.2.1의 Python·Java 기본 제외·플랫폼 테스트와 캐시 전제 보정. 최신 구현 커밋은 967c175이며 main에 푸시했다.
+- 이전 run 40652167597은 네 작업 모두 production 설치의 ENOTCACHED로 실패했다. 새 캐시 + npm ci로 로컬 재현했고 --prefer-offline 설치로 보정했다.
+- 새 run 40657181408의 macOS/Windows × Node 22/24 네 작업이 모두 성공했다. 각 작업은 문법 54개·플랫폼 6개·브라우저 40개·pack 29개 파일을 통과했다.
+- 결과: https://github.com/superlucky84/docatlas/actions/runs/40657181408. 네 작업의 완료 상태와 실제 로그를 확인했다.
+- 제품 런타임은 이번 캐시 수정에서 바꾸지 않았다. 기존 전체 Node 115개와 POSIX 설치 통합 4개는 이전 로컬 검증 기록이다.
+- 다음: 실제 Windows 콘솔 Ctrl+C·PowerShell/CMD·기본 브라우저 인수, 필요 시 별도 npm 0.2.1 배포·팀 가이드 갱신.
+- 기술적 차단 없음. npm 0.2.1은 미배포이며 Confluence는 변경하지 않았다. 문서만 바뀐 인계 커밋은 CI를 재실행하지 않는다.
 
-## 플랫폼 CI 캐시 전제 보정 — 진행 중
+## 플랫폼 CI 캐시 전제 보정 — 검증 완료
 
 진입: 사용자 보고와 run 40652167597 네 작업의 로그. 기준 커밋 a44c39e.
 원인: 각 작업의 플랫폼 테스트 6개 중 5개 통과, 새 tarball production 설치만 ENOTCACHED로 실패했다.
@@ -795,7 +796,7 @@ npm ci가 받아 둔 잠금파일의 tarball만으로는 새 의존성 트리를
 - [x] 플랫폼 최초 설치를 --prefer-offline으로 보정하고 설치/실행 모드를 진단에 구분한다.
 - [x] README의 설치 전제와 Windows 검증 상태를 실제 CI 결과에 맞게 안내한다.
 - [x] docs/**만 바뀐 인계 커밋은 CI를 재실행하지 않도록 필터링한다.
-- [ ] Integration Test: 같은 캐시에서 플랫폼 6개 통과, 문법·문서·pack 검증 후 푸시하고 네 CI 작업을 확인한다.
+- [x] Integration Test: 같은 캐시에서 플랫폼 6개 통과, 문법·문서·pack 검증 후 푸시하고 네 CI 작업을 확인한다.
 
 기준 검증: 기존 플랫폼 6개·전체 Node 115개·Chrome 40개. 제품/수집기 계약은 바꾸지 않는다.
 종료 기준: 새 CI의 네 조합에서 설치·브라우저·pack 단계가 실제 통과한다. 남은 실제 콘솔 인수는 별도 유지한다.
@@ -803,4 +804,16 @@ npm ci가 받아 둔 잠금파일의 tarball만으로는 새 의존성 트리를
 재현: /private/tmp/docatlas-clean-ci-eo4xl_09/seed에 manifest/lockfile만 복사하고 새 cache에 npm ci를 실행했다.
 그 cache로 원래 test:platform을 실행해 5개 통과·production 설치 1개 ENOTCACHED 실패를 동일하게 재현했다.
 수정 후 같은 cache에서 6개가 통과했고 설치 진단은 prefer-offline, 실행기 검사는 offline으로 구분했다.
-문법 54개·workflow YAML/필터·pack dry-run 29개 파일·git diff --check가 통과했다. 원격 네 작업은 다음 단계에서 확인한다.
+문법 54개·workflow YAML/필터·pack dry-run 29개 파일·git diff --check가 통과했다. 문서 5개의 JSON 4개·로컬 링크/앵커 27개도 확인했다.
+
+새 CI run 40657181408, 검증 커밋 967c175482c0b9fa7f71e5114f43d43a54cc20f9:
+
+| 작업 | 실제 Node | 플랫폼 | 브라우저 | 패키징 | 결과 |
+| --- | --- | --- | --- | --- | --- |
+| macos-latest / Node 22 | 22.23.4 | 6개 | 40개 | 29파일 | 성공 |
+| macos-latest / Node 24 | 24.22.1 | 6개 | 40개 | 29파일 | 성공 |
+| windows-latest / Node 22 | 22.23.4 | 6개 | 40개 | 29파일 | 성공 |
+| windows-latest / Node 24 | 24.22.1 | 6개 | 40개 | 29파일 | 성공 |
+
+모든 작업에서 문법 54개가 통과했다. Windows의 .cmd 실행기·네이티브 한글/공백 경로와 실제 브라우저 검증이 포함된다.
+기본 브라우저 자동 열기와 실제 터미널 Ctrl+C는 주입 신호·headless 브라우저로 대체 검증했다고 표시하지 않는다.
