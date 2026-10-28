@@ -17,7 +17,7 @@
 - 완료: 0.2.0의 추가 수집 옵션·설정 파일명·검색 경로 탐색을 사용자가 npm 배포했다.
   새 작업은 Python·Java 기본 제외와 Windows 점검의 0.2.1 후보이며 맨 아래 인계가 현재 상태다.
 - 완료: 검색 결과의 경로에서 트리 위치 찾기. 최신 문법 51개·Chrome 40개·설치 통합 4개 통과.
-- 진행 중: RQ-16·17·18 에이전트 스킬 관리와 설치. Integration Test까지 자동 검증을 마쳤다. Windows CI와 사람의 M-16·17 인수가 남았다.
+- 진행 중: RQ-16·17·18 에이전트 스킬 관리와 설치. 자동 검증과 Windows/macOS CI를 마쳤고 PR #1에 올렸다. 사람의 M-16·17 인수와 병합·배포 결정이 남았다.
 
 기술 선택은 각 단계에서 근거와 검증을 기록해 DC/IC를 해소한다.
 상세 계약을 바꾸면 요구사항·설계·단계·수동 기준을 같은 작업에서 갱신한다.
@@ -417,7 +417,7 @@ Windows 네이티브 Ctrl+C·기본 브라우저·PowerShell/CMD·UNC/네트워�
 
 대응: RQ-16·17·18 / PR-09·10 / DC-16~19 / M-16·17. 기준 커밋 d71ee97, 계획 cc9e98d, 1단계 b85e00e, 2단계 59a561e,
 3단계 49143c0, 4단계 ead614f, Test Hardening 5bb8c7a. 다음 후보 버전 0.3.0은 제안이며 package.json은 아직 0.2.1이다.
-상태: 설치 tarball로 전 과정을 자동 검증했고 DC-18을 해소했다. Windows CI 실행과 사람의 M-16·17 인수가 남았다.
+상태: 설치 tarball로 전 과정을 자동 검증했고 DC-18을 해소했다. PR #1의 Windows/macOS CI가 통과했다. 사람의 M-16·17 인수가 남았다.
 
 진입 조건: DC-19 공개 범위 확인. 2026-10-28 사용자 확인으로 충족했다.
 
@@ -521,7 +521,7 @@ Windows 네이티브 Ctrl+C·기본 브라우저·PowerShell/CMD·UNC/네트워�
 - [x] 판정 뒤 생긴 심볼릭 링크: 쓰기 전에 멈추고 아무것도 바꾸지 않는다.
 - [x] 이전 docatlas는 높은 버전 설치본을 낮추지 않고(skip-downgrade, 종료 3), ctxbin 관리 사본은 건드리지도 기록하지도 않는다.
 - [x] test:platform: production tarball의 npm 실행기로 한글·공백 HOME(HOME·USERPROFILE 지정)에 미리보기·설치·재실행을 검증한다. macOS 통과.
-- [ ] 같은 플랫폼 검증의 Windows 실행. platform CI는 main push와 PR에서 돌므로 PR 또는 main 반영 때 확인한다.
+- [x] 같은 플랫폼 검증의 Windows 실행: PR #1의 CI에서 Windows Node 22/24 모두 6개 통과(아래 Integration Test 기록).
 
 기준 검증: npm test, npm run test:platform.
 종료 기준: 어떤 실패에서도 사용자가 고친 파일이 사라지지 않고 백업으로 복원할 수 있다. macOS에서 충족했다.
@@ -546,7 +546,7 @@ Windows 네이티브 Ctrl+C·기본 브라우저·PowerShell/CMD·UNC/네트워�
 - [x] DC-18: Codex CLI 0.165.0의 codex debug prompt-input(모델 호출 없음)으로 격리한 HOME·CODEX_HOME에서 관찰했다.
   프로젝트 스킬은 신뢰와 무관하게, 프로젝트 룰은 신뢰한 프로젝트에서만 읽고, 같은 이름 룰은 프로젝트가 우선이다.
   같은 이름 경고 문구를 확정하고 프로젝트 설치에 codex-trust 경고를 추가했다.
-- [ ] platform CI의 Windows·macOS 실행. main push나 PR에서 돈다.
+- [x] platform CI의 Windows·macOS 실행: PR #1, run 40665207058, fa90bfd. 네 작업 모두 통과.
 - [ ] M-16·17 사람의 수동 인수: 실제 Claude Code·Codex 새 세션에서 설치된 스킬과 룰이 보이는지 확인한다.
 
 기준 검증: npm run test:integration, npm run test:platform, npm pack --dry-run.
@@ -564,6 +564,7 @@ Windows 네이티브 Ctrl+C·기본 브라우저·PowerShell/CMD·UNC/네트워�
 | DOCMAP_BROWSER_CHANNEL=chrome DOCMAP_NPM_CACHE=/private/tmp/ddd-docmap-phase1-npm-cache npm run test:integration | 5개 통과. 새 F-09 포함 |
 | npm pack --dry-run | 45개 파일 |
 | codex debug prompt-input 관찰 | 위 DC-18 결과. 실제 HOME과 Codex 설정은 쓰지 않았다 |
+| [platform CI 40665207058](https://github.com/superlucky84/docatlas/actions/runs/40665207058) | macOS·Windows × Node 22/24 네 작업 통과. 각 작업 문법·agent kit 검사, 플랫폼 6개(tarball npm 실행기로 한글·공백 HOME에 agents 설치 포함), pack 45파일. Windows는 USERPROFILE과 .cmd 실행기 경로 |
 
 ## 검증 예제와 기록
 
@@ -934,13 +935,13 @@ registry와 실행 버전이 0.2.0인지 확인하고 새 설정·수집 옵션�
 - 완료: 0.2.1의 Python·Java 기본 제외·플랫폼 테스트와 캐시 전제 보정. 최신 구현 커밋은 967c175이며 main에 푸시했다.
 - run 40657181408의 macOS/Windows × Node 22/24 네 작업이 모두 성공했다. 원인·재현·작업별 결과는 아래 플랫폼 CI 캐시 전제 보정 기록에 있다.
 - 에이전트 스킬: 작업 브랜치 feat/agent-kit. 계획 cc9e98d, 1단계 b85e00e, 2단계 59a561e, 3단계 49143c0, 4단계 ead614f,
-  Test Hardening 5bb8c7a. Integration Test(F-09·DC-18 반영)는 미커밋이다. 사용자는 앞 단계를 리뷰 없이 진행하기로 했다.
-- 다음: Integration Test 리뷰 여부 확인 → 커밋 → Windows CI를 위한 PR 또는 main 반영(사용자 결정) → 사람의 M-16·17 인수.
-  배포하려면 버전(0.3.0 제안)과 npm publish를 사용자가 정한다.
+  Test Hardening 5bb8c7a, Integration Test fa90bfd. 사용자 요청으로 push했고 PR #1(https://github.com/superlucky84/docatlas/pull/1)을 열었다.
+  PR의 platform CI 네 작업이 통과했다. 사용자는 앞 단계를 리뷰 없이 진행하기로 했다.
+- 다음: 사람의 M-16·17 인수(실제 Claude Code·Codex 새 세션), PR 병합 결정, 배포 시 버전(0.3.0 제안)·npm publish·Confluence 갱신.
   별도로 실제 Windows 콘솔 Ctrl+C·PowerShell/CMD·기본 브라우저 인수와 필요 시 npm 배포·팀 가이드 갱신.
 - 남은 일: Confluence 팀 페이지는 이전 designer 1.0.0이다. 갱신 시점은 사용자가 정한다.
-- 차단: 없음. Windows CI는 원격 반영 결정을 기다린다.
-- 최신 커밋: 5bb8c7a. Integration Test 변경은 미커밋이다. npm 0.2.1은 미배포이며 Confluence는 읽기만 했다.
+- 차단: 없음.
+- 최신 구현 커밋: fa90bfd(PR #1). 이 인계는 문서 커밋으로 추가한다. npm 0.2.1은 미배포이며 Confluence는 읽기만 했다.
   문서만 바뀐 인계 커밋은 CI를 재실행하지 않는다.
 
 ## 플랫폼 CI 캐시 전제 보정 — 검증 완료
