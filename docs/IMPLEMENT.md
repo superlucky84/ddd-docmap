@@ -769,6 +769,29 @@ npm pack --dry-run 45개 파일. 이 저장소의 문서 지도는 docs/의 5개
 - [x] 두 METHOD 구조 대조, 링크 검사(예제 인계 앵커 포함), npm run check·npm test.
   구조 동일(제목 16개·글머리 38·링크 11개), 링크 117개 문제 0, Node 154개 통과·3개 건너뜀·실패 0.
 
+## README 축약과 사용 가이드 분리 — 진행 중
+
+대응: RQ-19 / DC-25 / M-18.
+진입: 사용자 결정(2026-10-28)을 기준 4종에 기록했다. 기준 커밋 3929473. README는 512줄이며 Reference가 약 290줄이다.
+기준 검증: 문법 72개·agent kit 세 쌍, Node 154개 통과·3개 건너뜀·실패 0, 링크 검사 문제 0.
+
+### 구현
+
+- [ ] guide/document-map.md·guide/configuration.md·guide/platforms.md를 README 내용으로 만든다. 링크는 새 위치에 맞춘다.
+- [ ] agent-kit/README.md에 에이전트 설치 위치·갱신·출력 상세를 옮긴다.
+- [ ] README를 DC-25 순서로 줄인다. Configuration 제목과 가이드 링크를 남긴다.
+
+### Test Hardening
+
+- [ ] 이전 README의 줄을 새 README·guide·agent-kit/README와 줄 단위로 대조해 빠진 정보가 없는지 확인한다.
+
+### Integration Test
+
+- [ ] 링크·앵커 검사(guide 포함), npm run check·npm test, npm pack --dry-run(파일 수 45개 유지).
+- [ ] PR #3에 병합하고 CLI 도움말 링크를 바꾼다.
+
+종료 기준: README가 핵심과 링크만 담고, 이전 정보가 모두 새 위치에 있으며, 검사가 통과한다.
+
 ## 검증 예제와 기록
 
 F-01~08의 구체적인 구성은 [수동 검증의 가상 프로젝트](./MANUAL_TEST_CHECKLIST.md#가상-프로젝트)를 따른다.
