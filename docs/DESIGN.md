@@ -545,6 +545,11 @@ README 순서:
 - DC-21: 저장소 루트의 docatlas.config.json은 {"version":1,"include":["docs/**/*.md"]}이다. 기본 제외 목록을 반복하지 않고
   이 저장소의 지도에서 예제를 뺀다. 예제는 --root examples/sample-shop으로 연다.
 - DC-21: test/examples.test.js가 예제의 수집 결과와 저장소 지도의 예제 제외를 확인한다.
+- DC-22: METHOD.md·METHOD.ko.md에 프로젝트 적용 절을 둔다. 적용 범위는 세 단계 선택지다.
+  필요할 때만 스킬 사용(프로젝트 설정 없음) → AGENTS.md·CLAUDE.md에서 있는 문서를 따르도록 안내 → 이 저장소 AGENTS.md 같은 전체 규칙.
+  권장 예시는 두 번째 단계이며 문서가 없는 작은 수정에는 새 문서를 요구하지 않는다. 그대로 쓰지 않고 고쳐 써도 된다고 밝힌다.
+  설치 명령은 계속 AGENTS.md·CLAUDE.md를 수정하지 않는다. README 핵심 규칙 아래에도 필요한 만큼 쓰라는 한 줄을 둔다.
+  examples/sample-shop/AGENTS.md는 같은 가벼운 예시다. 루트 파일이라 기본 수집 대상이 아니며 예제 문서 수(21개)는 그대로다.
 - 이전 README의 사용법 정보는 지우지 않고 새 위치로 옮긴다. 버전별 신규 표시는 CHANGELOG.md로 옮긴다.
 - package.json은 description과 keywords만 바꾼다. 이름·버전·bin·files·의존성은 그대로다.
 
@@ -652,6 +657,8 @@ README 순서:
   루트 METHOD.md(영문)·CONTRIBUTING.md·CHANGELOG.md 분리·공개 안내에서 Confluence/ctxbin 사본 설명 제외·이전 인계 정리를 채택했다. M-18.
 - [x] DC-21: 2026-10-28 사용자 요청으로 해소. METHOD.ko.md(영어판 기준 번역)와 영문 합성 예제 examples/sample-shop/을 추가하고,
   저장소 루트 docatlas.config.json의 include를 docs/**/*.md로 한정해 이 저장소의 지도에서 예제를 뺀다. M-18.
+- [x] DC-22: 2026-10-28 사용자 선택. 프로젝트 적용은 강제 규칙이 아니라 선택지로 안내하고,
+  AGENTS.md·CLAUDE.md 권장 예시는 출발점으로 보여 준다. M-18.
 - [x] DC-11: 프로젝트별 설치와 docmap/ddd-docmap 공통 진입점을 구현하고 설치 검증을 통과했다.
   사용자 선택은 npx docmap / pnpm docmap이며 전역 런처를 추가하지 않는다. M-08, M-11.
 - [x] IC-01: picomatch 4.0.7, ignore 7.0.14, mdast-util-from-markdown 2.1.0과

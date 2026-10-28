@@ -705,6 +705,29 @@ npm pack --dry-run 45개 파일. 이 저장소의 문서 지도는 docs/의 5개
 
 종료 기준: 한국어판과 예제가 있고, 예제는 --root로 열리며 저장소 지도에는 섞이지 않는다. 기존 검사·테스트가 통과한다.
 
+## 프로젝트 적용 안내와 PR — 진행 중
+
+대응: RQ-19 / DC-22 / M-18.
+진입: 사용자 결정(2026-10-28)을 기준 4종에 기록했다. 기준 커밋 fb2a87c.
+기준 검증(변경 전): 문법 72개·agent kit 세 쌍, Node 157개 중 154개 통과·3개 건너뜀·실패 0, pack 45개 파일.
+
+### 구현
+
+- [ ] METHOD.md·METHOD.ko.md에 프로젝트 적용 절: 세 단계 선택지, 가벼운 AGENTS.md·CLAUDE.md 예시, 고쳐 써도 된다는 안내.
+- [ ] README 핵심 규칙 아래에 필요한 만큼 쓰라는 한 줄과 적용 절 링크.
+- [ ] examples/sample-shop/AGENTS.md와 예제 README 안내.
+
+### Test Hardening
+
+- [ ] 두 METHOD의 구조가 같고, 적용 절이 스킬 규칙과 모순되지 않으며 강제 표현이 없는지 확인한다.
+
+### Integration Test
+
+- [ ] npm run check, npm test, npm run test:platform, npm pack --dry-run, 링크 검사.
+- [ ] main 대상 PR을 만들고 플랫폼 CI 결과를 확인한다.
+
+종료 기준: 적용 범위를 고를 수 있다는 안내와 예시가 있고, 기존 검사가 통과하며, PR이 열려 있다.
+
 ## 검증 예제와 기록
 
 F-01~08의 구체적인 구성은 [수동 검증의 가상 프로젝트](./MANUAL_TEST_CHECKLIST.md#가상-프로젝트)를 따른다.
