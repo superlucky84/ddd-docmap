@@ -28,7 +28,8 @@ CLI ── 프로젝트 루트·실행 상태
 수집기는 브라우저와 CLI 실행 방식에 의존하지 않게 한다.
 화면은 파일 시스템에 직접 접근하지 않고 서버가 제공하는 읽기 모델을 사용한다.
 파생 인덱스를 잃어도 원본과 선택 설정으로 재생성할 수 있어야 한다.
-계획(RQ-16·17): CLI의 agents 하위 명령은 src/agent-kit/을 사용한다. 이 모듈은 수집기·서버·화면과 독립이며 서버는 사용하지 않는다.
+RQ-16·17: src/agent-kit/은 스킬 원본 읽기와 설치 판정을 맡는다(2단계 구현). 수집기·서버·화면과 독립이며 서버는 사용하지 않는다.
+CLI의 agents 하위 명령(3단계)이 이 모듈을 사용한다.
 
 ## 프로젝트 루트와 식별
 
@@ -346,6 +347,7 @@ PR-02·05·06·08 / DC-09, IC-03에 대응한다. 아래 계약으로 구현했�
 
 전역 사본이 있는 사용자에게는 프로젝트 설치만으로 Claude 스킬 갱신이 전달되지 않는다. 이것이 전역 기본의 근거다.
 Codex 룰은 name·description·developer_instructions를 가진 TOML이다. 원본 Markdown 본문을 developer_instructions로 변환한다.
+본문은 TOML 여러 줄 literal('''…''')로 쓰고, '''나 TOML이 허용하지 않는 제어 문자가 있으면 escape한 기본 문자열로 쓴다(2단계 구현).
 
 ### 원본 형식 — 1단계 구현됨
 
@@ -389,23 +391,30 @@ docatlas agents help
 docatlas --help에는 agents 하위 명령과 agents help를 가리키는 한 줄을 추가한다.
 자동 테스트로 도움말의 옵션 목록과 실제 옵션을 대조한다.
 
-### 판정과 보호 — 설계 제안 (PR-09)
+### 판정과 보호 — 2단계 판정 구현 (PR-09)
 
-| 상황 | 동작 |
-| --- | --- |
-| 대상 파일 없음 | create |
-| 내용이 같음 | unchanged |
-| 설치 기록의 해시와 같음 | replace |
-| 기록은 없지만 이전 배포본 해시와 같음(룰은 본문 해시 포함) | replace하고 기록을 만든다 |
-| 그 외(사용자가 고침) | skip-modified. --force일 때 백업 후 replace |
-| 설치본 버전이 패키지보다 높음 | skip-downgrade. --force일 때만 replace |
-| ctxbin 설치 기록에 있는 항목 | skip-managed. 한 위치를 두 도구가 관리하지 않게 한다 (DC-17) |
+src/agent-kit/plan.js가 파일을 쓰지 않고 대상마다 아래 순서로 판정한다. 쓰기·백업·기록 저장은 3단계다.
 
-- 모든 판정과 원본 검증을 마친 뒤 쓴다. 파일마다 임시 파일을 만든 뒤 이름을 바꾸고, 실패하면 이미 바꾼 파일을 되돌린다.
-- 대상 경로나 상위 디렉터리가 심볼릭 링크면 쓰지 않는다.
-- 설치 기록은 전역 ~/.docatlas/agents.json, 프로젝트 <root>/.docatlas/agents.json(함께 커밋)이다. 백업은 ~/.docatlas/backups/다.
-  위치는 DC-17에서 확정한다. 수집기는 이미 .docatlas/를 기본 제외한다.
-- 프로젝트 설치 때 전역에 같은 이름이 있으면 Claude에서는 전역 스킬이 쓰인다고 경고한다. 전역 설치 때도 cwd 프로젝트의 같은 이름을 경고한다.
+| 순서 | 상황 | 동작 (reason) |
+| --- | --- | --- |
+| 1 | 경로가 심볼릭 링크를 지나거나 대상이 일반 파일이 아님 | blocked (symlink·not-directory·not-file). --force로도 쓰지 않는다 |
+| 2 | 대상 파일 없음 | create (new) |
+| 3 | 정규화 해시가 설치할 내용과 같음 | unchanged (same) |
+| 4 | 대상 폴더의 .ctxbin-sync.json items에 이름이 있음 | skip-managed (ctxbin). 한 위치를 두 도구가 관리하지 않게 한다 |
+| 5 | 설치 기록의 경로·해시와 같고 기록의 kitVersion이 패키지보다 높음 | skip-downgrade (downgrade) |
+| 6 | 설치 기록의 경로·해시와 같음 | replace (recorded) |
+| 7 | 이전 배포본의 파일 해시와 같음 | replace (previous-file) |
+| 8 | 이전 배포본의 본문 해시와 같음(Codex 룰 제외) | replace (previous-body) |
+| 9 | 그 외: 사용자가 고친 사본 | skip-modified (modified) |
+
+- skip-* 항목은 --force일 때 백업 표시와 함께 replace가 된다. 그 밖의 replace는 백업하지 않는다.
+- 심볼릭 링크를 지나는 경로에는 쓰지 않는다. 2단계 결정: 전역 설치에서는 클라이언트 폴더 자체(~/.claude 등)가
+  디렉터리를 가리키는 링크여도 된다. dotfiles 저장소로 설정 폴더를 관리하는 사용자를 막지 않기 위해서다. 프로젝트 설치에는 이 예외가 없다.
+- 설치 기록(schema 1)은 files의 "client/kind/name" 키마다 path·kitVersion·version·sha256을 둔다. 읽기 실패나 형식 오류는 경고 후 무시한다.
+  위치는 전역 ~/.docatlas/agents.json, 프로젝트 <root>/.docatlas/agents.json(함께 커밋)이다. 백업은 ~/.docatlas/backups/다.
+  수집기는 이미 .docatlas/를 기본 제외한다.
+- 반대쪽 범위(전역↔cwd 프로젝트)에 같은 경로가 있으면 같은 이름 경고와 함께 클라이언트 규칙 표의 동작을 알린다.
+- 쓸 때(3단계)는 모든 판정과 원본 검증을 마친 뒤 파일마다 임시 파일을 만들고 이름을 바꾼다. 실패하면 이미 바꾼 파일을 되돌린다.
 
 ### 업데이트 안내 — 설계 제안 (PR-10)
 
@@ -562,8 +571,8 @@ README의 기본 사용 명령은 docatlas다. 프로젝트 루트에서의 npx 
 - [x] DC-15: Python·Java 기본 제외와 Windows 점검은 위 계약을 따른다. 실제 Windows 지원 확정은 CI/수동 결과 후 결정한다. M-01, M-07, M-08, M-09, M-11, M-12, M-13.
 - [x] DC-16: 2026-10-28 사용자 선택. 스킬·룰 원본은 agent-kit/, 설치는 docatlas 하위 명령, 기본 전역·프로젝트 옵션,
   재실행 갱신, 기본 designer 한 쌍, 당분간 Confluence 배포 유지. 구현 전. M-16, M-17.
-- [ ] DC-17: 명령 이름·옵션, 클라이언트 감지, 결과 열·종료 코드, 설치 기록/백업 위치,
-  ctxbin 관리 사본 처리, 제거 명령. 위 설계 제안이 초안이다. M-16.
+- [ ] DC-17: 명령 이름·옵션, 결과 열·종료 코드, 백업 위치, 제거 명령. 위 설계 제안이 초안이다.
+  클라이언트 감지·설치 기록 형식·ctxbin 관리 사본 처리·링크 예외는 2단계에서 구현했다. M-16.
 - [ ] DC-18: Codex 프로젝트 .codex/agents의 로드 조건(프로젝트 신뢰 여부)과 전역/프로젝트 같은 이름 우선순위.
   공식 문서에 없어 실제 Codex에서 확인한다. M-17.
 - [x] DC-19: 2026-10-28 사용자 확인. 공개 저장소와 npm 패키지(MIT)에 스킬·룰 원본을 포함한다. M-16.

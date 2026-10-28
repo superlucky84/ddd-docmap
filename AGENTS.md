@@ -49,4 +49,6 @@ blockers, and the latest known commit.
 - When a skill or rule changes, follow agent-kit/README.md: raise versions, move old hashes to previous,
   record new hashes with node scripts/agent-kit.js hash, and run npm run check.
 - Update the wiki and ctxbin copies only after the repository change passes checks.
+- src/agent-kit/ is independent of the collector, server, and browser UI. Planning never writes files;
+  installs never touch documents, AGENTS.md, or CLAUDE.md and never follow symbolic links below a client folder.
 

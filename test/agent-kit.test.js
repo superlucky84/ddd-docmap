@@ -3,7 +3,8 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs/promises';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { checkAgentKit, hashText, parseFrontmatter } from '../scripts/agent-kit.js';
+import { checkAgentKit } from '../scripts/agent-kit.js';
+import { hashText, parseFrontmatter } from '../src/agent-kit/text.js';
 import { createProject } from './helpers/projects.js';
 
 const repositoryKit = fileURLToPath(new URL('../agent-kit/', import.meta.url));

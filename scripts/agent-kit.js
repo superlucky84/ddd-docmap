@@ -1,9 +1,11 @@
-import crypto from 'node:crypto';
 import fs from 'node:fs/promises';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { compareVersions } from '../src/agent-kit/kit.js';
+import { bodyOf, hashText, parseFrontmatter } from '../src/agent-kit/text.js';
 
-// Development checks for agent-kit/. Not part of the published package.
+// Authoring checks for agent-kit/. Not part of the published package.
+// Hashing and frontmatter rules come from src/agent-kit/ so installs and checks agree.
 
 const SCHEMA = 1;
 const NAME = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
@@ -20,98 +22,6 @@ const AGENT_KEYS = ['name', 'description'];
 const KINDS = ['skill', 'agent', 'codex-agent'];
 const EXTRA_FILES = ['README.md', 'manifest.json'];
 const decoder = new TextDecoder('utf-8', { fatal: true });
-
-export function normalizeText(text) {
-  return text.replace(/^﻿/, '').replace(/\r\n?/g, '\n').trimEnd() + '\n';
-}
-
-export function hashText(text) {
-  return crypto.createHash('sha256').update(normalizeText(text)).digest('hex');
-}
-
-function parseScalar(raw, where) {
-  const value = raw.trim();
-  if (value === '') {
-    throw new Error(where + ' has an empty value');
-  }
-  if (value.startsWith('"')) {
-    let parsed;
-    try {
-      parsed = JSON.parse(value);
-    } catch {
-      parsed = null;
-    }
-    if (typeof parsed !== 'string') {
-      throw new Error(where + ' has an invalid double-quoted value');
-    }
-    return parsed;
-  }
-  if (value.startsWith("'")) {
-    throw new Error(where + ' uses single quotes; use a plain or double-quoted value');
-  }
-  if (/^[-?:,[\]{}#&*!|>%@`]/.test(value) || value.includes(': ') || value.includes(' #') || value.endsWith(':')) {
-    throw new Error(where + ' needs double quotes to stay valid YAML');
-  }
-  if (/^(?:true|false|null|~|yes|no|on|off)$/i.test(value) || /^[-+]?(?:\d+\.?\d*|\.\d+)(?:e[-+]?\d+)?$/i.test(value)) {
-    throw new Error(where + ' would not be read as text; use double quotes');
-  }
-  return value;
-}
-
-// Parses the frontmatter subset used by skills and agent rules:
-// top-level "key: value" lines and one level of two-space nested maps.
-export function parseFrontmatter(text) {
-  const normalized = normalizeText(text);
-  if (!normalized.startsWith('---\n')) {
-    throw new Error('missing frontmatter');
-  }
-  const end = normalized.indexOf('\n---\n', 3);
-  if (end < 0) {
-    throw new Error('unclosed frontmatter');
-  }
-  const fields = {};
-  let map = null;
-  const lines = normalized.slice(4, end).split('\n');
-  for (const [index, line] of lines.entries()) {
-    const where = 'frontmatter line ' + (index + 2);
-    if (line.trim() === '') {
-      continue;
-    }
-    const nested = /^ {2}([A-Za-z0-9_-]+):(?: (.*))?$/.exec(line);
-    const top = /^([A-Za-z0-9_-]+):(?: (.*))?$/.exec(line);
-    if (nested && map) {
-      if (Object.hasOwn(map.value, nested[1])) {
-        throw new Error(where + ' repeats ' + map.key + '.' + nested[1]);
-      }
-      map.value[nested[1]] = parseScalar(nested[2] ?? '', where);
-    } else if (top) {
-      if (Object.hasOwn(fields, top[1])) {
-        throw new Error(where + ' repeats ' + top[1]);
-      }
-      if ((top[2] ?? '').trim() === '') {
-        map = { key: top[1], value: {} };
-        fields[top[1]] = map.value;
-      } else {
-        map = null;
-        fields[top[1]] = parseScalar(top[2], where);
-      }
-    } else {
-      throw new Error(where + ' is not a supported "key: value" line');
-    }
-  }
-  return { fields, body: normalized.slice(end + 5).replace(/^\n+/, '') };
-}
-
-function compareVersions(left, right) {
-  const a = left.split('.').map(Number);
-  const b = right.split('.').map(Number);
-  for (let index = 0; index < 3; index++) {
-    if (a[index] !== b[index]) {
-      return a[index] - b[index];
-    }
-  }
-  return 0;
-}
 
 function isRecord(value) {
   return typeof value === 'object' && value !== null && !Array.isArray(value);
@@ -331,13 +241,7 @@ async function main(args) {
   }
   for (const filename of args.slice(1)) {
     const text = await readText(filename);
-    let body = text;
-    try {
-      body = parseFrontmatter(text).body;
-    } catch {
-      // A body-only copy, such as a rule pasted from a wiki page.
-    }
-    console.log('file ' + hashText(text) + '  body ' + hashText(body) + '  ' + filename);
+    console.log('file ' + hashText(text) + '  body ' + hashText(bodyOf(text)) + '  ' + filename);
   }
 }
 
