@@ -354,13 +354,16 @@ Our injected-signal tests check application cleanup without claiming native cons
 | Environment | Verification status |
 | --- | --- |
 | macOS | Local CLI, collector, live updates, browser and installed-package checks pass; exact runs are recorded in the planning documents. |
-| Windows | Native path/npm launcher/browser CI is prepared. It has not run for this checkout; PowerShell/CMD, default-browser opening and physical Ctrl+C need actual Windows validation. |
+| Windows | The platform workflow checks native paths, npm launchers and the browser; consult the latest CI run and verification notes. PowerShell/CMD, default-browser opening and physical Ctrl+C also need manual validation. |
 | UNC/network drives, WSL, Linux | No support claim from this work; validate separately. |
 
 The [platform workflow](https://github.com/superlucky84/docatlas/blob/main/.github/workflows/platform.yml)
 targets macOS and Windows with Node 22 and 24. Run `npm run test:platform` to check
 native Unicode/space paths, CRLF, source discovery, references/assets, live policy changes,
 controlled cleanup, and production tarball launchers. This does not replace manual OS acceptance.
+The platform suite installs its fresh tarball with `--prefer-offline`: cached data
+is reused and missing dependency metadata can be downloaded. It needs registry access
+on a fresh CI runner. Once installed, all launcher help/version checks run offline.
 The Windows workflow runs this platform suite and browser tests. The full `npm test`
 and original `test:integration` suite still contain POSIX symlink/signal assumptions;
 their Windows portability is not claimed by this work.

@@ -547,3 +547,12 @@ README의 기본 사용 명령은 docatlas다. 프로젝트 루트에서의 npx 
 - checkout/setup-node의 v7 action.yml을 실제 GitHub 태그에서 확인했다.
 - 플랫폼 CI 상태: https://github.com/superlucky84/docatlas/actions/workflows/platform.yml. Windows 결과와 실제 콘솔/브라우저 인수는 구분한다.
 - 최신 구현 커밋: 3eeda0c. 기술적 차단 없음. npm 0.2.1은 미배포이며 이후 사용자 배포 범위로 남긴다.
+
+## DC-15 후속: 플랫폼 CI의 의존성 설치
+
+- npm ci의 lockfile/tarball 캐시와 새 임시 프로젝트 설치에 필요한 packument 캐시를 동일하게 취급하지 않는다.
+- test:platform의 최초 production tarball 설치는 --prefer-offline으로 캐시를 우선하고 누락 정보를 registry에서 받는다.
+  설치 이후 세 bin의 도움말/버전 검사는 --offline으로 유지한다. 진단에도 설치 모드와 실행 모드를 구분한다.
+- test:integration은 사전에 준비한 캐시에서의 엄격한 오프라인 설치를 계속 검증한다.
+- CI push/PR의 docs/**만 바뀐 인계 커밋은 플랫폼 재실행을 생략하고 README·코드·테스트·workflow 변경은 실행한다.
+  설치·브라우저 검사를 생략해 통과시키지 않는다. Windows 콘솔/브라우저 수동 인수와 자동 CI 결과는 별도다.

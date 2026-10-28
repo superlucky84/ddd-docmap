@@ -446,3 +446,12 @@ Phase 3은 기본 탐색·읽기의 첫 검토 시점이다. 전체 제품 릴�
 - 기존 자동 검증과 미실행 수동 체크박스를 유지한다. Windows CI와 실제 콘솔/브라우저 인수는 각각 실행 결과를 확인한다.
 - CI 상태: https://github.com/superlucky84/docatlas/actions/workflows/platform.yml.
 - 최신 구현 커밋: 3eeda0c. 기술적 차단 없음. 0.2.1 배포와 팀 가이드 반영은 이후 별도 작업이다.
+
+## 플랫폼 CI 캐시 보정 검증
+
+- [ ] 빈 캐시 + npm ci 뒤 원래 플랫폼 설치 검사의 ENOTCACHED를 재현한다.
+- [ ] 수정 후 같은 캐시에서 production tarball 설치·세 npm 실행기·원본 해시 보존이 통과한다.
+- [ ] macOS/Windows Node 22/24의 새 CI에서 플랫폼 6개·브라우저 40개·pack 단계까지 확인한다.
+- [ ] 네이티브 콘솔 Ctrl+C·PowerShell/CMD·기본 브라우저 수동 인수는 자동 테스트와 구분한다.
+
+대응: RQ-15 / DC-15 / M-08·11·12. 기존 엄격한 offline 설치 통합과 플랫폼 설치 전제를 구분한다.

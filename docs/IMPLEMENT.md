@@ -784,3 +784,23 @@ registry와 실행 버전이 0.2.0인지 확인하고 새 설정·수집 옵션�
 - CI 상태 확인: https://github.com/superlucky84/docatlas/actions/workflows/platform.yml. 원격 결과를 로컬 macOS 결과와 분리한다.
 - 다음: Windows/macOS Node 22/24 CI 결과 확인·실제 Windows 콘솔/브라우저 인수, 이후 별도 0.2.1 배포·팀 가이드 갱신.
 - 최신 구현 커밋: 3eeda0c. 푸시 범위의 기술적 차단 없음. npm publish와 Confluence 수정은 이번 요청에 포함하지 않는다.
+
+## 플랫폼 CI 캐시 전제 보정 — 진행 중
+
+진입: 사용자 보고와 run 40652167597 네 작업의 로그. 기준 커밋 a44c39e.
+원인: 각 작업의 플랫폼 테스트 6개 중 5개 통과, 새 tarball production 설치만 ENOTCACHED로 실패했다.
+npm ci가 받아 둔 잠금파일의 tarball만으로는 새 의존성 트리를 오프라인 해석할 메타데이터가 충분하지 않았다.
+
+- [x] Test Hardening: 독립 빈 캐시에서 npm ci만 실행해 같은 실패를 재현한다.
+- [x] 플랫폼 최초 설치를 --prefer-offline으로 보정하고 설치/실행 모드를 진단에 구분한다.
+- [x] README의 설치 전제와 Windows 검증 상태를 실제 CI 결과에 맞게 안내한다.
+- [x] docs/**만 바뀐 인계 커밋은 CI를 재실행하지 않도록 필터링한다.
+- [ ] Integration Test: 같은 캐시에서 플랫폼 6개 통과, 문법·문서·pack 검증 후 푸시하고 네 CI 작업을 확인한다.
+
+기준 검증: 기존 플랫폼 6개·전체 Node 115개·Chrome 40개. 제품/수집기 계약은 바꾸지 않는다.
+종료 기준: 새 CI의 네 조합에서 설치·브라우저·pack 단계가 실제 통과한다. 남은 실제 콘솔 인수는 별도 유지한다.
+
+재현: /private/tmp/docatlas-clean-ci-eo4xl_09/seed에 manifest/lockfile만 복사하고 새 cache에 npm ci를 실행했다.
+그 cache로 원래 test:platform을 실행해 5개 통과·production 설치 1개 ENOTCACHED 실패를 동일하게 재현했다.
+수정 후 같은 cache에서 6개가 통과했고 설치 진단은 prefer-offline, 실행기 검사는 offline으로 구분했다.
+문법 54개·workflow YAML/필터·pack dry-run 29개 파일·git diff --check가 통과했다. 원격 네 작업은 다음 단계에서 확인한다.

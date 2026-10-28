@@ -146,7 +146,8 @@ test('installed production tarball exposes npm launchers and reads a manifest-fr
   const before = await fileHashes(project.root);
   const [pack] = JSON.parse((await npm(['pack', '--json', '--pack-destination', temporary], repository)).stdout);
   await fs.writeFile(path.join(temporary, 'package.json'), '{"private":true,"type":"module"}\n');
-  await npm(['install', '--offline', '--omit=dev', '--ignore-scripts', '--no-audit', '--no-fund',
+  // npm ci caches locked tarballs, but a new dependency tree can still need registry metadata.
+  await npm(['install', '--prefer-offline', '--omit=dev', '--ignore-scripts', '--no-audit', '--no-fund',
     path.join(temporary, pack.filename)], temporary);
   for (const name of ['docatlas', 'docmap', 'ddd-docmap']) {
     const version = await npm(['exec', '--offline', '--', name, '--version'], temporary);
@@ -171,5 +172,6 @@ test('installed production tarball exposes npm launchers and reads a manifest-fr
   assert.equal(await cli.execution, 0);
   assert.deepEqual(await fileHashes(project.root), before);
   t.diagnostic(JSON.stringify({ package: pack.name, version: pack.version, platform: process.platform,
-    launchers: process.platform === 'win32' ? 'npm .cmd' : 'npm bin', offline: true, originalFilesPreserved: true }));
+    launchers: process.platform === 'win32' ? 'npm .cmd' : 'npm bin',
+    installation: 'prefer-offline', launcherChecks: 'offline', originalFilesPreserved: true }));
 });
