@@ -5,7 +5,7 @@ changes on main that are not published yet.
 Agent skill and rule versions are tracked separately in
 [agent-kit/manifest.json](agent-kit/manifest.json).
 
-## Unreleased
+## 0.3.1 — 2026-10-28
 
 - Exclude `.conda` by default at any depth, so a conda environment created inside a project
   (the folder name VS Code uses) keeps its package docs off the map. Other names, such as `env`,

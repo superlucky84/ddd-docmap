@@ -49,7 +49,7 @@ Generated directories are excluded at any depth. The default exclusions are:
 | Python caches/metadata | `__pycache__`, `.pytest_cache`, `.mypy_cache`, `.ruff_cache`, `.eggs`, `*.egg-info` |
 | Java build/dependency caches | `target`, `.gradle`, `.m2` |
 
-The Python and Java rows were added in 0.3.0, and `.conda` in the next release after 0.3.0
+The Python and Java rows were added in 0.3.0, and `.conda` in 0.3.1
 (see the [changelog](../CHANGELOG.md)). They prevent dependency docs,
 test environments, and generated copies from appearing in the map or being watched.
 Ordinary source folders and names such as `env`, `bin`, `out`, `vendor`,

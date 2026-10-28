@@ -447,8 +447,9 @@ test/integration/package.test.js의 부모 1개·하위 3개, 총 4개가 Node 2
 
 사용자 결정: PR #4까지 병합한 main을 0.3.1로 배포한다. 아래 자동 확인은 기존 수동 인수 체크박스를 대신하지 않는다.
 
-- [ ] manifest·lockfile·CLI가 0.3.1을 표시하고 CHANGELOG에 0.3.1 항목이 있다.
-- [ ] 문법·Node·플랫폼 테스트와 pack/publish dry-run이 통과하고 파일 수가 45개다.
+- [x] manifest·lockfile·CLI가 0.3.1을 표시하고 CHANGELOG에 0.3.1 항목이 있다.
+- [x] 문법·Node·플랫폼 테스트와 pack/publish dry-run이 통과하고 파일 수가 45개다.
+  2026-10-28 Linux / Node 22.22.0: Node 155개 통과·3개 건너뜀, 플랫폼 6개, docatlas@0.3.1 45개 파일.
 - [ ] 사용자가 게시 후 npm view docatlas@0.3.1 version과 npx --yes docatlas@0.3.1 agents help를 확인한다.
 - [ ] 게시 후 npm 패키지 페이지에서 새 README의 캡처와 GitHub 링크가 열린다(M-18).
 
