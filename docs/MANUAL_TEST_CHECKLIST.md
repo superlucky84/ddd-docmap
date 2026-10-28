@@ -443,6 +443,15 @@ test/integration/package.test.js의 부모 1개·하위 3개, 총 4개가 Node 2
 | M-16 | production tarball의 npm 실행기로 한글·공백 HOME에 미리보기·설치·재실행 (macOS 로컬, PR #1 CI의 macOS·Windows 통과) | platform.test.js |
 | M-16·17 | F-09: 개발 의존성 설치본으로 도움말→미리보기→설치→재실행, 프로젝트 --all 설치와 경고, 문서 무변경, 낡은 기록 안내→갱신 후 사라짐, 수정본 종료 3과 --force 백업 | integration/agent-kit.test.js |
 
+## 0.3.1 배포 준비 확인 — 2026-10-28
+
+사용자 결정: PR #4까지 병합한 main을 0.3.1로 배포한다. 아래 자동 확인은 기존 수동 인수 체크박스를 대신하지 않는다.
+
+- [ ] manifest·lockfile·CLI가 0.3.1을 표시하고 CHANGELOG에 0.3.1 항목이 있다.
+- [ ] 문법·Node·플랫폼 테스트와 pack/publish dry-run이 통과하고 파일 수가 45개다.
+- [ ] 사용자가 게시 후 npm view docatlas@0.3.1 version과 npx --yes docatlas@0.3.1 agents help를 확인한다.
+- [ ] 게시 후 npm 패키지 페이지에서 새 README의 캡처와 GitHub 링크가 열린다(M-18).
+
 ## 0.3.0 배포 준비 확인 — 2026-10-28
 
 사용자 요청: PR #1이 병합된 main에서 0.3.0으로 올리고 npm 게시 순서를 안내한다.

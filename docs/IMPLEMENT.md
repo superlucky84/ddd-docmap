@@ -884,6 +884,36 @@ npm pack --dry-run 45개 파일. 이 저장소의 문서 지도는 docs/의 5개
 
 종료 기준: 다른 에이전트가 도움말이나 오류만 읽고 원본 위치와 할 일을 알 수 있고, Claude Code·Codex 설치 동작은 그대로다.
 
+## 0.3.1 배포 준비 — 진행 중
+
+대응: RQ-14·17·18·19 / DC-24~27 / M-11·16·18.
+진입: PR #4 병합 후 main 666d55e. 작업 브랜치를 main으로 빨리 감기했다. main의 트리는 마지막 전체 검증 커밋 0061f21과 같다.
+기준 검증(0061f21): 문법 72개·agent kit 세 쌍, Node 158개 중 155개 통과·3개 건너뜀·실패 0, 플랫폼 6개, pack 45개 파일.
+
+- [ ] manifest·lockfile을 npm version 0.3.1 --no-git-tag-version --ignore-scripts로 갱신한다.
+- [ ] CHANGELOG의 Unreleased를 0.3.1로 옮기고 guide/configuration.md의 "next release after 0.3.0"을 0.3.1로 고친다.
+- [ ] npm run check, npm test, npm run test:platform, npm pack --dry-run, npm publish --dry-run, CLI 버전 출력을 확인한다.
+- [ ] 준비 PR을 만들고, 사용자가 실행할 게시·확인 명령을 안내한다.
+
+종료 기준: 0.3.1 후보의 파일 구성과 버전 표시가 맞고 검사가 통과한다. 실제 npm publish·태그는 사용자 단계다.
+
+### 사용자가 실행할 0.3.1 배포 절차
+
+준비 PR 병합과 CI 통과 뒤 main에서 실행한다. package.json은 이미 0.3.1이므로 npm version을 다시 실행하지 않는다.
+
+```sh
+git checkout main
+git pull origin main
+npm whoami --registry=https://registry.npmjs.org/
+npm publish --dry-run --access public --registry=https://registry.npmjs.org/
+npm publish --access public --registry=https://registry.npmjs.org/
+npm view docatlas version --registry=https://registry.npmjs.org/
+npx --yes docatlas@0.3.1 --version
+npx --yes docatlas@0.3.1 agents help
+```
+
+선택: git tag v0.3.1, git push origin v0.3.1. CHANGELOG의 날짜는 npm 게시일(UTC)이며 다른 날 게시하면 고친다.
+
 ## 검증 예제와 기록
 
 F-01~08의 구체적인 구성은 [수동 검증의 가상 프로젝트](./MANUAL_TEST_CHECKLIST.md#가상-프로젝트)를 따른다.
@@ -1103,11 +1133,8 @@ npm ci가 받아 둔 잠금파일의 tarball만으로는 새 의존성 트리를
 이 프로젝트의 현재 인계는 이 블록 하나다. 작업을 멈출 때 이 블록을 바꾸며 이전 내용은 git 이력에 남는다.
 2026-10-28 이전의 인계와 검증 기록은 [인계 이력](./handoff/HISTORY.md#구현-계획에서-옮긴-기록)에 있다.
 
-- 완료: RQ-19 저장소 소개(DC-20~25)와 .conda 기본 제외(DC-24)·CLI 도움말 링크가 PR #2·#3으로 main에 병합됐다(18ef3ad).
-  자세한 근거는 위의 각 작업 절에 있다. .conda와 CLI 도움말 링크는 아직 npm에 배포되지 않았다(CHANGELOG Unreleased).
-- 완료(DC-26): 에이전트용 도움말 1단계(설치 대상 미지정 시 implementer·reviewer 포함 여부 묻기)와 5단계(건너뛴 파일 알리기),
-  --force는 사용자 허락 때만이라는 규칙, README --all 안내, Claude Code·Codex 밖 에이전트 안내(DC-27),
-  agent-kit 안내의 기본 설치 이유. 작업 브랜치 claude/tender-gates-sa5kn8를 main에서 다시 시작했다.
-- 다음: DC-26 PR 검토와 병합, 이후 다음 npm 배포(사용자 단계). M-16·M-18 사람 확인과 Codex 실제 세션, Windows 콘솔·Node 22.0 인수는 남아 있다.
-- 차단: 없음.
-- 최신 커밋: main 18ef3ad 위의 작업 브랜치. 실제 최신 SHA는 git log -1로 확인한다.
+- 완료: PR #2·#3·#4가 main에 병합됐다(666d55e). 저장소 소개(DC-20~25), .conda 기본 제외(DC-24), 에이전트용 도움말 보강(DC-26·27).
+- 진행 중: 0.3.1 배포 준비(위 절). 작업 브랜치 claude/tender-gates-sa5kn8를 main에서 다시 시작했다.
+- 다음: 준비 PR 병합 → 사용자가 위 절차로 npm 게시와 확인. 이후 M-16·M-18 사람 확인, Codex 실제 세션, Windows 콘솔·Node 22.0 인수.
+- 차단: 없음. npm publish는 사용자 인증이 필요하다.
+- 최신 커밋: main 666d55e 위의 작업 브랜치. 실제 최신 SHA는 git log -1로 확인한다.
