@@ -1062,11 +1062,10 @@ npm ci가 받아 둔 잠금파일의 tarball만으로는 새 의존성 트리를
 - 완료(DC-25): README를 핵심과 링크만 남기도록 줄이고(512 → 132줄) 사용 레퍼런스를 guide/ 세 문서와 agent-kit/README.md로 옮겼다.
 - 완료(DC-24, 별도 브랜치 claude/conda-default-exclusion): 기본 exclude에 **/.conda/**를 더했다. README·CHANGELOG(Unreleased) 반영.
   검증: Node 154개 통과·3개 건너뜀·실패 0, 플랫폼 6개 통과, pack 45개 파일.
-- 다음: [PR #2](https://github.com/superlucky84/docatlas/pull/2)를 먼저 main에 병합한 뒤 [PR #3](https://github.com/superlucky84/docatlas/pull/3)(.conda·CLI 도움말 링크)을 병합한다.
-  .conda 제외는 다음 npm 배포(0.3.0 이후)에 포함된다. 배포는 사용자 단계다.
-  GitHub 저장소 About·topics 설정은 사용자가 한다.
-  M-18 사람 확인(GitHub 첫 화면, 한국어판, 예제 열기, 다음 게시 후 npm 페이지의 캡처·링크).
-  기존 남은 일: Codex 실제 세션과 M-16 수동 항목, Windows 콘솔·기본 브라우저·Node 22.0 인수.
+- 다음: [PR #2](https://github.com/superlucky84/docatlas/pull/2)는 f9e691e 시점에 main에 병합됐다(병합 커밋 368370c).
+  그 뒤 올린 문서 커밋 7개(스펙 주도 개발과의 관계, Linux·WSL 안내, README 축약과 guide/)와 .conda·CLI 도움말 변경은
+  모두 main을 향한 [PR #3](https://github.com/superlucky84/docatlas/pull/3)에 있다. PR #3을 병합하면 끝난다.
+  .conda와 CLI 도움말 링크는 다음 npm 배포(0.3.0 이후)에 포함된다. 배포는 사용자 단계다.
 - 차단: 없음. README 캡처는 GitHub main의 절대 URL이라 main에 반영되기 전에는 브랜치 화면에서 보이지 않는다.
-- 최신 커밋: PR #2는 claude/tender-gates-sa5kn8(d0b54af), PR #3은 그 위의 claude/conda-default-exclusion이다.
-  PR #2의 최신 커밋을 PR #3에 병합했다. 실제 최신 SHA는 각 브랜치에서 git log -1로 확인한다.
+- 최신 커밋: PR #3 브랜치 claude/conda-default-exclusion(main으로 병합 시험 결과 충돌 없음, Node 154개 통과).
+  이후 새 작업은 병합된 main에서 다시 시작한다. 실제 최신 SHA는 git log -1로 확인한다.
