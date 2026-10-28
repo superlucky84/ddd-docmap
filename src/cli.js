@@ -1,9 +1,11 @@
 import { readFileSync } from 'node:fs';
+import os from 'node:os';
 import { parseArgs } from 'node:util';
 import open from 'open';
 import { CollectionOptionsError, ConfigurationError, ProjectError } from './collector/index.js';
 import { startServer } from './server/index.js';
 import { runAgents } from './agent-kit/command.js';
+import { agentKitNotice } from './agent-kit/notice.js';
 
 const metadata = JSON.parse(readFileSync(new URL('../package.json', import.meta.url), 'utf8'));
 const help = [
@@ -98,6 +100,9 @@ export async function run(args, {
   stdout.write('Document map: ' + session.url + '\n');
   stdout.write('Project: ' + session.snapshot.project.rootLabel + '\n');
   stdout.write(session.snapshot.documents.length + ' documents. Press Ctrl+C to stop.\n');
+  void agentKitNotice({ home: home ?? os.homedir(), root: session.snapshot.project.rootLabel, kitDir }).then(message => {
+    if (message && !stopping) stdout.write(message + '\n');
+  });
   if (!values['no-open']) {
     void Promise.resolve().then(() => {
       if (!stopping) return opener(session.url);
