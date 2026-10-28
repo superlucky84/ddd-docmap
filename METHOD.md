@@ -122,17 +122,18 @@ Documents grow with the project, and not all of them keep paying off. A document
 small change buries the ones that matter, so small fixes can go without one (see
 [Apply it to a project](#apply-it-to-a-project)).
 
-Agents write most of the documents, but a person still curates them:
+You do not have to clean up by hand; agents can do it. But to tell an agent what to clean up,
+you need to know where the documents are and what they say. Typical requests:
 
-- Merge duplicates and keep one canonical copy.
-- Move a contract up when it becomes shared, and leave a reference behind.
-- Delete or archive plans that no longer match the code.
-- Move old handoffs and verification logs into a history file. The designer skill does this
-  only when you ask.
+- "Merge these duplicates and keep one canonical copy."
+- "This contract is shared now. Move it up and leave a reference behind."
+- "This plan no longer matches the code. Delete or archive it."
+- "Move the old handoffs and verification logs into a history file." The designer skill does
+  this only when you ask.
 
-That is why this repository ships **docatlas**, a document viewer for people. It shows every
-document in a project on one local map, so you can read, review, and decide what to clean up.
-It never edits the documents; changes go through you and your agent.
+That is why this repository ships **docatlas**, a document viewer for people. It shows on one
+local map where every document lives and what it says, so you can see the whole picture and tell
+your agent what to tidy. docatlas itself never edits the documents.
 
 ## Roles
 

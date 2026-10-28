@@ -717,7 +717,8 @@ npm pack --dry-run 45개 파일. 이 저장소의 문서 지도는 docs/의 5개
   작성 규칙 소개도 남겨 두기로 한 문서에 적용한다는 표현으로 바꿨다. 한국어판 예시는 한국어로 썼다.
 - [x] README 핵심 규칙 아래에 필요한 만큼 쓰라는 한 줄과 적용 절 링크.
 - [x] examples/sample-shop/AGENTS.md와 예제 README 안내. 예제 문서 수는 21개 그대로다.
-- [x] 사용자 설명 반영: METHOD 두 언어의 문서 관리 절과 README 요약에 사람이 문서를 정리하며 docatlas가 그 뷰어라는 이유를 넣었다.
+- [x] 사용자 설명 반영: METHOD 두 언어의 문서 관리 절과 README 요약에 docatlas가 그 뷰어라는 이유를 넣었다.
+  후속 설명대로 정리는 에이전트에게 맡기고, 사람은 문서의 분포와 내용을 파악해 정리를 시킨다는 관점으로 고쳤다.
   두 METHOD 구조 동일(제목 14개·글머리 39·링크 7개), 링크 140개 문제 0.
 
 ### Test Hardening
@@ -964,10 +965,10 @@ npm ci가 받아 둔 잠금파일의 tarball만으로는 새 의존성 트리를
   검증: 문법 72개, Node 157개 중 154개 통과·3개 건너뜀·실패 0, pack 45개 파일, 링크 132개 문제 0.
 - 완료(DC-22): METHOD 두 언어에 프로젝트 적용 절(세 단계 선택지와 가벼운 AGENTS.md 예시), README 안내, 예제 AGENTS.md.
   검증: Node 157개 중 154개 통과·3개 건너뜀·실패 0, 플랫폼 6개 통과, pack 45개 파일, 링크 136개 문제 0.
-  이어서 사용자 설명대로 문서 관리 절을 더해 docatlas를 사람이 문서를 보고 정리하는 뷰어로 소개했다.
+  이어서 사용자 설명대로 문서 관리 절을 더해, 사람이 문서 분포와 내용을 파악해 에이전트에게 정리를 시키는 뷰어로 docatlas를 소개했다.
 - 다음: [PR #2](https://github.com/superlucky84/docatlas/pull/2)의 CI 확인과 사용자 검토 후 main 병합.
   GitHub 저장소 About·topics 설정은 사용자가 한다.
   M-18 사람 확인(GitHub 첫 화면, 한국어판, 예제 열기, 다음 게시 후 npm 페이지의 캡처·링크).
   기존 남은 일: Codex 실제 세션과 M-16 수동 항목, Windows 콘솔·기본 브라우저·Node 22.0 인수.
 - 차단: 없음. README 캡처는 GitHub main의 절대 URL이라 main에 반영되기 전에는 브랜치 화면에서 보이지 않는다.
-- 최신 커밋: 작업 브랜치 claude/tender-gates-sa5kn8. 이 인계 직전 커밋은 f1aa55d이며 실제 최신 SHA는 git log -1로 확인한다.
+- 최신 커밋: 작업 브랜치 claude/tender-gates-sa5kn8. 이 인계 직전 커밋은 d4e6740이며 실제 최신 SHA는 git log -1로 확인한다.
