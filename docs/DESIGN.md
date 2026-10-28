@@ -512,6 +512,9 @@ README의 기본 사용 명령은 docatlas다. 프로젝트 루트에서의 npx 
 | CONTRIBUTING.md | 개발 설치·검사·브라우저/설치 통합·플랫폼·벤치마크·소스 tarball·문서 작업 방식 | 제외 |
 | CHANGELOG.md | 게시한 버전별 변경 요약 | 제외(npm 10.9.4 pack에서 자동 포함 안 됨 확인) |
 | agent-kit/README.md | 킷 구성·설치 명령·현재 버전·변경 절차 | 포함 |
+| METHOD.ko.md | METHOD.md의 한국어 번역(DC-21) | 제외 |
+| examples/sample-shop/ | 영문 합성 예제 프로젝트(DC-21) | 제외 |
+| docatlas.config.json | 이 저장소 문서 지도의 include를 docs/**/*.md로 한정(DC-21) | 제외 |
 
 README 순서:
 
@@ -534,7 +537,14 @@ README 순서:
   스킬·룰을 바꾸면 METHOD.md와 README 요약이 여전히 맞는지 확인한다. 이 단계를 agent-kit/README.md 변경 절차에 넣는다.
 - 공개 안내는 Confluence·ctxbin을 원본과 사본의 관계로 설명하지 않는다. ctxbin 관리 파일 건너뛰기는 설치 동작 설명에만 남긴다.
 - 문서 지도 캡처는 저장소에 넣을 수 있는 합성 영문 예제로 만들어 .github/assets/document-map.png에 둔다.
-  개발 스크립트 scripts/screenshot.js가 예제 생성·서버 실행·브라우저 캡처를 재현한다. 제품 코드와 npm 패키지에는 포함하지 않는다.
+  개발 스크립트 scripts/screenshot.js가 예제 복사·서버 실행·브라우저 캡처를 재현한다. 제품 코드와 npm 패키지에는 포함하지 않는다.
+- DC-21: METHOD.ko.md는 METHOD.md의 번역이며 영어판이 기준이다. 두 문서는 같은 변경에서 함께 고친다.
+- DC-21: examples/sample-shop/은 사용자 안내용 영문 합성 예제다. checkout은 4종 전체로 상태 표시·결정·phase·인계를 보여 주고,
+  다른 기능은 부분 문서·중첩 기능·공유 계약·코드 옆 docs/를 보여 준다. 실제 회사 문서를 쓰지 않는다.
+  테스트 fixture가 아니며, 기존 테스트는 계속 임시 디렉터리에 예제를 만든다. README 캡처는 이 예제를 복사해 만든다.
+- DC-21: 저장소 루트의 docatlas.config.json은 {"version":1,"include":["docs/**/*.md"]}이다. 기본 제외 목록을 반복하지 않고
+  이 저장소의 지도에서 예제를 뺀다. 예제는 --root examples/sample-shop으로 연다.
+- DC-21: test/examples.test.js가 예제의 수집 결과와 저장소 지도의 예제 제외를 확인한다.
 - 이전 README의 사용법 정보는 지우지 않고 새 위치로 옮긴다. 버전별 신규 표시는 CHANGELOG.md로 옮긴다.
 - package.json은 description과 keywords만 바꾼다. 이름·버전·bin·files·의존성은 그대로다.
 
@@ -640,8 +650,8 @@ README 순서:
 - [x] DC-19: 2026-10-28 사용자 확인. 공개 저장소와 npm 패키지(MIT)에 스킬·룰 원본을 포함한다. M-16.
 - [x] DC-20: 2026-10-28 사용자 선택. docatlas 저장소 하나를 DDD 본거지로 소개하고, 위 RQ-19 계약의 README 순서·
   루트 METHOD.md(영문)·CONTRIBUTING.md·CHANGELOG.md 분리·공개 안내에서 Confluence/ctxbin 사본 설명 제외·이전 인계 정리를 채택했다. M-18.
-- [ ] DC-21: METHOD 한국어판과 examples/ 합성 예제 프로젝트의 필요 여부는 TBD다.
-  examples/의 문서는 이 저장소의 기본 문서 지도에 함께 수집되므로, 추가할 때 수집 설정도 함께 정한다. M-18.
+- [x] DC-21: 2026-10-28 사용자 요청으로 해소. METHOD.ko.md(영어판 기준 번역)와 영문 합성 예제 examples/sample-shop/을 추가하고,
+  저장소 루트 docatlas.config.json의 include를 docs/**/*.md로 한정해 이 저장소의 지도에서 예제를 뺀다. M-18.
 - [x] DC-11: 프로젝트별 설치와 docmap/ddd-docmap 공통 진입점을 구현하고 설치 검증을 통과했다.
   사용자 선택은 npx docmap / pnpm docmap이며 전역 런처를 추가하지 않는다. M-08, M-11.
 - [x] IC-01: picomatch 4.0.7, ignore 7.0.14, mdast-util-from-markdown 2.1.0과

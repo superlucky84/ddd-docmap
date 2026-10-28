@@ -310,7 +310,7 @@ DOCMAP_BROWSER_CHANNEL=chrome으로 설치 Chrome을 선택한다. 지원 환경
 
 ### M-18 — 저장소 소개와 방법론 문서
 
-대응: RQ-19 / DC-20·21.
+대응: RQ-19 / DC-20·21. 예제: examples/sample-shop/.
 
 - [ ] GitHub 저장소 첫 화면에서 DDD가 Doc-Driven Development이며 Domain-Driven Design이 아님을 바로 읽는다.
 - [ ] README만 보고 세 구성(방법론·agent kit·문서 지도)과 시작 명령을 찾는다.
@@ -318,6 +318,9 @@ DOCMAP_BROWSER_CHANNEL=chrome으로 설치 Chrome을 선택한다. 지원 환경
 - [ ] 이전 README에 있던 설정·제외·Windows·읽기/검색·API 안내와 개발·검증 안내를 새 위치에서 찾는다.
 - [ ] 다음 게시 후 npm 패키지 페이지에서 README의 캡처와 GitHub 링크가 열린다.
 - [ ] 공개 안내(README·METHOD·CONTRIBUTING·agent-kit 안내)에 Confluence·사내 사본 설명이 없다.
+- [ ] METHOD.ko.md가 METHOD.md와 같은 내용을 한국어로 전한다(DC-21).
+- [ ] 저장소 clone에서 npx docatlas --root examples/sample-shop으로 예제를 열면 checkout 4종과 부분 문서·중첩 기능이 보인다.
+- [ ] 저장소 루트에서 문서 지도를 열면 예제가 섞이지 않고 이 프로젝트의 기획 문서만 보인다.
 
 통과: 처음 온 사람이 README 첫 화면에서 방법론과 시작 방법을 이해하고, 기존 사용자가 필요한 레퍼런스를 잃지 않는다.
 상태: 문서 작성과 자동 확인 완료. 사람의 화면 확인은 미실행이다.

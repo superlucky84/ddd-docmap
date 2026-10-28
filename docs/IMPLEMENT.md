@@ -20,6 +20,7 @@
 - 완료: RQ-16·17·18 에이전트 스킬 관리와 설치의 구현·자동 검증·Windows/macOS CI·Claude Code 실제 세션 확인과 PR #1 병합.
   Codex 실제 세션 확인과 남은 수동 인수는 별도다. 0.3.0은 사용자가 npm에 게시했다(2026-10-28 registry latest 확인).
 - 완료: RQ-19 저장소 소개와 DDD 본거지 문서와 이전 인계 정리. 제품 코드는 바꾸지 않았다. M-18 사람 확인은 남아 있다.
+- 진행 중: DC-21 METHOD 한국어판과 examples/ 합성 예제 프로젝트.
 
 기술 선택은 각 단계에서 근거와 검증을 기록해 DC/IC를 해소한다.
 상세 계약을 바꾸면 요구사항·설계·단계·수동 기준을 같은 작업에서 갱신한다.
@@ -669,6 +670,33 @@ npm pack --dry-run 45개 파일. 환경: Linux / Node 22.22.0 / npm 10.9.4.
 
 종료 기준: README 첫 화면에 DDD 정의와 세 구성·시작 명령이 있고, 기존 사용법 정보가 빠짐없이 새 위치에 있으며,
 검사·테스트·pack 결과가 기준과 같다. 제품 코드 변경은 없다. M-18의 사람 확인(GitHub·npm 화면)은 별도다.
+
+## METHOD 한국어판과 예제 프로젝트 — 진행 중
+
+대응: RQ-19 / DC-21 / M-18.
+진입: 사용자 후속 요청(2026-10-28, 남은 TBD 진행)을 기준 4종에 기록했다. 기준 커밋 b9ee4a4.
+기준 검증(변경 전): npm run check 문법 71개·agent kit 세 쌍 통과. npm test 155개 중 152개 통과·3개 건너뜀·실패 0.
+npm pack --dry-run 45개 파일. 이 저장소의 문서 지도는 docs/의 5개 문서다.
+
+### 구현
+
+- [ ] METHOD.ko.md: METHOD.md와 같은 제목·표·목록 구조의 한국어 번역. 두 문서 상단에서 서로 연결한다.
+- [ ] examples/sample-shop/: checkout 4종 전체와 부분 문서·중첩 기능·공유 계약·코드 옆 docs/, 예제 README.
+- [ ] 저장소 루트 docatlas.config.json으로 이 저장소의 지도를 docs/로 한정한다.
+- [ ] scripts/screenshot.js가 내장 문서 대신 예제를 복사해 쓰고 README 캡처를 다시 만든다.
+- [ ] README·METHOD·CONTRIBUTING·agent-kit/README에 한국어판·예제 안내를 넣는다.
+
+### Test Hardening
+
+- [ ] test/examples.test.js: 예제의 문서 수·checkout 4종·중첩 그룹·경고 없음, 저장소 지도의 예제 제외.
+- [ ] METHOD.ko.md와 METHOD.md의 제목·표 행·목록 항목 수를 대조한다.
+
+### Integration Test
+
+- [ ] npm run check, npm test(새 테스트 포함), npm pack --dry-run 45개 파일 유지(예제·한국어판 제외).
+- [ ] 링크·앵커 검사와 docatlas 서버로 예제 문서 읽기(참조 오류 없음).
+
+종료 기준: 한국어판과 예제가 있고, 예제는 --root로 열리며 저장소 지도에는 섞이지 않는다. 기존 검사·테스트가 통과한다.
 
 ## 검증 예제와 기록
 

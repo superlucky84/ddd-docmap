@@ -35,6 +35,9 @@
 | ../METHOD.md | Doc-Driven Development 방법론 전문(영문) | RQ-19 작성 완료 |
 | ../CONTRIBUTING.md · ../CHANGELOG.md | 개발·검증 안내, 게시 버전별 변경 요약 | RQ-19 작성 완료 |
 | ../scripts/screenshot.js · ../.github/assets/ | README 캡처와 합성 예제로 다시 만드는 개발 스크립트 | RQ-19 추가 |
+| ../METHOD.ko.md | 방법론 한국어판(METHOD.md 번역) | DC-21 계획 |
+| ../examples/sample-shop/ | 4종 문서와 부분 문서를 보여 주는 영문 합성 예제 프로젝트 | DC-21 계획 |
+| ../docatlas.config.json | 이 저장소 문서 지도의 수집 범위를 docs/로 한정 | DC-21 계획 |
 
 설치되는 프로젝트는 입력 데이터의 소유자다. 도구의 설치 위치와 문서를 읽을
 프로젝트 위치를 구분한다.
@@ -181,7 +184,8 @@ README에 이 프로젝트가 말하는 DDD의 기반 설명이 없고 첫 화�
 - 확인됨: 쌓인 이전 인계를 정리한다. 현재 인계 하나를 구현 계획에 두고 이전 인계는 docs/handoff/로 옮긴다.
 - 설계 제안: 문서 지도 캡처는 저장소에 넣을 수 있는 합성 예제로 만든다. spec-driven 도구와의 차이를 METHOD에 짧게 둔다.
 - 범위 밖: CLI·수집기·서버·화면·설치 동작과 agent-kit 스킬·룰 원본은 바꾸지 않는다. package.json은 description·keywords만 바꾼다.
-- TBD(DC-21): METHOD 한국어판, examples/ 합성 예제 프로젝트. GitHub 저장소 About·topics는 사용자가 저장소 설정에서 바꾼다.
+- 확인됨(2026-10-28 후속 요청): 남겨 둔 TBD인 METHOD 한국어판과 examples/ 합성 예제 프로젝트도 진행한다(DC-21).
+- GitHub 저장소 About·topics는 사용자가 저장소 설정에서 바꾼다.
 
 ## 오류와 규모
 
@@ -208,7 +212,7 @@ Phase 4에서 PR-02·05·08의 검색·변경 감지·명시적인 문서 이동
 0.2.0과 0.3.0은 사용자가 게시했다. 2026-10-28 npm registry 조회에서 latest는 0.3.0이다.
 최종 지원 OS/Node 하한 검증은 남아 있다.
 에이전트 스킬 관리와 설치의 DC-16~19를 모두 해소했다. Codex 룰 규칙은 Codex CLI 0.165.0 관찰 결과다.
-저장소 소개(RQ-19)의 METHOD 한국어판과 examples/ 합성 예제는 TBD다(DC-21).
+저장소 소개(RQ-19)의 METHOD 한국어판과 examples/ 합성 예제는 2026-10-28 사용자 요청으로 진행한다(DC-21).
 
 최신 인계 상태는 [구현 계획의 현재 인계](./IMPLEMENT.md#현재-인계)를 따른다.
 
