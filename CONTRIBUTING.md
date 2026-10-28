@@ -151,3 +151,6 @@ run `npm run check`. Then make sure [METHOD.md](METHOD.md), its Korean translati
 the rules correctly. Change both method files in the same commit.
 
 Release notes go in [CHANGELOG.md](CHANGELOG.md).
+
+Keep the README to the essentials and links. Usage details live in [guide/](guide/), and agent install
+details in [agent-kit/README.md](agent-kit/README.md). Explain each thing in one place and link to it.

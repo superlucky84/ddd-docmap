@@ -779,7 +779,8 @@ npm pack --dry-run 45개 파일. 이 저장소의 문서 지도는 docs/의 5개
 ### 구현
 
 - [x] src/collector/config.js의 기본 exclude에 **/.conda/**를 더한다.
-- [x] README의 기본 제외 표·설정 예제·conda 안내, CHANGELOG의 Unreleased 항목.
+- [x] 기본 제외 표·설정 예제·conda 안내, CHANGELOG의 Unreleased 항목.
+  DC-25로 이 설명이 guide/configuration.md로 옮겨져, PR #2 병합 시 같은 수정을 가이드에 다시 반영했다.
 
 ### Test Hardening
 
@@ -795,6 +796,34 @@ npm pack --dry-run 45개 파일. 이 저장소의 문서 지도는 docs/의 5개
 - [x] PR #2를 기준으로 하는 PR을 만든다. 실제 배포는 사용자 단계다. [PR #3](https://github.com/superlucky84/docatlas/pull/3).
 
 종료 기준: .conda 문서가 모든 깊이에서 기본 제외되고 env 등 일반 이름은 그대로이며 기존 검사가 통과한다.
+
+## README 축약과 사용 가이드 분리 — 완료(PR #3 반영 대기)
+
+대응: RQ-19 / DC-25 / M-18.
+진입: 사용자 결정(2026-10-28)을 기준 4종에 기록했다. 기준 커밋 3929473. README는 512줄이며 Reference가 약 290줄이다.
+기준 검증: 문법 72개·agent kit 세 쌍, Node 154개 통과·3개 건너뜀·실패 0, 링크 검사 문제 0.
+
+### 구현
+
+- [x] guide/document-map.md·guide/configuration.md·guide/platforms.md를 README 내용으로 만든다. 링크는 새 위치에 맞춘다.
+  문서 지도·설정 가이드는 README 절을 그대로 옮기고 제목 단계와 링크만 바꿨다. 지원 환경 가이드는 상태 표 → Windows → WSL 순으로
+  다시 묶고, Linux 결과가 생겨 "other OSes remain unverified"를 "environments not listed above"로 고쳤다.
+- [x] agent-kit/README.md에 에이전트 설치 위치·갱신·출력 상세를 옮긴다.
+- [x] README를 DC-25 순서로 줄인다. Configuration 제목과 가이드 링크를 남긴다. 512줄 → 132줄.
+  옵션 표는 README에만 두고 설정 가이드는 링크로 바꿨다. CONTRIBUTING에 README·guide 역할을 적었다.
+
+### Test Hardening
+
+- [x] 이전 README의 줄을 새 README·guide·agent-kit/README와 줄 단위로 대조해 빠진 정보가 없는지 확인한다.
+  378줄 중 그대로 없는 46줄을 검토했다. 요약·이동·링크 변경이었고, 빠진 METHOD 적용 절 링크와 블로그 글 링크를 되살렸다.
+
+### Integration Test
+
+- [x] 링크·앵커 검사(guide 포함), npm run check·npm test, npm pack --dry-run(파일 수 45개 유지).
+  링크 165개 문제 0, Node 154개 통과·3개 건너뜀·실패 0, pack 45개 파일.
+- [ ] PR #3에 병합하고 CLI 도움말 링크를 바꾼다.
+
+종료 기준: README가 핵심과 링크만 담고, 이전 정보가 모두 새 위치에 있으며, 검사가 통과한다.
 
 ## 검증 예제와 기록
 
@@ -1029,13 +1058,14 @@ npm ci가 받아 둔 잠금파일의 tarball만으로는 새 의존성 트리를
   이어서 사용자 설명대로 문서 관리 절을 더해, 사람이 문서 분포와 내용을 파악해 에이전트에게 정리를 시키는 뷰어로 docatlas를 소개했다.
 - 완료(DC-23): METHOD 두 언어에 스펙 주도 개발과의 관계 절, README에 그 요약과 Linux·WSL 지원 상태·conda 환경 안내를 넣었다.
   Linux 근거: Ubuntu 24.04 / Node 22.22.0에서 Node 154개·플랫폼 6개·브라우저 40개 통과. WSL은 직접 실행하지 않았다.
+- 완료(DC-25): README를 핵심과 링크만 남기도록 줄이고(512 → 132줄) 사용 레퍼런스를 guide/ 세 문서와 agent-kit/README.md로 옮겼다.
 - 완료(DC-24, 별도 브랜치 claude/conda-default-exclusion): 기본 exclude에 **/.conda/**를 더했다. README·CHANGELOG(Unreleased) 반영.
   검증: Node 154개 통과·3개 건너뜀·실패 0, 플랫폼 6개 통과, pack 45개 파일.
-- 다음: [PR #2](https://github.com/superlucky84/docatlas/pull/2)를 먼저 main에 병합한 뒤 [PR #3](https://github.com/superlucky84/docatlas/pull/3)(.conda)을 병합한다.
+- 다음: [PR #2](https://github.com/superlucky84/docatlas/pull/2)를 먼저 main에 병합한 뒤 [PR #3](https://github.com/superlucky84/docatlas/pull/3)(.conda·CLI 도움말 링크)을 병합한다.
   .conda 제외는 다음 npm 배포(0.3.0 이후)에 포함된다. 배포는 사용자 단계다.
   GitHub 저장소 About·topics 설정은 사용자가 한다.
   M-18 사람 확인(GitHub 첫 화면, 한국어판, 예제 열기, 다음 게시 후 npm 페이지의 캡처·링크).
   기존 남은 일: Codex 실제 세션과 M-16 수동 항목, Windows 콘솔·기본 브라우저·Node 22.0 인수.
 - 차단: 없음. README 캡처는 GitHub main의 절대 URL이라 main에 반영되기 전에는 브랜치 화면에서 보이지 않는다.
-- 최신 커밋: PR #2는 claude/tender-gates-sa5kn8(3929473), PR #3은 그 위의 claude/conda-default-exclusion이다.
+- 최신 커밋: PR #2는 claude/tender-gates-sa5kn8(d0b54af), PR #3은 그 위의 claude/conda-default-exclusion이다.
   PR #2의 최신 커밋을 PR #3에 병합했다. 실제 최신 SHA는 각 브랜치에서 git log -1로 확인한다.

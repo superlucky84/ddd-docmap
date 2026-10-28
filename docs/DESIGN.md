@@ -509,7 +509,8 @@ README의 기본 사용 명령은 docatlas다. 프로젝트 루트에서의 npx 
 
 | 파일 | 내용 | npm 패키지 |
 | --- | --- | --- |
-| README.md | 소개·DDD 요약·구성·빠른 시작·역할·이 저장소 예시, 문서 지도 사용법, Reference | 자동 포함 |
+| README.md | 핵심만: 소개·DDD 요약·구성·빠른 시작·역할·문서 지도 기본·Configuration 안내·더 읽기 목록(DC-25) | 자동 포함 |
+| guide/document-map.md · guide/configuration.md · guide/platforms.md | README에서 옮긴 사용 레퍼런스(DC-25) | 제외 |
 | METHOD.md | 방법론 전문(영문): 정의·원칙·4종 문서·흐름·작성 규칙·역할·문서 배치·도구와의 관계 | 제외 |
 | CONTRIBUTING.md | 개발 설치·검사·브라우저/설치 통합·플랫폼·벤치마크·소스 tarball·문서 작업 방식 | 제외 |
 | CHANGELOG.md | 게시한 버전별 변경 요약 | 제외(npm 10.9.4 pack에서 자동 포함 안 됨 확인) |
@@ -518,21 +519,26 @@ README의 기본 사용 명령은 docatlas다. 프로젝트 루트에서의 npx 
 | examples/sample-shop/ | 영문 합성 예제 프로젝트(DC-21) | 제외 |
 | docatlas.config.json | 이 저장소 문서 지도의 include를 docs/**/*.md로 한정(DC-21) | 제외 |
 
-README 순서:
+README 순서(DC-25, 목표 150줄 안팎):
 
-1. 제목과 한 줄 소개. DDD가 Doc-Driven Development이며 Domain-Driven Design이 아님을 밝힌다.
-2. Doc-Driven Development 요약: 핵심 문장, 4종 문서, 흐름, 핵심 규칙, METHOD와 블로그 링크.
-3. 이 저장소의 세 구성: 방법론·agent kit·문서 지도.
-4. 빠른 시작: 스킬 설치 → 에이전트와 설계 → 문서 지도 실행.
-5. 에이전트 역할: designer·implementer·reviewer와 기본 설치 여부.
-6. 이 저장소도 같은 방식으로 만든다: docs/의 기준 4종과 이 저장소에서 문서 지도를 여는 방법.
-7. 문서 지도: 실행·설치 방법과 화면 동작(기존 내용).
-8. Reference: 문서 위치·옵션·Configuration·읽기·검색·agent 설치 상세·Windows·Collector API.
-9. 기여·계획 문서·라이선스.
+1. 제목과 한 줄 소개, DDD가 Domain-Driven Design이 아니라는 안내, 캡처.
+2. Doc-Driven Development 요약: 핵심 문장, 4종 문서, 핵심 규칙 3개, 필요한 만큼 쓰라는 한 줄,
+   스펙 주도 개발 질문에 대한 짧은 답, METHOD 링크.
+3. 이 저장소의 구성 표, 빠른 시작, 에이전트 역할 표.
+4. 문서 지도 기본: 사람용 지도인 이유 한 문단, 실행 명령, 옵션 표, 지원 OS 한 줄과 가이드 링크.
+5. Configuration: 설정 없이 동작한다는 안내와 가이드 링크. 0.3.0 도움말이 가리키는 앵커라 제목을 유지한다.
+6. 더 읽기 목록: METHOD·가이드 세 개·agent-kit·예제·이 저장소 기획 문서·CONTRIBUTING·CHANGELOG.
+7. 라이선스.
+
+상세 위치(DC-25): 문서 지도 실행·설치·화면·읽기·검색·Collector API는 guide/document-map.md,
+문서 위치·제외·설정 파일은 guide/configuration.md, Windows·Linux·WSL은 guide/platforms.md,
+에이전트 설치 위치·갱신·출력은 agent-kit/README.md(npm 패키지 포함)로 옮긴다. 같은 설명을 두 곳에 쓰지 않는다.
+guide/는 이 저장소 기획 문서(docs/)와 구분하며, 저장소 지도(docs/만 수집)에는 넣지 않는다.
 
 규칙:
 
-- src/cli.js의 도움말이 README#configuration을 가리키므로 `## Configuration` 제목을 유지한다.
+- 0.3.0의 src/cli.js 도움말이 README#configuration을 가리키므로 README에 Configuration 제목과 가이드 링크를 유지한다.
+  다음 배포부터 도움말은 guide/configuration.md를 가리킨다(DC-25, PR #3).
 - npm 패키지에 없는 파일(METHOD·CONTRIBUTING·CHANGELOG·docs·캡처)은 GitHub 절대 URL로,
   패키지에 있는 LICENSE·agent-kit/는 상대 경로로 연결한다. 기존 README 링크 규칙과 같다.
 - METHOD.md와 README 요약은 agent-kit 세 스킬·룰의 규칙을 요약한다. 새 규칙을 만들지 않는다.
@@ -672,6 +678,8 @@ README 순서:
   저장소 루트 docatlas.config.json의 include를 docs/**/*.md로 한정해 이 저장소의 지도에서 예제를 뺀다. M-18.
 - [x] DC-22: 2026-10-28 사용자 선택. 프로젝트 적용은 강제 규칙이 아니라 선택지로 안내하고,
   AGENTS.md·CLAUDE.md 권장 예시는 출발점으로 보여 준다. M-18.
+- [x] DC-25: 2026-10-28 사용자 선택. README는 핵심과 링크만 두고 사용 레퍼런스는 guide/와 agent-kit/README.md로 옮긴다.
+  CLI 도움말 링크 변경은 다음 배포(PR #3). M-18.
 - [x] DC-24: 2026-10-28 사용자 선택. 기본 exclude에 **/.conda/**를 더하고 다음 배포에 포함한다. M-01, M-09.
 - [x] DC-23: 2026-10-28 사용자 설명. 스펙 주도 개발과의 공통점을 인정하고, 중심이 문서와 그 관리라는 철학 차이를
   METHOD 두 언어와 README에 설명한다. M-18.
