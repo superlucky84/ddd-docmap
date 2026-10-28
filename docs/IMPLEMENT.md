@@ -785,7 +785,7 @@ npm pack --dry-run 45개 파일. 이 저장소의 문서 지도는 docs/의 5개
 - [x] npm run check, npm test, npm run test:platform(설치된 tarball에서 .conda 제외), npm pack --dry-run.
   문법 72개·agent kit 세 쌍, Node 157개 중 154개 통과·3개 건너뜀·실패 0, 플랫폼 6개 통과, pack 45개 파일.
   재현 예제에서 .conda 문서는 빠지고 env 문서는 그대로 수집된다.
-- [ ] PR #2를 기준으로 하는 PR을 만든다. 실제 배포는 사용자 단계다.
+- [x] PR #2를 기준으로 하는 PR을 만든다. 실제 배포는 사용자 단계다. [PR #3](https://github.com/superlucky84/docatlas/pull/3).
 
 종료 기준: .conda 문서가 모든 깊이에서 기본 제외되고 env 등 일반 이름은 그대로이며 기존 검사가 통과한다.
 
@@ -1024,7 +1024,7 @@ npm ci가 받아 둔 잠금파일의 tarball만으로는 새 의존성 트리를
   Linux 근거: Ubuntu 24.04 / Node 22.22.0에서 Node 154개·플랫폼 6개·브라우저 40개 통과. WSL은 직접 실행하지 않았다.
 - 완료(DC-24, 별도 브랜치 claude/conda-default-exclusion): 기본 exclude에 **/.conda/**를 더했다. README·CHANGELOG(Unreleased) 반영.
   검증: Node 154개 통과·3개 건너뜀·실패 0, 플랫폼 6개 통과, pack 45개 파일.
-- 다음: [PR #2](https://github.com/superlucky84/docatlas/pull/2)를 먼저 main에 병합한 뒤 .conda PR을 병합한다.
+- 다음: [PR #2](https://github.com/superlucky84/docatlas/pull/2)를 먼저 main에 병합한 뒤 [PR #3](https://github.com/superlucky84/docatlas/pull/3)(.conda)을 병합한다.
   .conda 제외는 다음 npm 배포(0.3.0 이후)에 포함된다. 배포는 사용자 단계다.
   GitHub 저장소 About·topics 설정은 사용자가 한다.
   M-18 사람 확인(GitHub 첫 화면, 한국어판, 예제 열기, 다음 게시 후 npm 페이지의 캡처·링크).
