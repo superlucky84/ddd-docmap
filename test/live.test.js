@@ -20,10 +20,17 @@ function changed(store, predicate, action) {
   });
 }
 
+async function liveProject(t, files) {
+  const cleanups = [];
+  t.after(async () => { for (const cleanup of cleanups.reverse()) await cleanup(); });
+  const project = await createProject({ after: fn => cleanups.push(fn) }, files);
+  return { ...project, after: fn => cleanups.push(fn) };
+}
+
 async function watched(t, files = {}) {
-  const project = await createProject(t, { 'docs/DESIGN.md': '# Initial\n\nFirst body.', ...files });
+  const project = await liveProject(t, { 'docs/DESIGN.md': '# Initial\n\nFirst body.', ...files });
   const store = await createProjectStore(project.root);
-  t.after(() => store.close());
+  project.after(() => store.close());
   return { ...project, store };
 }
 
@@ -84,12 +91,13 @@ test('two stores isolate content and shutdown releases watchers', async t => {
 });
 
 test('HTTP search, explicit missing-path redirects, SSE, and document generations agree', async t => {
-  const { root, write } = await createProject(t, {
+  const project = await liveProject(t, {
     'ddd-docmap.config.json': JSON.stringify({ version: 1, redirects: { 'docs/old.md': 'docs/current.md' } }),
     'docs/current.md': '# Current\n\nBody needle.\n\n[Previous](old.md#current)'
   });
+  const { root, write } = project;
   const app = await startServer({ root });
-  t.after(() => app.close());
+  project.after(() => app.close());
   const read = async route => (await fetch(new URL(route, app.url))).json();
   const map = await read('api/map');
   const search = await read('api/search?q=old.md');

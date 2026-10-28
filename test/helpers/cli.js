@@ -1,7 +1,7 @@
 import { spawn } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 
-export const cliPath = fileURLToPath(new URL('../../bin/ddd-docmap.js', import.meta.url));
+export const cliPath = fileURLToPath(new URL('../../bin/docatlas.js', import.meta.url));
 
 export async function startCli(t, { cwd, args = [], executable = cliPath }) {
   const child = spawn(process.execPath, [executable, ...args], { cwd, stdio: ['ignore', 'pipe', 'pipe'] });

@@ -2,7 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs/promises';
 import path from 'node:path';
-import { collectProject, ConfigurationError } from '@superlucky84/ddd-docmap';
+import { collectProject, ConfigurationError } from 'docatlas';
 import { createBasicProject, createProject } from './helpers/projects.js';
 
 const CONFIG = 'ddd-docmap.config.json';

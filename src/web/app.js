@@ -156,7 +156,7 @@ async function load() {
     if (!response.ok) throw new Error('The project could not be loaded.');
     applyMap(await response.json());
     const project = state.map.project;
-    document.title = project.displayName + ' · ddd-docmap';
+    document.title = project.displayName + ' · docatlas';
     $('project-name').textContent = project.displayName;
     $('project-root').textContent = project.rootLabel;
     $('project-root').title = project.rootLabel;

@@ -2,7 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs/promises';
 import path from 'node:path';
-import { collectProject, ProjectError } from '@superlucky84/ddd-docmap';
+import { collectProject, ProjectError } from 'docatlas';
 import { BASIC_DOCUMENTS, BASIC_FILES, createBasicProject, createProject } from './helpers/projects.js';
 
 test('F-01: discovers exactly eight documents and excludes dependencies and output', async t => {

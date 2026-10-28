@@ -2,7 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs/promises';
 import path from 'node:path';
-import { collectProject, ConfigurationError } from '@superlucky84/ddd-docmap';
+import { collectProject, ConfigurationError } from 'docatlas';
 import { readRegularFile } from '../src/collector/read.js';
 import { createProject } from './helpers/projects.js';
 

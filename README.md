@@ -1,13 +1,12 @@
-# ddd-docmap
+# docatlas
 
 Local document maps for **Doc-Driven Development** projects.
 
 Find feature documentation spread across a repository, explore its hierarchy,
 and read Markdown without losing your place.
 
-> Phase 5 hardening is complete. Browse feature cards, read Markdown, search,
-> and see local saves reflected without reloading. Packaged installation checks
-> also pass; final acceptance and release decisions remain. There is no npm release yet.
+> The first npm release is still pending. Until it is published, use the local
+> tarball instructions below. The package name and command are both `docatlas`.
 
 ## Document map
 
@@ -25,39 +24,95 @@ additional documents such as README or research notes. Defaults should work
 without rewriting existing documentation; optional configuration can refine
 labels, summaries, and discovery.
 
-## Development
+## Run from a project root
 
-The declared minimum is Node.js 22. Packaged integration checks pass on Node.js
-22.12.0 and 24.22.1 on macOS 15.6.1. Node.js 22.0 and other OSes remain unverified.
+Docatlas uses **the directory where you run the command** as its default project root.
+For example, running it in `/path/to/project` reads that project's documents.
+Use `--root` to select a different directory.
 
-```sh
-git clone https://github.com/superlucky84/ddd-docmap.git
-cd ddd-docmap
-npm install --ignore-scripts
-npm run check
-npm test
-node bin/ddd-docmap.js --help
-node bin/ddd-docmap.js --version
-npm pack --dry-run
-```
+### Without adding a project dependency
 
-The local manifest uses the package name
-`@superlucky84/ddd-docmap`; registry availability has not been checked.
-The package is marked private while the first release and license are decided.
-
-## Run locally
-
-After installing dependencies in this checkout:
+After the npm release, change into the project you want to explore and run:
 
 ~~~sh
-node bin/ddd-docmap.js
-node bin/ddd-docmap.js --root /path/to/project
-node bin/ddd-docmap.js --root /path/to/project --no-open
+cd /path/to/project
+npx docatlas
+~~~
+
+When Docatlas is not installed in the project, npx can download it to the npm cache
+and run it without adding a dependency to the project's package.json. If a matching
+local installation exists, npx uses that version.
+
+### With a project-local installation
+
+For npm projects, install it as a development dependency, then run the local version:
+
+~~~sh
+cd /path/to/project
+npm install --save-dev docatlas
+npx --no-install docatlas
+~~~
+
+For pnpm projects:
+
+~~~sh
+cd /path/to/project
+pnpm add -D docatlas
+pnpm docatlas
+~~~
+
+These commands keep the package version in the project's manifest and lockfile.
+Package managers expose the local `node_modules/.bin/docatlas` command. An ordinary
+shell needs that directory on PATH to run a bare `docatlas`.
+
+An optional package script also provides `npm run docatlas` or `pnpm run docatlas`:
+
+~~~json
+{
+  "scripts": {
+    "docatlas": "docatlas"
+  }
+}
+~~~
+
+### Before the first npm release
+
+Create a tarball from this source checkout after installing its dependencies:
+
+~~~sh
+npm pack --pack-destination /tmp
+~~~
+
+Then install it from your project's root:
+
+~~~sh
+cd /path/to/project
+pnpm add -D /tmp/docatlas-0.1.0.tgz
+pnpm docatlas
+~~~
+
+Or use npm:
+
+~~~sh
+cd /path/to/project
+npm install --save-dev /tmp/docatlas-0.1.0.tgz
+npx --no-install docatlas
+~~~
+
+### Options and shutdown
+
+After publication, the same options work for one-off and local runs:
+
+~~~sh
+npx docatlas --root /path/to/another-project
+npx docatlas --no-open
 ~~~
 
 The CLI prints a loopback URL and opens your default browser. Keep the terminal
 open; Ctrl+C stops this server. Separate invocations use separate servers.
-If opening a browser fails, open the printed address manually.
+With `--no-open`, or if opening a browser fails, open the printed address manually.
+Installed users can also pass options to `pnpm docatlas` or `npx --no-install docatlas`.
+Earlier `docmap` and `ddd-docmap` command names remain accepted for compatibility.
 
 The arrow expands child features; the card expands its documents. On narrow
 screens, selecting a document switches to its reader, with a button back to the map.
@@ -102,6 +157,25 @@ An explicit previous path works in search, document URLs, and relative Markdown 
 even when the old file no longer exists. Valid chains resolve to one current document;
 cycles, missing targets, and excluded sources produce collection notices.
 
+## Development
+
+The declared minimum is Node.js 22. Packaged integration checks pass on Node.js
+22.12.0 and 24.22.1 on macOS 15.6.1. Node.js 22.0 and other OSes remain unverified.
+
+```sh
+git clone https://github.com/superlucky84/docatlas.git
+cd docatlas
+npm install --ignore-scripts
+npm run check
+npm test
+node bin/docatlas.js --help
+node bin/docatlas.js --version
+npm pack --dry-run
+```
+
+The package name is `docatlas`, licensed under MIT. Version `0.1.0` is prepared for
+its first npm release. Registry publication is still pending.
+
 ## Browser checks
 
 The development-only Playwright tests need a browser:
@@ -137,14 +211,14 @@ npm run benchmark -- --browser
 
 The browser benchmark uses installed Chrome by default; `DOCMAP_BROWSER_CHANNEL`
 can select another Playwright channel. Timings, idle CPU, and memory are local measurements.
-See the [recorded results and regression criteria](docs/IMPLEMENT.md#phase-5-완료-검증--2026-10-28).
+See the [recorded results and regression criteria](https://github.com/superlucky84/docatlas/blob/main/docs/IMPLEMENT.md#phase-5-완료-검증--2026-10-28).
 
 ## Collector API
 
 After installing dependencies in this checkout, collect a project without a server:
 
 ~~~js
-import { collectProject } from '@superlucky84/ddd-docmap';
+import { collectProject } from 'docatlas';
 
 const snapshot = await collectProject('/path/to/project');
 console.log(snapshot.documents.length, snapshot.groups.length);
@@ -154,7 +228,8 @@ The snapshot contains project identity, document metadata, hierarchical groups,
 warnings, and a content-based revision. It does not contain full document bodies.
 
 The collector reads nested .gitignore rules and optional ddd-docmap.config.json.
-See the [implemented collection contract](docs/DESIGN.md#phase-1-구현-계약).
+This configuration filename is retained for compatibility.
+See the [implemented collection contract](https://github.com/superlucky84/docatlas/blob/main/docs/DESIGN.md#phase-1-구현-계약).
 The config supports version, include, exclude, groups, and redirects.
 Redirects are explicit project-relative Markdown paths; they are never inferred from prose.
 
@@ -162,14 +237,14 @@ Redirects are explicit project-relative Markdown paths; they are never inferred 
 
 Planning documents are currently written in Korean.
 
-- [Requirements](docs/REQUIREMENTS.md): scope, agreed behavior, and proposed additions.
-- [Design](docs/DESIGN.md): architecture, document model, and open decisions.
-- [Implementation plan](docs/IMPLEMENT.md): phases, validation, and handoff.
-- [Manual checks](docs/MANUAL_TEST_CHECKLIST.md): acceptance scenarios.
+- [Requirements](https://github.com/superlucky84/docatlas/blob/main/docs/REQUIREMENTS.md): scope, agreed behavior, and proposed additions.
+- [Design](https://github.com/superlucky84/docatlas/blob/main/docs/DESIGN.md): architecture, document model, and open decisions.
+- [Implementation plan](https://github.com/superlucky84/docatlas/blob/main/docs/IMPLEMENT.md): phases, validation, and handoff.
+- [Manual checks](https://github.com/superlucky84/docatlas/blob/main/docs/MANUAL_TEST_CHECKLIST.md): acceptance scenarios.
 
-See [AGENTS.md](AGENTS.md) for contributor and coding-agent guidance.
+See [AGENTS.md](https://github.com/superlucky84/docatlas/blob/main/AGENTS.md) for contributor and coding-agent guidance.
 
 ## License
 
-TBD. No open-source license has been selected yet.
+[MIT](LICENSE). Copyright (c) 2026 superlucky84.
 

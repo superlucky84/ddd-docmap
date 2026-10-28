@@ -55,24 +55,42 @@ test('F-07: a production tarball runs independently and preserves both target pr
   scope.after(() => fs.rm(installRoot, { recursive: true, force: true }));
   const { stdout } = await npm(['pack', '--json', '--pack-destination', installRoot], repository);
   const [pack] = JSON.parse(stdout);
+  assert.equal(pack.name, 'docatlas');
+  assert.equal(pack.version, '0.1.0');
   const packedFiles = new Set(pack.files.map(file => file.path));
-  for (const filename of ['bin/ddd-docmap.js', 'src/collector/read.js', 'src/collector/index.js',
+  for (const filename of ['LICENSE', 'README.md', 'bin/docatlas.js', 'bin/ddd-docmap.js', 'src/collector/read.js', 'src/collector/index.js',
     'src/server/index.js', 'src/server/project-store.js', 'src/server/render.js',
     'src/web/index.html', 'src/web/app.js', 'src/web/reader.js', 'src/web/search.js', 'src/web/live.js', 'src/web/styles.css']) {
     assert.ok(packedFiles.has(filename), 'Missing runtime file: ' + filename);
   }
-  assert.ok(!pack.files.some(file => /^(?:node_modules|test)\//.test(file.path)));
+  assert.ok(!pack.files.some(file => /^(?:node_modules|test|docs|scripts)\//.test(file.path) || file.path === 'AGENTS.md'));
   await fs.writeFile(path.join(installRoot, 'package.json'), '{"private":true,"type":"module"}\n');
   await npm(['install', '--offline', '--omit=dev', '--ignore-scripts', '--no-audit', '--no-fund',
     path.join(installRoot, pack.filename)], installRoot);
-  const installed = path.join(installRoot, 'node_modules/@superlucky84/ddd-docmap');
-  const executable = path.join(installed, 'bin/ddd-docmap.js');
+  const installed = path.join(installRoot, 'node_modules', pack.name);
+  const executable = path.join(installed, 'bin/docatlas.js');
   assert.ok(!(await fs.lstat(installed)).isSymbolicLink());
   await assert.rejects(fs.access(path.join(installRoot, 'node_modules/@playwright/test')), { code: 'ENOENT' });
   assert.equal((await execute(process.execPath, [executable, '--version'], { cwd: installRoot })).stdout.trim(), pack.version);
+  const installedMetadata = JSON.parse(await fs.readFile(path.join(installed, 'package.json'), 'utf8'));
+  assert.equal(installedMetadata.license, 'MIT');
+  assert.notEqual(installedMetadata.private, true);
+  assert.equal(installedMetadata.repository.url, 'git+https://github.com/superlucky84/docatlas.git');
+  assert.match(await fs.readFile(path.join(installed, 'LICENSE'), 'utf8'), /Copyright \(c\) 2026 superlucky84/);
+  assert.equal(installedMetadata.bin.docatlas, installedMetadata.bin.docmap);
+  assert.equal(installedMetadata.bin.docmap, installedMetadata.bin['ddd-docmap']);
+  const binName = name => path.join('node_modules', '.bin', name);
+  for (const name of ['docatlas', 'docmap', 'ddd-docmap']) {
+    assert.equal(await fs.realpath(path.join(installRoot, binName(name))), executable);
+    const help = await npm(['exec', '--offline', '--', name, '--help'], installRoot);
+    assert.match(help.stdout, /docatlas \[--root <directory>\]/);
+    assert.match(help.stdout, /Compatibility aliases: docmap, ddd-docmap/);
+    const version = await npm(['exec', '--offline', '--', name, '--version'], installRoot);
+    assert.equal(version.stdout.trim(), pack.version);
+  }
 
   const js = await createReadingProject(scope, {
-    'package.json': '{"private":true,"scripts":{"build":"exit 99"}}',
+    'package.json': '{"private":true,"scripts":{"build":"exit 99","docatlas":"docatlas"}}',
     'docs/catalog/REQUIREMENTS.md': BASIC_FILES['docs/catalog/REQUIREMENTS.md'] + '\nJavaScriptOnlyToken.\n',
     'ddd-docmap.config.json': JSON.stringify({ version: 1, redirects: { 'docs/old/DESIGN.md': READING_ID } })
   });
@@ -80,11 +98,24 @@ test('F-07: a production tarball runs independently and preserves both target pr
     'main.py': 'print("This project needs no JavaScript build.")\n',
     'docs/catalog/REQUIREMENTS.md': BASIC_FILES['docs/catalog/REQUIREMENTS.md'] + '\nPythonOnlyToken.\n'
   });
+  await npm(['install', '--save-dev', '--offline', '--ignore-scripts', '--no-audit', '--no-fund',
+    path.join(installRoot, pack.filename)], js.root);
+  const localMetadata = JSON.parse(await fs.readFile(path.join(js.root, 'package.json'), 'utf8'));
+  assert.ok(localMetadata.devDependencies[pack.name]);
+  const localExecutable = path.join(js.root, binName('docatlas'));
+  assert.equal(await fs.realpath(localExecutable), path.join(js.root, 'node_modules', pack.name, 'bin/docatlas.js'));
+  assert.equal((await npm(['run', '--silent', 'docatlas', '--', '--version'], js.root)).stdout.trim(), pack.version);
+  assert.equal((await npm(['exec', '--offline', '--', 'docatlas', '--version'], js.root)).stdout.trim(), pack.version);
+  await assert.rejects(npm(['exec', '--offline', '--', 'docatlas', '--unknown'], js.root), error => {
+    assert.equal(error.code, 2);
+    assert.match(error.stderr, /Run docatlas --help/);
+    return true;
+  });
   const beforeJs = await filesIn(js.root);
   const beforeNonJs = await filesIn(nonJs.root);
   const alias = path.join(installRoot, 'non-js-alias');
   await fs.symlink(nonJs.root, alias, 'dir');
-  const first = await startCli(scope, { cwd: js.root, executable, args: ['--no-open'] });
+  const first = await startCli(scope, { cwd: js.root, executable: localExecutable, args: ['--no-open'] });
   const second = await startCli(scope, { cwd: installRoot, executable, args: ['--root', alias, '--no-open'] });
   const browser = await chromium.launch({ channel: process.env.DOCMAP_BROWSER_CHANNEL || undefined });
   scope.after(() => browser.close());
@@ -95,7 +126,7 @@ test('F-07: a production tarball runs independently and preserves both target pr
 
   await t.test('installed API, cwd, explicit root, and packaged web assets agree', async () => {
     const api = await execute(process.execPath, ['--input-type=module', '-e',
-      'import { collectProject } from "@superlucky84/ddd-docmap"; console.log(JSON.stringify(await collectProject(process.argv[1])));',
+      'import { collectProject } from "docatlas"; console.log(JSON.stringify(await collectProject(process.argv[1])));',
       js.root], { cwd: installRoot });
     const collected = JSON.parse(api.stdout);
     const map = await (await fetch(first.url + 'api/map')).json();
@@ -115,6 +146,8 @@ test('F-07: a production tarball runs independently and preserves both target pr
     assert.equal((await fetch(first.url + 'api/map', { headers: { Origin: 'https://example.com' } })).status, 403);
     await page.goto(first.url);
     await otherPage.goto(second.url);
+    await expect(page.getByRole('link', { name: 'docatlas home', exact: true })).toHaveText('docatlas');
+    await expect(page).toHaveTitle(/ · docatlas$/);
     await expect(page.locator('#map-count')).toContainText('9 documents');
     await expect(otherPage.locator('#map-count')).toContainText('9 documents');
     await otherPage.getByRole('searchbox').fill('PythonOnlyToken');

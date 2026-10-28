@@ -6,11 +6,12 @@ import { startServer } from './server/index.js';
 
 const metadata = JSON.parse(readFileSync(new URL('../package.json', import.meta.url), 'utf8'));
 const help = [
-  'ddd-docmap — local document maps for Doc-Driven Development', '',
+  'docatlas — local document maps for Doc-Driven Development', '',
   'Usage:',
-  '  ddd-docmap [--root <directory>] [--no-open]',
-  '  ddd-docmap --help',
-  '  ddd-docmap --version', '',
+  '  docatlas [--root <directory>] [--no-open]',
+  '  docatlas --help',
+  '  docatlas --version', '',
+  'Compatibility aliases: docmap, ddd-docmap', '',
   'Options:',
   '  --root <directory>  Read this project instead of the current directory.',
   '  --no-open           Print the address without opening a browser.',
@@ -33,7 +34,7 @@ export async function run(args, {
       }
     }));
   } catch (error) {
-    stderr.write(error.message + '\nRun ddd-docmap --help for usage.\n');
+    stderr.write(error.message + '\nRun docatlas --help for usage.\n');
     return 2;
   }
   if (values.help) {

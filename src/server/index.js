@@ -63,7 +63,7 @@ export async function startServer({ root = process.cwd(), port = 0 } = {}) {
       const host = '127.0.0.1:' + server.address().port;
       const origin = 'http://' + host;
       if (request.headers.host !== host) {
-        throw new HttpError(421, 'Use the local address printed by ddd-docmap.');
+        throw new HttpError(421, 'Use the local address printed by docatlas.');
       }
       if (request.headers.origin && request.headers.origin !== origin) {
         throw new HttpError(403, 'Requests from other origins are not allowed.');

@@ -1,4 +1,4 @@
-# ddd-docmap 설계
+# docatlas 설계
 
 문서 기준: 2026-10-28.
 [요구사항](./REQUIREMENTS.md) · [구현 계획](./IMPLEMENT.md) · [수동 검증](./MANUAL_TEST_CHECKLIST.md)
@@ -199,12 +199,20 @@ github-slugger 2.0.0으로 한글·중복 제목을 구분한다. 내부 DOM id�
 ## CLI와 서버 수명주기 — Phase 2
 
 아래 인터페이스와 --help/-h, --version/-v를 지원한다.
+2026-10-28 사용자 선택으로 기본 명령을 docatlas로 변경한다. docmap·ddd-docmap은 호환 이름으로 유지한다.
 
 ```sh
-ddd-docmap
-ddd-docmap --root ./some-project
-ddd-docmap --no-open
+docatlas
+docatlas --root ./some-project
+docatlas --no-open
 ```
+
+package.json의 세 bin 이름을 같은 bin/docatlas.js에 연결한다. 이전 bin/ddd-docmap.js는 호환 진입점으로 둔다.
+개발 의존성으로 설치하면 실행 파일은 node_modules/.bin에 생긴다. npm은 npx --no-install docatlas 또는
+scripts의 "docatlas": "docatlas"와 npm run docatlas로, pnpm은 pnpm docatlas로 실행한다.
+사용자는 프로젝트별 설치 후 npx / pnpm으로 실행하는 방식을 선택했다.
+일반 셸의 PATH를 자동 변경하거나 전역 런처를 추가하지 않는다.
+도움말·브라우저 브랜드·제목·서버 안내는 docatlas를 기본 이름으로 쓰고 도움말에 기존 이름을 표시한다.
 
 사용자 선택에 따라 기본 실행은 포그라운드다. 브라우저를 연 뒤에도 터미널에서
 서버를 유지하며 Ctrl+C로 종료한다. --no-open은 브라우저를 열지 않고 주소를 출력한다.
@@ -272,14 +280,29 @@ PR-02·05·06·08 / DC-09, IC-03에 대응한다. 아래 계약으로 구현했�
 
 - npm run test:integration은 실제 npm pack 결과를 별도 임시 디렉터리에 production 의존성만 설치한다.
   설치된 CLI·공개 수집 API·HTTP·Chrome으로 검증하며 소스의 서버 모듈을 직접 실행하지 않는다.
+- 프로젝트별 설치 검증은 F-07 JS 대상에도 tarball을 개발 의존성으로 설치한다. 설치된 .bin/docatlas와
+  호환 .bin/docmap·.bin/ddd-docmap, npm exec와 npm run docatlas의 명령 발견을 확인한다.
 - F-07의 JS/비 JS 프로젝트에서 cwd·--root·루트 별칭, 4종 선택·서식·참조·검색·갱신·신호 종료를 확인한다.
   두 실행 중 하나를 종료해도 다른 실행의 내용과 상태가 유지되어야 한다.
 - 실행 전후 파일 목록과 내용 해시를 비교한다. 검증 중 명시적으로 저장한 내용 외의 변경은 실패다.
-  npm 설치는 대상 프로젝트 밖에서 수행하며 프로젝트의 빌드나 스크립트를 실행하지 않는다.
+  설치 단계의 명시적 manifest/lockfile/node_modules 변경 이후를 기준으로 원본을 비교한다.
+  프로젝트의 빌드나 설치 스크립트는 실행하지 않는다.
 - DOCMAP_NPM_CACHE로 설치 캐시를 지정할 수 있으며 오프라인 설치를 기본으로 한다.
   Chrome은 기존 DOCMAP_BROWSER_CHANNEL 설정을 따른다. 최종 지원 OS·최소 Node·사람의 수동 인수는 별도 기록한다.
 
 ## 배포와 구현 선택
+
+2026-10-28 사용자 선택: npm 패키지는 unscoped docatlas, 공개 GitHub 저장소는
+superlucky84/docatlas, 라이선스는 MIT다. 첫 공개 후보 버전은 0.1.0으로 준비한다.
+name/version/license/bin과 lockfile 루트를 함께 바꾸며 self import는 docatlas로 갱신한다.
+기존 ddd-docmap.config.json과 내부 상태 키는 호환성을 위해 유지한다.
+
+npm files는 bin/·src/로 제한하고 README·package.json·LICENSE의 자동 포함을 확인한다.
+기준 문서·AGENTS·보존 패치는 GitHub에서 제공한다. README의 문서 링크는 GitHub의 새 저장소를 가리킨다.
+검증한 tarball을 별도 설치해 실제 docatlas 실행·공개 import·화면·신호 종료를 확인한다.
+README의 기본 사용 명령은 docatlas다. 프로젝트 루트에서의 npx 일회성 실행과 npm/pnpm 로컬 설치,
+현재 미배포 상태에서 tarball을 설치하는 방법을 별도 항목으로 설명한다.
+사용자 선택으로 이번에는 배포 준비까지만 수행하며 실제 npm publish는 실행하지 않는다.
 
 배포 패키지에 CLI·수집기·서버·빌드된 화면을 함께 포함한다.
 설치 대상 프로젝트에서 화면 빌드를 실행하지 않게 한다.
@@ -375,7 +398,11 @@ PR-02·05·06·08 / DC-09, IC-03에 대응한다. 아래 계약으로 구현했�
   Node와 Chrome 검증 통과. M-04, M-06, M-13의 해당 흐름.
 - [x] DC-08: 사용자 선택으로 포그라운드 실행과 Ctrl+C 종료를 채택한다. 서버별 소유·정리는 Phase 2에서 검증한다. M-08, M-14.
 - [x] DC-09: Phase 4 계약의 검색·직렬 갱신·SSE·탭 메모리 상태 보존을 채택한다. Node·Chrome 검증 통과: M-05, M-07, M-10의 해당 흐름.
-- [ ] DC-10: 라이선스·배포 이름·지원 OS. Phase 7 / M-11, M-12.
+- [ ] DC-10: 라이선스 MIT·패키지/저장소 docatlas는 확정했다. 최종 지원 OS와 실제 npm 배포는 남아 있다. Phase 7 / M-11, M-12.
+- [x] DC-12: 사용자 선택은 docatlas 패키지/명령·superlucky84/docatlas 저장소와 MIT다.
+  구현·검증 결과는 이름 변경 단계에서 기록한다. 최종 지원 OS·npm 인증·실제 배포 완료는 별도다. M-08, M-11.
+- [x] DC-11: 프로젝트별 설치와 docmap/ddd-docmap 공통 진입점을 구현하고 설치 검증을 통과했다.
+  사용자 선택은 npx docmap / pnpm docmap이며 전역 런처를 추가하지 않는다. M-08, M-11.
 - [x] IC-01: picomatch 4.0.7, ignore 7.0.14, mdast-util-from-markdown 2.1.0과
   Node 기본 test runner를 채택했다. 공식 API 확인과 Node 24 자동 검증 통과.
   Phase 4는 Node 22.12.0에서 검증했다. 선언한 하한 22.0과 최종 OS 범위는 배포 전 확정한다. Phase 3 렌더러는 markdown-it 15.0.3, 앵커는 github-slugger 2.0.0이다.
@@ -386,9 +413,30 @@ PR-02·05·06·08 / DC-09, IC-03에 대응한다. 아래 계약으로 구현했�
 
 ## 인계 상태 — 2026-10-28
 
+이 절과 다음 프로젝트별 설치 인계는 이름 변경 전의 기록이다. 현재 상태는 맨 아래 docatlas 인계를 따른다.
+
 - 사용자 요청으로 재개해 보존 패치를 적용하고 Phase 5 검증 계약을 구현·검증했다.
 - Phase 6의 설치된 CLI/API/브라우저 통합 검증은 통과했다. 전체 수동 인수·지원 환경은 별도다.
 - 다음: 남은 M 항목과 Node 하한·지원 OS를 검증하고 Phase 7의 DC-10·IC-03을 해소한다.
 - 기술적 차단 없음. 라이선스·배포 경로·최종 지원 OS는 TBD다.
 - 최신 확인 커밋(이번 작업 전): 4b8b195. 이번 구현·테스트·검증 기록은 사용자 요청으로 함께 커밋한다.
 - 상세 검증과 명령: [구현 계획의 최신 인계](./IMPLEMENT.md#인계-상태--2026-10-28).
+
+## 프로젝트별 설치 인계 — 2026-10-28
+
+- 사용자 선택: 프로젝트별 개발 의존성 설치 후 npx docmap / pnpm docmap으로 실행한다.
+- docmap과 ddd-docmap을 같은 bin에 연결했고, 도움말·오류 안내·로컬 명령 발견과 설치된 CLI 흐름을 검증했다.
+- 로컬 설치 없이 npx docmap을 실행하면 다른 registry 패키지를 찾을 수 있다. 이 패키지 배포 후 일회성 실행은
+  npx --package=@superlucky84/ddd-docmap docmap으로 패키지를 명시한다. 현재는 미배포다.
+- 다음: 사용자의 실제 프로젝트에 tarball 설치 후 사용성 인수. 전역 런처·셸 변경은 추가하지 않는다.
+- 차단 요인: 기술적 차단 없음. npm 배포와 최종 지원 환경은 기존 TBD다.
+- 최신 확인 커밋: 2cb552b. 이번 명령·테스트·문서 변경은 작업 트리에 있다.
+
+## docatlas 인계 — 2026-10-28
+
+- DC-12의 docatlas 이름·MIT와 세 bin 공통 진입점·공개 import·브라우저 브랜드를 구현·검증했다.
+- GitHub 저장소는 https://github.com/superlucky84/docatlas이며 ID 1435263800과 공개 상태를 유지한다.
+- npm 후보는 docatlas@0.1.0이다. README·LICENSE·bin/·src/의 28개 파일과 배포 dry-run을 확인했다.
+- 사용자 선택은 배포 준비까지다. 원본 설정 파일과 이전 두 명령의 호환 정책을 유지한다.
+- 다음: 실제 사용성 인수와 지원 환경 검증, 이후 npm 인증 갱신과 배포. 준비 범위의 기술적 차단 없음.
+- 작업 기준 커밋: 2cb552b. 이 문서를 포함한 새 커밋 SHA는 Git 기록에서 확인한다.

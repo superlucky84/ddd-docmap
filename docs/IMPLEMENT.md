@@ -1,4 +1,4 @@
-# ddd-docmap 구현 계획
+# docatlas 구현 계획
 
 문서 기준: 2026-10-28.
 [요구사항](./REQUIREMENTS.md) · [설계](./DESIGN.md) · [수동 검증](./MANUAL_TEST_CHECKLIST.md)
@@ -172,7 +172,7 @@ M-03·08과 M-12·14의 실행 조건을 확인한다.
 
 대응: DC-10과 설치·배포 계약.
 
-- [ ] 라이선스·패키지 이름의 사용 가능 여부·배포 경로를 결정한다.
+- [x] 사용자 선택: MIT·npm docatlas·GitHub superlucky84/docatlas. 레지스트리 등록 여부는 배포 직전 다시 확인한다.
 - [ ] 실제 검증된 최소 Node·지원 OS를 문서화한다.
 - [ ] 구현된 명령과 설정으로 README·도움말·예제를 정리한다.
 - [ ] 확정한 환경에서 CI와 패키지 검사를 구성한다.
@@ -182,6 +182,80 @@ M-03·08과 M-12·14의 실행 조건을 확인한다.
 기준 테스트: 공개 예정 tarball의 설치·실행과 필수 인수 항목.
 종료 기준: 라이선스와 배포 대상이 확정되고 실제 설치 가능한 릴리스가 있다.
 GitHub 초기 생성은 이 단계의 npm 배포를 대신하지 않는다.
+
+## 프로젝트별 설치와 docmap 명령 — 완료
+
+2026-10-28 사용자 요청. 대응: RQ-09 / DC-11 / M-08·11.
+
+- [x] 기준 4종에 프로젝트별 개발 의존성 설치·명령 이름·로컬 PATH의 실행 계약을 기록한다.
+- [x] docmap bin을 추가하고 ddd-docmap 호환 이름과 같은 CLI로 연결한다.
+- [x] 도움말·오류 안내·README의 설치와 실행 예제를 갱신한다.
+- [x] Test Hardening: 두 이름의 도움말·버전·잘못된 인자·로컬 명령 발견을 검증한다.
+- [x] 회귀 중 확인한 테스트 정리 순서를 보강한다. 테스트 임시 루트를 삭제하기 전에
+  서버·감지기를 먼저 닫아 부모 임시 디렉터리 polling이 남는 경합을 방지한다.
+- [x] Integration Test: 실제 tarball을 JS 대상의 개발 의존성으로 설치하고 .bin/docmap으로
+  cwd 수집·읽기·갱신·신호 종료와 설치 이후 원본 보존을 검증한다.
+- [x] npm run check, npm test, npm run test:integration, npm pack --dry-run과 문서 정합성을 확인한다.
+
+기준 테스트: Node 93개, 기존 설치 통합 4개, public bin ddd-docmap의 이전 동작.
+종료 기준: 로컬 설치가 docmap과 호환 명령을 제공하고 해당 프로젝트의 문서를 읽는다.
+사용자는 npx docmap / pnpm docmap을 선택했다. 전역 런처/PATH 자동 변경은 추가하지 않는다.
+실제 대상 프로젝트 설치는 별도 실행 단계다.
+
+검증 기록: npm run check의 JavaScript 47개, npm test의 Node 93개와 설치 통합 4개가 통과했다.
+통합 테스트는 docmap/ddd-docmap의 npm exec 도움말·버전, npm run docmap,
+알 수 없는 인자의 종료 2, JS 대상의 실제 개발 의존성 설치와 .bin/docmap의 cwd 실행을 확인한다.
+브라우저의 읽기·검색·갱신·SIGINT 종료·다른 실행 유지와 설치 후 파일 해시 보존도 통과했다.
+
+첫 전체 회귀는 live.test.js의 검사가 끝난 뒤 StatWatcher 하나가 부모 임시 디렉터리를 감시해 종료되지 않았다.
+해당 프로세스만 진단·종료했고, 서버/감지기를 닫은 다음 임시 루트를 삭제하도록 테스트 정리 순서를 바꿨다.
+이후 Node 93개 전체가 약 7.5초에 정상 종료했다. 제품 감지기 코드는 이번에 변경하지 않았다.
+
+문서 6개의 로컬 링크/앵커 32개·요구/결정/인수 ID 46개·Phase 0~7 검증 관문과
+manifest/lockfile의 두 bin 일치가 통과했다. npm pack --dry-run은 런타임 파일 35개를 확인했다.
+추가 임시 설치에서 pnpm 10.13.1의 pnpm docmap --help / --version도 통과했다.
+로컬 설치용 tarball: /private/tmp/superlucky84-ddd-docmap-0.0.0-dev.0.tgz.
+
+## docatlas 이름 변경과 MIT 배포 준비 — 완료
+
+2026-10-28 사용자 선택: npm name과 명령은 docatlas, GitHub 저장소도 superlucky84/docatlas,
+라이선스는 MIT다. 대응: RQ-09·10 / DC-12 / M-08·11.
+
+- [x] 기준 4종에 새 이름·라이선스·파일 목록과 이전 명령/설정의 호환 정책을 기록한다.
+- [x] package.json·lockfile·공개 import·실행 파일·도움말·화면·README를 함께 갱신한다.
+- [x] MIT LICENSE와 최초 공개 후보 버전 0.1.0, npm 공개 배포 설정을 준비한다.
+- [x] Test Hardening: 세 명령 이름·버전·오류·패키지 파일 목록·공개 import를 검증한다.
+- [x] Integration Test: docatlas tarball을 별도 설치해 cwd·읽기·검색·갱신·원본 보존·신호 종료를 검증한다.
+- [x] npm run check, npm test, Chrome 전체 회귀, 설치 통합, npm pack --dry-run, npm publish --dry-run과 문서 정합성을 확인한다.
+- [x] GitHub 저장소를 docatlas로 바꾸고 동일 저장소 ID·새 URL과 로컬 origin을 확인한다.
+- [x] npm 등록 가능 여부와 로그인 상태, 실제 배포 여부·남은 작업을 기록한다.
+- [x] README의 미설치/설치 실행 방법·cwd 루트·tarball·옵션을 docatlas 기준으로 정리한다.
+- [ ] 이번 변경을 커밋하고 새 GitHub 저장소에 반영한 뒤 원격 README를 확인한다.
+
+기준 테스트: Node 93개·Chrome 34개·설치 통합 4개, 현재 origin의 공개 저장소와 기존 명령.
+종료 기준: 이름·라이선스·파일 목록이 일치하는 tarball과 새 GitHub 저장소를 확인한다.
+npm 로그인·수동 인수·최종 지원 환경·실제 npm 배포는 각각 실행 결과를 구분해 기록한다.
+사용자는 이번에는 배포 준비까지만 진행하도록 선택했다. 실제 npm publish는 실행하지 않는다.
+
+검증: macOS 15.6.1 / Node 22.12.0 / Chrome 156.0.8078.48.
+문법 48개·Node 93개·Chrome 34개·최종 bin 경로의 설치 통합 4개가 통과했다.
+기준 4종·README·AGENTS의 링크/앵커 33개(새 GitHub 문서 링크도 로컬 원본에 대응해 확인),
+요구/결정/인수 ID 48개와 Phase 0~7 검증 관문이 통과했다. manifest/lockfile의 name/version/license/세 bin도 일치한다.
+
+배포 후보는 /private/tmp/docatlas-0.1.0.tgz다. npm pack·publish dry-run에서 28개 파일을 확인했다.
+초기 publish dry-run의 bin 경로 정규화 경고는 ./ 접두사를 제거한 뒤 해소했다.
+최종 세 명령과 공개 import·브라우저 브랜드·읽기/검색/갱신·원본 보존·신호 종료를 설치 통합으로 다시 확인했다.
+
+GitHub 저장소는 https://github.com/superlucky84/docatlas로 변경했다.
+저장소 ID 1435263800(GraphQL R_kgDOVYxjOA)이 유지됐고 origin의 fetch/push URL도 새 주소다.
+npm 레지스트리의 docatlas 조회는 404였으며 이름 확보는 아직 하지 않았다.
+npm whoami는 샌드박스 DNS 실패 뒤 허용된 네트워크에서 재확인했지만 401 Unauthorized였다.
+사용자가 배포 준비까지만 선택했으므로 실제 배포는 수행하지 않는다. 이후 배포 시 재로그인이 필요하다.
+
+README 실행 예제를 추가 검증했다. 프로젝트 manifest/node_modules가 없는 임시 대상에서
+tarball을 지정한 npm exec의 일회성 실행이 0.1.0을 출력했고 대상에는 문서 외 파일이 생기지 않았다.
+같은 tarball을 로컬 개발 의존성으로 설치한 뒤 npm exec와 pnpm 10.13.1의 docatlas 실행도
+0.1.0을 출력했다. 원본 문서 내용이 유지됨을 확인했다. registry 이름으로 실행하는 예제는 배포 후 사용하도록 표시했다.
 
 ## 검증 예제와 기록
 
@@ -444,6 +518,8 @@ DOCMAP_BROWSER_CHANNEL=chrome npm run test:browser
 
 ## 인계 상태 — 2026-10-28
 
+이 절과 다음 프로젝트별 설치 인계는 이름 변경 전의 기록이다. 현재 상태는 맨 아래 docatlas 인계를 따른다.
+
 - 사용자 요청으로 재개했고 Phase 5를 완료했다. 보존 패치는 이미 적용했으므로 다시 적용하지 않는다.
 - Phase 6의 재현 가능한 설치 통합 테스트를 추가했고 Node 22.12.0·24.22.1에서 통과했다.
   기준 4종과 README를 현재 구현·검증 범위에 맞췄다.
@@ -456,3 +532,25 @@ DOCMAP_BROWSER_CHANNEL=chrome npm run test:browser
   DOCMAP_BROWSER_CHANNEL=chrome npm run test:integration, npm run benchmark -- --browser, npm pack --dry-run.
   통합 검증은 npm 캐시의 production 의존성을 오프라인 사용한다. 다른 캐시라면 DOCMAP_NPM_CACHE를 지정한다.
   성능 측정은 다른 테스트와 동시에 실행하지 않는다.
+
+## 프로젝트별 설치 인계 — 2026-10-28
+
+- 사용자 선택: 프로젝트별 설치 후 npx docmap / pnpm docmap. 전역 런처/PATH 자동 변경 없음.
+- 완료: 두 bin 이름·lockfile·도움말·설치 안내, 실제 JS 개발 의존성 설치·로컬 실행과 통합 검증.
+- 미설치 npx docmap은 다른 패키지를 찾을 수 있으므로, 배포 후 일회성 명령은
+  npx --package=@superlucky84/ddd-docmap docmap으로 안내한다. 현재 npm 배포는 하지 않았다.
+- 다음: 실제 대상 프로젝트에 tarball을 설치해 사용성을 확인한다. 기존 수동 인수·지원 OS/Node 하한·배포 결정은 유지한다.
+- 기술적 차단 없음. 최신 확인 커밋: 2cb552b2b2338ed64aba70972a8df204859c2792.
+  이번 변경은 작업 트리에 있으며 실제 joongangscripts의 manifest·lockfile·문서는 수정하지 않았다.
+
+## docatlas 인계 — 2026-10-28
+
+- 사용자 결정: 패키지와 기본 명령 docatlas, GitHub 저장소도 docatlas, MIT 라이선스.
+  이번에는 배포 준비까지만 진행하며 실제 npm publish를 실행하지 않는다.
+- 완료: manifest/lockfile·공개 import·세 bin·도움말·화면·README·LICENSE, Node/Chrome/설치 통합과 배포 dry-run.
+  GitHub 이름 변경과 저장소 ID 유지·origin 갱신을 확인했다.
+- README는 미설치 npx·npm/pnpm 로컬 설치·미배포 tarball 설치, cwd 기본 루트·--root·--no-open·Ctrl+C를 구분한다.
+- 다음: 새 저장소에 소스/README 반영 후 배포 전 사용성 인수. 실제 배포 시 npm 재로그인·최종 지원 환경 검증을 진행한다.
+- 차단 요인: 현재 준비 범위의 기술적 차단 없음. npm 인증 401은 이후 실제 배포 전에 해소해야 한다.
+- 작업 기준 커밋: 2cb552b2b2338ed64aba70972a8df204859c2792. 이 문서를 포함한 새 커밋은 git log -1 --oneline으로 확인한다.
+- 실제 joongangscripts의 manifest·lockfile·원본 문서는 수정하지 않았다.

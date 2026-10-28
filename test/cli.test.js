@@ -10,7 +10,7 @@ test('help, version, invalid arguments, and invalid roots exit without a server'
   const { root } = await createProject(t);
   for (const [args, code, expected] of [
     [['--help'], 0, 'Press Ctrl+C'],
-    [['--version'], 0, '0.0.0-dev.0'],
+    [['--version'], 0, '0.1.0'],
     [['--unknown'], 2, '--help'],
     [['--root'], 2, 'argument'],
     [['--root', './missing', '--no-open'], 2, 'root']
