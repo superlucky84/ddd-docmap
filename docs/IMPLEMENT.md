@@ -1001,4 +1001,4 @@ npm ci가 받아 둔 잠금파일의 tarball만으로는 새 의존성 트리를
   M-18 사람 확인(GitHub 첫 화면, 한국어판, 예제 열기, 다음 게시 후 npm 페이지의 캡처·링크).
   기존 남은 일: Codex 실제 세션과 M-16 수동 항목, Windows 콘솔·기본 브라우저·Node 22.0 인수.
 - 차단: 없음. README 캡처는 GitHub main의 절대 URL이라 main에 반영되기 전에는 브랜치 화면에서 보이지 않는다.
-- 최신 커밋: 작업 브랜치 claude/tender-gates-sa5kn8. 이 인계 직전 커밋은 6b04a64 이후 작업이며 실제 최신 SHA는 git log -1로 확인한다.
+- 최신 커밋: 작업 브랜치 claude/tender-gates-sa5kn8. 이 인계 직전 커밋은 4e2eec4이며 실제 최신 SHA는 git log -1로 확인한다.
