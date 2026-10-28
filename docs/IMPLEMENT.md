@@ -14,8 +14,8 @@
 - 완료: Phase 5 Test Hardening. Node 93개·Chrome 34개와 F-08 성능 측정·회귀 기준 기록.
 - 진행 중: Phase 6 Integration Test. 별도 설치 자동 검증은 Node 22.12.0·24.22.1에서 통과했다.
   전체 수동 인수·선언한 Node 22.0·최종 지원 OS 검증은 남아 있다.
-- 완료: 0.1.0은 사용자가 npm 배포했다. 0.2.0의 추가 수집 옵션·설정 파일명·전체 설정 안내와 자동 검증을 완료했다.
-  0.2.0은 미배포이며 아래 완료 검증과 맨 아래 인계가 현재 상태다.
+- 완료: 0.2.0의 추가 수집 옵션·설정 파일명·검색 경로 탐색을 사용자가 npm 배포했다.
+  새 작업은 Python·Java 기본 제외와 Windows 점검의 0.2.1 후보이며 맨 아래 인계가 현재 상태다.
 - 완료: 검색 결과의 경로에서 트리 위치 찾기. 최신 문법 51개·Chrome 40개·설치 통합 4개 통과.
 
 기술 선택은 각 단계에서 근거와 검증을 기록해 DC/IC를 해소한다.
@@ -360,6 +360,58 @@ Confluence의 다른 문서가 함께 게시되지 않도록 원본 publish/sync
 - 가상 예제의 검색/트리 이동 캡처 2개를 /private/tmp/docatlas-search-path-preview/에 남기고 경로 표시·대상 테두리·본문 유지를 시각 확인했다.
   기존 Confluence 가이드는 이번 검색 기능으로 추가 게시하지 않았다.
 
+## Python·Java 기본 제외와 Windows 점검 — 구현·로컬 검증 완료
+
+대응: RQ-14·15 / DC-15 / M-01·07·08·09·11·12·13. 기준 커밋 1ec2bd6, 새 후보 0.2.1.
+
+### 구현
+
+- [x] 기본 제외와 Windows 경로/신호·검증 한계를 기준 4종에 먼저 기록한다.
+- [x] 언어별 생성 폴더의 기본 제외와 README 전체 목록·설정 대체·OS 사용법을 반영한다.
+- [x] Windows와 macOS에서 실행할 플랫폼 검증 명령과 CI를 준비하고 파일명/실행기 가정을 점검한다.
+- [x] 배포된 0.2.0과 다음 후보를 구분하고 문서의 기본 실행 예제는 고정 버전 없이 유지한다.
+
+기준 검증: 문법 51개·Node 109개·Chrome 40개·설치 통합 4개.
+종료 기준: 기본 제외 확장이 기존 설정/원본 정책을 유지하고 Windows 실행·검증 범위를 정확하게 안내한다.
+
+### Test Hardening
+
+- [x] Python·Java 가상 프로젝트에서 루트/중첩 생성 폴더를 탐색하지 않고 일반/유사 이름 소스 문서를 보존한다.
+- [x] include/CLI 조합·exclude 대체·ignore·기존 읽기/감지 경계·설정 변경 복구를 확인한다.
+- [x] 네이티브 경로·한글/공백·CRLF·링크/이미지·라이브 갱신과 주입 신호의 정상 정리를 검증한다.
+- [x] 플랫폼 공통 검증 대상에서 Windows 불가 파일명을 보정하고 .cmd/심볼릭 링크/강제 종료를 혼동하지 않는다.
+  기존 전체 Node/설치 통합의 POSIX 전제는 남아 있으므로 Windows 전체 통과를 주장하지 않는다.
+
+기준 검증: 기능 테스트·서버/CLI 수명주기·플랫폼 공통 테스트와 기존 전체 회귀.
+종료 기준: 언어별 제외가 과도한 일반 경로 제외나 접근 정책 우회를 일으키지 않는다.
+
+### Integration Test
+
+- [x] 실제 tarball 플랫폼 검증으로 npm 실행 shim·별도 위치/manifest 없는 대상·API/CLI·원본 보존을 확인한다.
+- [x] 문법·Node·플랫폼·Chrome·설치 통합·pack dry-run·문서/설정 예제를 확인한다.
+- [x] Windows CI를 준비하되 로컬 macOS 결과와 미실행 원격/수동 항목을 분리해 인계한다.
+
+기준 검증: production-only tarball과 기존 탐색·검색·갱신·종료 및 Node 22/24 CI 행렬.
+종료 기준: 검토 가능한 후보와 실행 가능한 Windows 검증 경로를 제공한다. 실제 Windows 검증은 실행 전 미실행으로 남긴다.
+
+### 0.2.1 로컬 검증 — 2026-10-28
+
+환경: macOS / Node 22.12.0 / arm64 / Chrome 156.0.8078.48. 다른 OS·Node 24에서 이번 후보를 실행한 결과가 아니다.
+
+| 명령/범위 | 결과 |
+| --- | --- |
+| npm run check | JavaScript 54개 통과 |
+| DOCMAP_NPM_CACHE=/private/tmp/ddd-docmap-phase1-npm-cache npm test | 115개 통과. 언어별 3개·플랫폼 3개 포함 |
+| DOCMAP_NPM_CACHE=/private/tmp/ddd-docmap-phase1-npm-cache npm run test:platform | 6개 통과. 코드/빌드 미실행·생성 폴더 가지치기·범위/정책·라이브 재설정·실제 설치된 세 npm 명령·대상 해시·신호 핸들러 정리 |
+| DOCMAP_BROWSER_CHANNEL=chrome npm run test:browser | 40개 통과. 경로 탐색 fixture의 큰따옴표를 Windows 유효 문자로 보정 |
+| DOCMAP_BROWSER_CHANNEL=chrome DOCMAP_NPM_CACHE=/private/tmp/ddd-docmap-phase1-npm-cache npm run test:integration | 4개 통과. 0.2.1 production-only/offline 설치·읽기/검색/갱신/종료·원본 보존 |
+| npm pack --dry-run | 29개 파일. 기준 문서·테스트·CI는 배포에서 제외 |
+| README/기준 4종 | JSON 4개·로컬 링크/앵커 27개 통과. README의 18개 기본 exclude를 실제 loader 결과와 대조 |
+| CI | platform.yml의 YAML 구문과 Windows/macOS Node 22/24 행렬 확인. 원격 CI 미실행, actionlint 미설치 |
+
+Windows workflow는 test:platform과 test:browser를 실행한다. full npm test/test:integration은 POSIX 전제가 남아 별도 이식 대상이다.
+Windows 네이티브 Ctrl+C·기본 브라우저·PowerShell/CMD·UNC/네트워크 드라이브는 실제 인수 전 미검증이다.
+
 ## 검증 예제와 기록
 
 F-01~08의 구체적인 구성은 [수동 검증의 가상 프로젝트](./MANUAL_TEST_CHECKLIST.md#가상-프로젝트)를 따른다.
@@ -621,7 +673,7 @@ DOCMAP_BROWSER_CHANNEL=chrome npm run test:browser
 
 ## 인계 상태 — 2026-10-28
 
-이 절부터 docatlas 인계까지는 이전 작업 기록이다. 현재 상태는 맨 아래 0.2.0 인계를 따른다.
+아래 이전 인계는 각 시점의 작업 기록이다. 현재 상태는 맨 아래 최신 인계를 따른다.
 
 - 사용자 요청으로 재개했고 Phase 5를 완료했다. 보존 패치는 이미 적용했으므로 다시 적용하지 않는다.
 - Phase 6의 재현 가능한 설치 통합 테스트를 추가했고 Node 22.12.0·24.22.1에서 통과했다.
@@ -715,3 +767,11 @@ registry와 실행 버전이 0.2.0인지 확인하고 새 설정·수집 옵션�
 
 - 다음: 사용자 배포와 registry/실제 프로젝트 검증, README/팀 가이드의 미배포 표기 갱신.
 - 기술적 차단 없음. 남은 수동 인수·Node 22.0·다른 OS 범위는 유지한다. 최신 구현 커밋: c16a862.
+
+## 0.2.1 Python·Java 기본 제외와 Windows 최신 인계 — 2026-10-28
+
+- 완료: RQ-14 기본 제외 13개 추가, 설정 대체/읽기/감지 회귀, RQ-15 플랫폼 공통 테스트·Windows 사용법·CI 준비.
+- 문법 54개·Node 115개·Chrome 40개·설치 통합 4개·플랫폼 6개와 pack/문서/YAML 검증이 macOS에서 통과했다.
+- Windows/macOS Node 22/24 workflow는 작성했으나 원격 실행 전이다. 실제 Windows·콘솔·기본 브라우저 지원 확정은 TBD다.
+- 다음: 별도 커밋·푸시 후 Windows CI/실제 인수, 필요 시 별도 0.2.1 배포. 배포 후 팀 가이드의 기본 제외 목록도 갱신한다.
+- 기술적 차단 없음. 최신 확인 커밋은 1ec2bd6이다. 이번 후보는 미커밋·미배포이며 Confluence는 변경하지 않았다.

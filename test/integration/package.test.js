@@ -56,7 +56,7 @@ test('F-07: a production tarball runs independently and preserves both target pr
   const { stdout } = await npm(['pack', '--json', '--pack-destination', installRoot], repository);
   const [pack] = JSON.parse(stdout);
   assert.equal(pack.name, 'docatlas');
-  assert.equal(pack.version, '0.2.0');
+  assert.equal(pack.version, JSON.parse(await fs.readFile(path.join(repository, 'package.json'), 'utf8')).version);
   const packedFiles = new Set(pack.files.map(file => file.path));
   for (const filename of ['LICENSE', 'README.md', 'bin/docatlas.js', 'bin/ddd-docmap.js', 'src/collector/read.js', 'src/collector/index.js',
     'src/server/index.js', 'src/server/project-store.js', 'src/server/render.js',

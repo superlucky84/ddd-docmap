@@ -19,7 +19,20 @@ const DEFAULT_EXCLUDE = [
   '**/build/**',
   '**/coverage/**',
   '**/.docatlas/**',
-  '**/.ddd-docmap/**'
+  '**/.ddd-docmap/**',
+  '**/.venv/**',
+  '**/venv/**',
+  '**/__pycache__/**',
+  '**/.pytest_cache/**',
+  '**/.mypy_cache/**',
+  '**/.ruff_cache/**',
+  '**/.tox/**',
+  '**/.nox/**',
+  '**/.eggs/**',
+  '**/*.egg-info/**',
+  '**/target/**',
+  '**/.gradle/**',
+  '**/.m2/**'
 ];
 
 function isObject(value) {

@@ -5,9 +5,9 @@ Local document maps for **Doc-Driven Development** projects.
 Find feature documentation spread across a repository, explore its hierarchy,
 and read Markdown without losing your place.
 
-> `docatlas@0.1.0` is published. This checkout prepares **0.2.0** with
-> `--docs-dir`, `--all-md`, and `docatlas.config.json`; these additions require
-> the new version. Until it is published, try them using the tarball below.
+> Docatlas is published on npm. This checkout adds Python/Java generated-directory
+> exclusions for the next release. Those new defaults are not yet published;
+> use the tarball instructions below to try this checkout.
 
 ## Document map
 
@@ -30,6 +30,10 @@ labels, summaries, and discovery.
 Docatlas uses **the directory where you run the command** as its default project root.
 For example, running it in `/path/to/project` reads that project's documents.
 Use `--root` to select a different directory.
+
+The target can be a JavaScript, Python, Java/Spring, or other Markdown project.
+Your computer needs Node.js 22+ and npm; the target needs no `package.json`,
+Python package installation, Maven/Gradle plugin, or application build.
 
 ### Without adding a project dependency
 
@@ -88,7 +92,7 @@ Then install it from your project's root:
 
 ~~~sh
 cd /path/to/project
-pnpm add -D /tmp/docatlas-0.2.0.tgz
+pnpm add -D /tmp/docatlas-0.2.1.tgz
 pnpm docatlas
 ~~~
 
@@ -96,7 +100,7 @@ Or use npm:
 
 ~~~sh
 cd /path/to/project
-npm install --save-dev /tmp/docatlas-0.2.0.tgz
+npm install --save-dev /tmp/docatlas-0.2.1.tgz
 npx --no-install docatlas
 ~~~
 
@@ -129,7 +133,7 @@ By default, Docatlas collects `.md` files under every `docs/` directory, includi
 `IMPLEMENT.md`, and `MANUAL_TEST_CHECKLIST.md` elsewhere in the project.
 An arbitrary `README.md` outside `docs/` needs an additional location or include rule.
 
-Starting with **0.2.0**, add project-relative directories without replacing those defaults:
+Add project-relative directories without replacing those defaults:
 
 ~~~sh
 npx docatlas --docs-dir documentation
@@ -157,25 +161,39 @@ scope. `--docs-dir .` also selects the project root.
 Neither option bypasses exclusions: **`node_modules/` and `.git/` at any depth are
 always skipped**, as are symbolic links and paths outside the project. `.gitignore`
 rules and configuration `exclude` apply before any include or CLI selection.
-Generated `dist/`, `build/`, `coverage/`, `.docatlas/`, and `.ddd-docmap/` directories
-are excluded by default. The document scanner does not search dependency documentation.
+Generated directories are excluded at any depth. The next release's defaults are:
+
+| Category | Excluded directory names |
+| --- | --- |
+| Existing output/cache defaults | `dist`, `build`, `coverage`, `.docatlas`, `.ddd-docmap` |
+| Python environments | `.venv`, `venv`, `.tox`, `.nox` |
+| Python caches/metadata | `__pycache__`, `.pytest_cache`, `.mypy_cache`, `.ruff_cache`, `.eggs`, `*.egg-info` |
+| Java build/dependency caches | `target`, `.gradle`, `.m2` |
+
+The Python/Java rows are additions in this checkout. They prevent dependency docs,
+test environments, and generated copies from appearing in the map or being watched.
+Ordinary source folders and names such as `env`, `bin`, `out`, `vendor`,
+`target-design`, and `venv-guide` retain their previous behavior.
+These are replaceable defaults, not fixed exclusions: an explicit `exclude` array
+replaces the entire list. Projects with an existing custom list must add any desired
+new patterns themselves. `.git` and `node_modules` remain fixed exclusions.
 
 | Option | Effect |
 | --- | --- |
 | `--root <directory>` | Select the project root; default is the current directory. |
-| `--docs-dir <directory>` | Add a document directory; repeatable, available in 0.2.0. |
-| `--all-md` | Select all `.md` candidates; available in 0.2.0. |
+| `--docs-dir <directory>` | Add a document directory; repeatable. |
+| `--all-md` | Select all `.md` candidates. |
 | `--no-open` | Print the local address without opening a browser. |
 | `--help`, `-h` | Show options and configuration guidance. |
 | `--version`, `-v` | Show the version actually running. |
 
 ## Configuration
 
-Starting with **0.2.0**, create optional **`docatlas.config.json`** at the project root.
+Create optional **`docatlas.config.json`** at the project root.
 If it is absent, Docatlas reads the legacy `ddd-docmap.config.json` instead.
 When both exist, only the new file is used; fields are not merged. An invalid new
-file reports its own error and does not fall back. Version **0.1.0** recognizes only
-the legacy filename. Rename the file after upgrading; the JSON schema stays version 1.
+file reports its own error and does not fall back. Older releases recognized only
+the legacy filename. The JSON schema stays version 1.
 
 All paths use `/` and are relative to the project root. Configuration is data-only
 JSON; JavaScript configuration and symbolic configuration files are not executed or followed.
@@ -208,6 +226,19 @@ give one group a clearer label:
     "**/coverage/**",
     "**/.docatlas/**",
     "**/.ddd-docmap/**",
+    "**/.venv/**",
+    "**/venv/**",
+    "**/__pycache__/**",
+    "**/.pytest_cache/**",
+    "**/.mypy_cache/**",
+    "**/.ruff_cache/**",
+    "**/.tox/**",
+    "**/.nox/**",
+    "**/.eggs/**",
+    "**/*.egg-info/**",
+    "**/target/**",
+    "**/.gradle/**",
+    "**/.m2/**",
     "documentation/private/**"
   ],
   "groups": {
@@ -222,14 +253,14 @@ give one group a clearer label:
 }
 ~~~
 
-The first five `include` patterns and first five `exclude` patterns above are the
-0.2.0 defaults. Omit either field to retain its defaults. For example,
+The lists above show this checkout's defaults, with `documentation/**/*.md` and
+`documentation/private/**` appended as project-specific examples.
+Omit either field to retain its defaults. For example,
 `{"version":1,"include":["documentation/**/*.md"]}` selects only that directory
 unless CLI selections add more. `{"version":1,"include":["**/*.md"]}` selects all
-Markdown candidates and also works in 0.1.0. To add one excluded directory, repeat
+Markdown candidates. To add one excluded directory, repeat
 the default exclusions and append yours; `exclude: []` deliberately removes the
 default output exclusions, while `node_modules`, `.git`, and ignore rules remain enforced.
-The 0.1.0 default exclusions contain the same entries except `.docatlas/`.
 
 Globs match without case sensitivity and support dot-prefixed names. Use positive
 patterns without a leading `./` or `!`; absolute paths and `..` are invalid.
@@ -266,7 +297,7 @@ Space-separated terms use AND matching; English is case-insensitive and Korean t
 is Unicode-normalized. Results include context and highlight matches. Press / to
 focus search and Escape to clear it. Search shows at most 50 results with the total count.
 
-In 0.2.0, each result shows its full project-relative path as a separate **Show in tree**
+Each result shows its full project-relative path as a separate **Show in tree**
 button. Click the document title to read it, or click the path to clear the search,
 expand its ancestor groups and document list, and scroll/focus that document in the map.
 Locating a path preserves the current reader, source mode, reading position, and URL.
@@ -294,6 +325,46 @@ An explicit previous path works in search, document URLs, and relative Markdown 
 even when the old file no longer exists. Valid chains resolve to one current document;
 cycles, missing targets, and excluded sources produce collection notices.
 
+## Windows and other operating systems
+
+Use the same command from a native Windows PowerShell or Command Prompt:
+
+~~~powershell
+Set-Location 'C:\work\Spring 프로젝트'
+npx docatlas
+~~~
+
+If PowerShell blocks the `npx.ps1` launcher, use `npx.cmd docatlas`.
+`--root` accepts a native Windows path, including a drive letter and spaces:
+
+~~~powershell
+npx docatlas --root 'C:\work\다른 프로젝트' --docs-dir documentation
+~~~
+
+Use `/` for `--docs-dir`, JSON paths/globs, and Markdown links on every OS.
+The reader and search display project-relative paths with `/`.
+If the browser does not open, run `npx docatlas --no-open` and open the printed
+loopback address yourself. Keep the terminal open and use Ctrl+C to stop it.
+
+Windows path handling and the browser opener are designed for native Windows.
+[Node supports terminal Ctrl+C on Windows](https://nodejs.org/api/process.html#signal-events),
+but sending a test subprocess `SIGINT`/`SIGTERM` on Windows forcefully terminates it.
+Our injected-signal tests check application cleanup without claiming native console validation.
+
+| Environment | Verification status |
+| --- | --- |
+| macOS | Local CLI, collector, live updates, browser and installed-package checks pass; exact runs are recorded in the planning documents. |
+| Windows | Native path/npm launcher/browser CI is prepared. It has not run for this checkout; PowerShell/CMD, default-browser opening and physical Ctrl+C need actual Windows validation. |
+| UNC/network drives, WSL, Linux | No support claim from this work; validate separately. |
+
+The [platform workflow](https://github.com/superlucky84/docatlas/blob/main/.github/workflows/platform.yml)
+targets macOS and Windows with Node 22 and 24. Run `npm run test:platform` to check
+native Unicode/space paths, CRLF, source discovery, references/assets, live policy changes,
+controlled cleanup, and production tarball launchers. This does not replace manual OS acceptance.
+The Windows workflow runs this platform suite and browser tests. The full `npm test`
+and original `test:integration` suite still contain POSIX symlink/signal assumptions;
+their Windows portability is not claimed by this work.
+
 ## Development
 
 The declared minimum is Node.js 22. Packaged integration checks pass on Node.js
@@ -310,8 +381,8 @@ node bin/docatlas.js --version
 npm pack --dry-run
 ```
 
-The package name is `docatlas`, licensed under MIT. Version `0.1.0` is published;
-this checkout prepares `0.2.0`. The next version has not been published by this change.
+The package name is `docatlas`, licensed under MIT. This checkout prepares `0.2.1`;
+the next version has not been published by this change.
 
 ## Browser checks
 
@@ -367,7 +438,7 @@ console.log(snapshot.documents.length, snapshot.groups.length);
 The snapshot contains project identity, document metadata, hierarchical groups,
 warnings, and a content-based revision. It does not contain full document bodies.
 
-The optional second argument is available in 0.2.0 and follows the CLI discovery
+The optional second argument follows the CLI discovery
 rules. Invalid options reject with `CollectionOptionsError` (`INVALID_COLLECTION_OPTIONS`).
 The collector reads nested `.gitignore` rules and the optional configuration
 described [above](#configuration), including the legacy filename fallback.

@@ -80,6 +80,8 @@ DOCMAP_BROWSER_CHANNEL=chrome으로 설치 Chrome을 선택한다. 지원 환경
 - [ ] F-01 문서 8개를 확인한다.
 - [ ] docs 밖 표준 문서와 README 기반 공통 문서가 포함된다.
 - [ ] 루트 README·의존 패키지·기본 산출물은 기본 발견에서 제외된다.
+- [ ] Python 가상환경/캐시와 Java target/.gradle/.m2의 중첩 docs·표준 문서가 기본 제외된다.
+- [ ] 일반 소스와 env/bin/out/vendor·target-design/venv-guide의 문서는 과도하게 제외되지 않는다.
 
 통과: 파일 수와 원본 상대 경로가 기대값과 일치한다. 상태: 미실행.
 
@@ -180,8 +182,9 @@ DOCMAP_BROWSER_CHANNEL=chrome으로 설치 Chrome을 선택한다. 지원 환경
 - [ ] --docs-dir 반복 지정과 --all-md, JSON include/exclude의 우선순위를 확인한다.
 - [ ] 없는 추가 폴더의 경고와 생성/삭제 반영, 두 설정 파일의 변경/삭제·오류 복구에도 실행 옵션이 유지된다.
 - [ ] --help·README·팀 가이드에 version/include/exclude/groups/redirects의 의미와 예제가 있다.
+- [ ] 새 언어별 제외도 include/CLI로 우회하지 않고 명시적 exclude 배열 대체로만 재포함된다.
 
-추가 대응: RQ-11·12 / DC-13. 새 옵션과 파일명은 0.2.0 후보이며 0.1.0 배포본과 구분한다.
+추가 대응: RQ-11·12 / DC-13. 옵션과 새 파일명은 배포된 0.2.0 계약이며 Python·Java 기본 제외 확장은 다음 후보에서 검증한다.
 
 통과: 확정된 설정 우선순위대로 동작하고 오류 위치와 이유를 알 수 있다. 상태: 미실행.
 
@@ -205,7 +208,7 @@ DOCMAP_BROWSER_CHANNEL=chrome으로 설치 Chrome을 선택한다. 지원 환경
 - [ ] 개발 의존성으로 설치한 프로젝트 루트에서 npx --no-install docatlas 또는 pnpm docatlas로 실행한다.
 - [ ] docatlas와 기존 docmap·ddd-docmap의 도움말·버전·옵션 동작이 같다.
 - [ ] 설치 단계의 manifest/lockfile/node_modules 변경 이후 실행 중 의도하지 않은 쓰기가 없다.
-- [ ] 설치할 후보 버전(현재 docatlas@0.2.0)의 이름·버전·MIT LICENSE·세 bin 이름과 GitHub 저장소 링크를 확인한다.
+- [ ] 설치할 후보 버전(현재 docatlas@0.2.1)의 이름·버전·MIT LICENSE·세 bin 이름과 GitHub 저장소 링크를 확인한다.
 - [ ] npm tarball에 README·LICENSE·실행 파일·런타임 자산을 포함하고 개발 문서/보존 패치는 제외한다.
 - [ ] 브라우저의 docatlas 브랜드·제목과 실제 설치된 docatlas의 cwd 실행을 확인한다.
 - [ ] README가 미설치 npx·npm/pnpm 로컬 설치·배포 전 tarball을 구분하고 현재 cwd 루트와 옵션·종료를 설명한다.
@@ -225,6 +228,12 @@ DOCMAP_BROWSER_CHANNEL=chrome으로 설치 Chrome을 선택한다. 지원 환경
 
 - [ ] 명시한 최소 Node와 지원 OS에서 실행·브라우저 열기·종료를 확인한다.
 - [ ] 좁은 화면, 긴 제목·표·경로와 키보드 포커스를 확인한다.
+- [ ] Windows PowerShell/CMD에서 npx docatlas·npx.cmd docatlas와 한글/공백이 있는 --root를 확인한다.
+- [ ] Windows 네이티브 드라이브의 / 문서 id·CRLF·상대 링크/이미지·감지·루트 경계가 정상이다.
+- [ ] Windows에서 실제 Ctrl+C로 서버·감지기를 정리하고 다른 실행은 유지한다. 강제 subprocess.kill 결과를 대체 증거로 쓰지 않는다.
+- [ ] Windows 기본 브라우저 열기와 --no-open 대안을 확인한다. UNC/네트워크 드라이브는 별도 확인 전 미검증이다.
+
+추가 대응: RQ-14·15 / DC-15. macOS의 공통 테스트 성공과 실제 Windows 실행/수동 인수는 구분한다.
 
 통과: 배포 문서에 표시한 환경에서 같은 핵심 흐름을 재현한다. 상태: 미실행.
 
@@ -364,7 +373,7 @@ Phase 3은 기본 탐색·읽기의 첫 검토 시점이다. 전체 제품 릴�
 
 ## 인계 상태 — 2026-10-28
 
-이 절부터 docatlas 인계까지는 이전 작업 기록이다. 현재 상태는 맨 아래 0.2.0 인계를 따른다.
+아래 이전 인계는 각 시점의 작업 기록이다. 현재 상태는 맨 아래 최신 인계를 따른다.
 
 - Phase 5 Test Hardening 완료. Node 93개·Chrome 34개와 F-08 분리 성능 측정이 통과했다.
 - Phase 6의 설치 통합 테스트 4개가 macOS / Node 22.12.0·24.22.1 / Chrome에서 통과했다.
@@ -421,3 +430,12 @@ Phase 3은 기본 탐색·읽기의 첫 검토 시점이다. 전체 제품 릴�
 - 다음: 사용자가 배포 후 registry/실행 버전 0.2.0과 실제 프로젝트의 설정·수집·검색 경로 탐색을 확인한다.
   배포 후 README와 팀 가이드의 버전 안내를 갱신한다. 절차는 구현 계획 맨 아래에 있다.
 - 기술적 차단 없음. 최신 구현 커밋: c16a862. 최종 수동 인수·지원 환경 검증은 계속 별도다.
+
+## 0.2.1 Python·Java/Windows 자동 검증과 인계 — 2026-10-28
+
+- M-01·07·09·11·13: 언어별 생성 폴더 13개 패턴 추가와 전체 18개 기본 제외, 일반 소스 보존·옵션/설정 대체·라이브 정책·참조/래스터 경계를 검증했다.
+- M-08·11·12: 네이티브 한글/공백 경로·CRLF·공개 id·링크/이미지·추가 범위 유지·주입 신호 정리·tarball/npm 실행기·대상 파일 해시를 플랫폼 suite로 검증했다.
+- macOS Node 22.12.0에서 문법 54개·Node 115개·Chrome 40개·설치 통합 4개·플랫폼 6개와 pack/문서/YAML 검증이 통과했다.
+- Windows/macOS Node 22/24 CI는 준비했다. 실제 Windows 실행과 물리적 Ctrl+C·PowerShell/CMD·기본 브라우저·UNC는 미검증/TBD이며 위 수동 체크박스를 완료로 표시하지 않는다.
+- 다음: 별도 커밋·푸시 후 Windows CI/실제 인수와 별도 0.2.1 배포·팀 가이드 반영. 기술적 차단 없음.
+- 최신 확인 커밋: 1ec2bd6. 이번 변경은 미커밋·미배포다. 기존 전체 Node/설치 통합의 POSIX 전제도 Windows 플랫폼 부분 검증과 구분한다.

@@ -4,7 +4,7 @@ import path from 'node:path';
 import { startServer } from '../../src/server/index.js';
 import { createProject } from '../helpers/projects.js';
 
-const folder = 'docs/zz-area/sub/한글 기능 "경로" [2026]';
+const folder = 'docs/zz-area/sub/한글 기능 \'경로\' [2026]';
 const targetId = folder + '/two.md';
 const readerId = 'docs/reader/DESIGN.md';
 const key = (page, value) => page.locator('[data-focus-key=' + JSON.stringify(value) + ']');

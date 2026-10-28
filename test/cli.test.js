@@ -1,6 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { spawnSync } from 'node:child_process';
+import { readFileSync } from 'node:fs';
 import { EventEmitter } from 'node:events';
 import { run } from '../src/cli.js';
 import { createBasicProject, createProject } from './helpers/projects.js';
@@ -10,7 +11,7 @@ test('help, version, invalid arguments, and invalid roots exit without a server'
   const { root } = await createProject(t);
   for (const [args, code, expected] of [
     [['--help'], 0, 'Press Ctrl+C'],
-    [['--version'], 0, '0.2.0'],
+    [['--version'], 0, JSON.parse(readFileSync(new URL('../package.json', import.meta.url), 'utf8')).version],
     [['--unknown'], 2, '--help'],
     [['--root'], 2, 'argument'],
     [['--docs-dir'], 2, 'argument'],

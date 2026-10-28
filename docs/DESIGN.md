@@ -55,7 +55,8 @@ CLI ── 프로젝트 루트·실행 상태
 같은 kind의 파일이 여러 개여도 실제 경로별 문서로 유지한다.
 
 .git과 node_modules는 항상 제외한다. 기본 산출물 제외는 dist, build,
-coverage, .docatlas, .ddd-docmap이다. 선택 설정의 exclude는 산출물 제외 목록을 대체하며
+coverage, .docatlas, .ddd-docmap이다. 다음 후보에서는 아래 Python·Java 제외를 추가한다.
+선택 설정의 exclude는 산출물 제외 목록을 대체하며
 항상 제외할 디렉터리에는 영향을 주지 않는다.
 
 Git 유무와 관계없이 .gitignore를 디렉터리별로 읽으며 Git 실행 파일은 필요 없다.
@@ -112,7 +113,6 @@ JSON 데이터만 읽으며 프로젝트의 JavaScript/TypeScript 설정을 실�
     "**/IMPLEMENT.md",
     "**/MANUAL_TEST_CHECKLIST.md"
   ],
-  "exclude": ["**/dist/**", "**/build/**", "**/coverage/**", "**/.docatlas/**", "**/.ddd-docmap/**"],
   "groups": {
     "docs/catalog": {
       "title": "콘텐트 목록",
@@ -147,7 +147,30 @@ redirects는 이전 Markdown 상대 경로를 현재 Markdown 상대 경로에 �
   수집 옵션은 서버/CLI와 독립적인 데이터이며 실행 중 외부 변경으로 바뀌지 않게 복사한다.
   잘못된 옵션은 CollectionOptionsError이며 CLI는 인자 오류와 같은 종료 2로 안내한다.
 - README·--help는 설정 파일 선택과 version/include/exclude/groups/redirects의 의미·기본값 대체·예제를 설명한다.
-  팀 가이드는 배포된 0.1.0의 이전 파일명과 미배포 0.2.0 후보의 새 옵션/파일명을 구분한다.
+  사용자 선택으로 팀 가이드의 기본 명령은 npx docatlas다. 릴리스 번호를 고정하지 않고 필요 시 @latest 실행과 로컬 설치본 갱신을 설명한다.
+
+## Python·Java 기본 제외와 Windows 점검 — 다음 후보 계약
+
+- 기본 exclude에 **/.venv/**, **/venv/**, **/__pycache__/**, **/.pytest_cache/**,
+  **/.mypy_cache/**, **/.ruff_cache/**, **/.tox/**, **/.nox/**, **/.eggs/**, **/*.egg-info/**,
+  **/target/**, **/.gradle/**, **/.m2/**를 추가한다. 모든 깊이에 적용하고 기존 기본값을 유지한다.
+- 고정 제외로 승격하지 않는다. include/--docs-dir/--all-md는 기본 제외를 우회하지 않으며,
+  명시적 exclude 배열은 기존 계약대로 기본 목록을 대체한다. exclude: [] 재포함도 검증한다.
+- 소스 언어·패키지 manifest의 유무로 문서를 분류하지 않는다. Python/Java/Gradle 코드·설정을 실행하지 않는다.
+  env/bin/out/vendor, target-design/venv-guide 같은 유사 이름과 업무 문서는 과도하게 제외하지 않는다.
+- Windows --root에는 네이티브 드라이브/역슬래시/공백 경로를 허용한다. JSON·--docs-dir·문서 id·Markdown 링크는 / 규칙을 유지한다.
+  내부 파일 경로는 node:path, 공개 id/링크는 POSIX 경로를 사용한다. 드라이브 밖 경로·링크 읽기를 허용하지 않는다.
+- npm의 Windows 실행 shim은 npm CLI를 Node로 실행해 검증한다. .cmd를 Unix 실행 파일/심볼릭 링크로 가정하지 않는다.
+- 터미널 Ctrl+C와 테스트의 subprocess.kill('SIGINT')를 구분한다. Windows 프로그램 종료는 후자가 강제 종료이므로 정상 정리 증거로 쓰지 않는다.
+  자동 검증은 run의 주입 신호로 정리 경로를 확인하며 실제 콘솔 Ctrl+C는 별도 수동 관문으로 둔다.
+- macOS/Windows의 Node 22·24 플랫폼 검증과 브라우저 CI를 준비한다. 원격 실행 전에는 Windows 통과나 공식 지원을 주장하지 않는다.
+  네이티브 Windows 실행·PowerShell/CMD·기본 브라우저·Ctrl+C·UNC/네트워크 드라이브 인수는 TBD다.
+  Windows CI 대상은 test:platform과 test:browser다. 기존 npm test/test:integration에는 POSIX 심볼릭 링크·강제 신호 전제가 남아 있어 전체 Windows 통과를 주장하지 않는다.
+
+근거: [Python venv](https://docs.python.org/3.14/library/venv.html),
+[Maven target](https://maven.apache.org/guides/introduction/introduction-to-the-standard-directory-layout.html),
+[Gradle 디렉터리](https://docs.gradle.org/current/userguide/directory_layout.html),
+[Node 신호](https://nodejs.org/api/process.html#signal-events).
 
 ## 읽기 모델 — Phase 1
 
@@ -328,7 +351,7 @@ PR-02·05·06·08 / DC-09, IC-03에 대응한다. 아래 계약으로 구현했�
 ## 배포와 구현 선택
 
 2026-10-28 사용자 선택: npm 패키지는 unscoped docatlas, 공개 GitHub 저장소는
-superlucky84/docatlas, 라이선스는 MIT다. 0.1.0은 사용자가 배포했고 다음 공개 후보는 0.2.0이다.
+superlucky84/docatlas, 라이선스는 MIT다. 0.2.0은 사용자가 배포했고 다음 공개 후보는 0.2.1이다.
 name/version/license/bin과 lockfile 루트를 함께 바꾸며 self import는 docatlas로 갱신한다.
 0.1.0의 ddd-docmap.config.json은 0.2.0에서 fallback으로 유지하며 기본 파일명은 docatlas.config.json이다.
 기존 내부 상태 키는 호환성을 위해 유지한다.
@@ -338,7 +361,7 @@ npm files는 bin/·src/로 제한하고 README·package.json·LICENSE의 자동 
 검증한 tarball을 별도 설치해 실제 docatlas 실행·공개 import·화면·신호 종료를 확인한다.
 README의 기본 사용 명령은 docatlas다. 프로젝트 루트에서의 npx 일회성 실행과 npm/pnpm 로컬 설치,
 다음 버전의 tarball을 설치하는 방법을 별도 항목으로 설명한다.
-0.1.0은 사용자가 배포를 완료했다. 이번 0.2.0 작업은 준비까지만 수행하며 실제 npm publish는 실행하지 않는다.
+0.2.0은 사용자가 배포를 완료했다. 이번 0.2.1 작업은 준비까지만 수행하며 실제 npm publish는 실행하지 않는다.
 
 배포 패키지에 CLI·수집기·서버·빌드된 화면을 함께 포함한다.
 설치 대상 프로젝트에서 화면 빌드를 실행하지 않게 한다.
@@ -439,6 +462,7 @@ README의 기본 사용 명령은 docatlas다. 프로젝트 루트에서의 npx 
   구현·검증 결과는 이름 변경 단계에서 기록한다. 0.1.0은 사용자 배포 완료, 0.2.0과 최종 지원 OS 검증은 별도다. M-08, M-11.
 - [x] DC-13: 수집 범위 옵션과 새 설정 파일은 위 0.2.0 계약을 채택한다. 구현/검증은 아래 추가 단계에서 추적한다. M-01, M-07, M-09, M-11, M-13.
 - [x] DC-14: 검색 경로는 별도의 트리 위치 탐색 동작으로 제공하며 현재 본문을 보존한다. 구현/검증은 추가 단계에서 추적한다. M-03, M-05, M-07, M-12.
+- [x] DC-15: Python·Java 기본 제외와 Windows 점검은 위 계약을 따른다. 실제 Windows 지원 확정은 CI/수동 결과 후 결정한다. M-01, M-07, M-08, M-09, M-11, M-12, M-13.
 - [x] DC-11: 프로젝트별 설치와 docmap/ddd-docmap 공통 진입점을 구현하고 설치 검증을 통과했다.
   사용자 선택은 npx docmap / pnpm docmap이며 전역 런처를 추가하지 않는다. M-08, M-11.
 - [x] IC-01: picomatch 4.0.7, ignore 7.0.14, mdast-util-from-markdown 2.1.0과
@@ -451,7 +475,7 @@ README의 기본 사용 명령은 docatlas다. 프로젝트 루트에서의 npx 
 
 ## 인계 상태 — 2026-10-28
 
-이 절부터 docatlas 인계까지는 이전 작업 기록이다. 현재 상태는 맨 아래 0.2.0 인계를 따른다.
+아래 이전 인계는 각 시점의 작업 기록이다. 현재 상태는 맨 아래 최신 인계를 따른다.
 
 - 사용자 요청으로 재개해 보존 패치를 적용하고 Phase 5 검증 계약을 구현·검증했다.
 - Phase 6의 설치된 CLI/API/브라우저 통합 검증은 통과했다. 전체 수동 인수·지원 환경은 별도다.
@@ -504,4 +528,15 @@ README의 기본 사용 명령은 docatlas다. 프로젝트 루트에서의 npx 
 - 현재 버전 0.2.0과 기존 0.1.0 설정 호환 계약을 유지한다. npm 최신은 조회 당시 0.1.0이고 실제 0.2.0 배포는 미실행이다.
 - 다음: 사용자가 안내한 npm 배포를 수행하고 registry/실제 프로젝트 실행을 확인한 뒤 배포 상태 문서를 갱신한다.
 - 기술적 차단 없음. 최종 수동 인수·지원 환경 검증은 기존 범위로 남긴다. 최신 구현 커밋: c16a862.
+
+## 0.2.1 Python·Java 기본 제외와 Windows 인계 — 2026-10-28
+
+- DC-15 구현·로컬 검증 완료. 기존 5개 기본 제외에 언어별 13개를 추가해 18개 패턴을 사용한다.
+- 설정의 기본 목록 대체·범위 옵션·고정 제외·ignore·읽기/감지 경계를 유지했다. 일반 경로·소스/manifest를 실행하거나 수정하지 않는다.
+- 플랫폼 검증은 실제 네이티브 경로·한글/공백·CRLF·링크/래스터·감지/재설정·주입 신호 정리·설치된 npm 실행기를 확인한다.
+- macOS Node 22.12.0에서 문법 54개·Node 115개·Chrome 40개·설치 통합 4개, 플랫폼 6개와 패키징/문서 검증이 통과했다.
+- Windows/macOS Node 22/24 CI는 작성했으나 원격 실행 전이다. Windows OS·PowerShell/CMD·기본 브라우저·실제 Ctrl+C·UNC의 공식 지원 여부는 TBD다.
+  기존 전체 Node/설치 통합의 Windows 이식성도 이번 플랫폼 부분 검증과 구분한다.
+- 다음: 별도 커밋·푸시 후 Windows CI와 실제 콘솔 인수, 이후 별도 0.2.1 배포/팀 가이드 반영. 기술적 차단 없음.
+- 최신 확인 커밋: 1ec2bd6. 이번 후보는 미커밋·미배포이며 로컬 결과를 Windows 결과로 해석하지 않는다.
 - 최신 구현 커밋: e9977a4. 새 GitHub main의 README·manifest에서 이름과 실행 계약을 재확인했다.
