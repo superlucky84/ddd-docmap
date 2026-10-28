@@ -66,3 +66,23 @@ test('indexed documents also honor changed exclusion rules before reading conten
   }));
   assert.equal((await fetch(app.url + 'api/document?id=' + encodeURIComponent(READING_ID))).status, 403);
 });
+
+test('additional Markdown and raster reads honor canonical exclusions before a rescan', async t => {
+  const cleanups = [];
+  const scope = { after: fn => cleanups.push(fn) };
+  t.after(async () => { for (const cleanup of cleanups.reverse()) await cleanup(); });
+  const { root, write } = await createProject(scope, {
+    'documentation/guide.md': '# Guide\n\n![Diagram](diagram.png)',
+    'documentation/diagram.png': PNG,
+    'ddd-docmap.config.json': JSON.stringify({ version: 1 })
+  });
+  const app = await startServer({ root, collectionOptions: { docsDirs: ['documentation'] } });
+  scope.after(() => app.close());
+  const url = app.url + 'api/document?id=documentation/guide.md';
+  const document = await (await fetch(url)).json();
+  const image = new URL(document.references.find(reference => reference.type === 'image').src, app.url);
+  assert.equal((await fetch(image)).status, 200);
+  await write('docatlas.config.json', JSON.stringify({ version: 1, exclude: ['documentation/**'] }));
+  assert.equal((await fetch(url)).status, 403);
+  assert.equal((await fetch(image)).status, 403);
+});

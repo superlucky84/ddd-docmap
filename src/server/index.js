@@ -23,8 +23,8 @@ const HEADERS = {
   'Content-Security-Policy': "default-src 'none'; script-src 'self'; style-src 'self'; connect-src 'self'; img-src 'self'; base-uri 'none'; frame-ancestors 'none'; form-action 'none'"
 };
 
-export async function startServer({ root = process.cwd(), port = 0 } = {}) {
-  const store = await createProjectStore(root);
+export async function startServer({ root = process.cwd(), port = 0, collectionOptions = {} } = {}) {
+  const store = await createProjectStore(root, { collectionOptions });
   const events = new Set();
   const imageAssets = new Map();
   function registerAsset(relativePath, contentType, sequence) {

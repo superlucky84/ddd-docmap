@@ -56,7 +56,7 @@ test('F-07: a production tarball runs independently and preserves both target pr
   const { stdout } = await npm(['pack', '--json', '--pack-destination', installRoot], repository);
   const [pack] = JSON.parse(stdout);
   assert.equal(pack.name, 'docatlas');
-  assert.equal(pack.version, '0.1.0');
+  assert.equal(pack.version, '0.2.0');
   const packedFiles = new Set(pack.files.map(file => file.path));
   for (const filename of ['LICENSE', 'README.md', 'bin/docatlas.js', 'bin/ddd-docmap.js', 'src/collector/read.js', 'src/collector/index.js',
     'src/server/index.js', 'src/server/project-store.js', 'src/server/render.js',
@@ -85,6 +85,9 @@ test('F-07: a production tarball runs independently and preserves both target pr
     const help = await npm(['exec', '--offline', '--', name, '--help'], installRoot);
     assert.match(help.stdout, /docatlas \[--root <directory>\]/);
     assert.match(help.stdout, /Compatibility aliases: docmap, ddd-docmap/);
+    assert.match(help.stdout, /--docs-dir/);
+    assert.match(help.stdout, /--all-md/);
+    assert.match(help.stdout, /docatlas.config.json/);
     const version = await npm(['exec', '--offline', '--', name, '--version'], installRoot);
     assert.equal(version.stdout.trim(), pack.version);
   }
@@ -92,11 +95,13 @@ test('F-07: a production tarball runs independently and preserves both target pr
   const js = await createReadingProject(scope, {
     'package.json': '{"private":true,"scripts":{"build":"exit 99","docatlas":"docatlas"}}',
     'docs/catalog/REQUIREMENTS.md': BASIC_FILES['docs/catalog/REQUIREMENTS.md'] + '\nJavaScriptOnlyToken.\n',
-    'ddd-docmap.config.json': JSON.stringify({ version: 1, redirects: { 'docs/old/DESIGN.md': READING_ID } })
+    'documentation/intro.md': '# Additional directory\n\nAdditionalDirectoryToken.',
+    'docatlas.config.json': JSON.stringify({ version: 1, redirects: { 'docs/old/DESIGN.md': READING_ID } })
   });
   const nonJs = await createReadingProject(scope, {
     'main.py': 'print("This project needs no JavaScript build.")\n',
-    'docs/catalog/REQUIREMENTS.md': BASIC_FILES['docs/catalog/REQUIREMENTS.md'] + '\nPythonOnlyToken.\n'
+    'docs/catalog/REQUIREMENTS.md': BASIC_FILES['docs/catalog/REQUIREMENTS.md'] + '\nPythonOnlyToken.\n',
+    'ddd-docmap.config.json': JSON.stringify({ version: 1, include: ['shared/**/*.md'] })
   });
   await npm(['install', '--save-dev', '--offline', '--ignore-scripts', '--no-audit', '--no-fund',
     path.join(installRoot, pack.filename)], js.root);
@@ -115,8 +120,10 @@ test('F-07: a production tarball runs independently and preserves both target pr
   const beforeNonJs = await filesIn(nonJs.root);
   const alias = path.join(installRoot, 'non-js-alias');
   await fs.symlink(nonJs.root, alias, 'dir');
-  const first = await startCli(scope, { cwd: js.root, executable: localExecutable, args: ['--no-open'] });
-  const second = await startCli(scope, { cwd: installRoot, executable, args: ['--root', alias, '--no-open'] });
+  const first = await startCli(scope, { cwd: js.root, executable: localExecutable,
+    args: ['--docs-dir', 'documentation', '--no-open'] });
+  const second = await startCli(scope, { cwd: installRoot, executable,
+    args: ['--root', alias, '--all-md', '--no-open'] });
   const browser = await chromium.launch({ channel: process.env.DOCMAP_BROWSER_CHANNEL || undefined });
   scope.after(() => browser.close());
   const page = await browser.newPage({ viewport: { width: 1440, height: 1000 } });
@@ -126,13 +133,18 @@ test('F-07: a production tarball runs independently and preserves both target pr
 
   await t.test('installed API, cwd, explicit root, and packaged web assets agree', async () => {
     const api = await execute(process.execPath, ['--input-type=module', '-e',
-      'import { collectProject } from "docatlas"; console.log(JSON.stringify(await collectProject(process.argv[1])));',
+      'import { collectProject } from "docatlas"; console.log(JSON.stringify(await collectProject(process.argv[1], { docsDirs: ["documentation"] })));',
       js.root], { cwd: installRoot });
     const collected = JSON.parse(api.stdout);
     const map = await (await fetch(first.url + 'api/map')).json();
     const otherMap = await (await fetch(second.url + 'api/map')).json();
-    assert.equal(map.documents.length, 9);
-    assert.equal(otherMap.documents.length, 9);
+    assert.equal(map.documents.length, 10);
+    assert.equal(otherMap.documents.length, 11);
+    assert.ok(map.documents.some(document => document.id === 'documentation/intro.md'));
+    assert.ok(otherMap.documents.some(document => document.id === 'README.md'));
+    assert.ok(!otherMap.documents.some(document => /^(?:node_modules|dist|\.git)\//.test(document.id)));
+    assert.equal((await (await fetch(first.url + 'api/search?q=AdditionalDirectoryToken')).json()).total, 1);
+    assert.equal((await fetch(first.url + 'api/document?id=documentation/intro.md')).status, 200);
     assert.equal(map.revision, collected.revision);
     assert.equal(map.project.rootLabel, js.root);
     assert.equal(otherMap.project.rootLabel, nonJs.root);
@@ -148,8 +160,17 @@ test('F-07: a production tarball runs independently and preserves both target pr
     await otherPage.goto(second.url);
     await expect(page.getByRole('link', { name: 'docatlas home', exact: true })).toHaveText('docatlas');
     await expect(page).toHaveTitle(/ · docatlas$/);
-    await expect(page.locator('#map-count')).toContainText('9 documents');
-    await expect(otherPage.locator('#map-count')).toContainText('9 documents');
+    await expect(page.locator('#map-count')).toContainText('10 documents');
+    await expect(otherPage.locator('#map-count')).toContainText('11 documents');
+    await page.getByRole('searchbox').fill('AdditionalDirectoryToken');
+    await page.getByRole('button', { name: 'Show documentation/intro.md in document tree', exact: true }).click();
+    await expect(page.getByRole('searchbox')).toHaveValue('');
+    await expect(page.locator('#map-tree')).toBeVisible();
+    await expect(page.locator('[data-focus-key="doc:documentation/intro.md"]')).toBeFocused();
+    await expect(page.locator('[data-focus-key="doc:documentation/intro.md"]')).toHaveClass(/is-located/);
+    await expect(page.locator('#document-view')).toBeHidden();
+    await page.locator('[data-focus-key="doc:documentation/intro.md"]').click();
+    await expect(page.locator('#document-content')).toContainText('AdditionalDirectoryToken');
     await otherPage.getByRole('searchbox').fill('PythonOnlyToken');
     await expect(otherPage.locator('#search-status')).toHaveText('1 document');
     await otherPage.locator('.search-result').click();

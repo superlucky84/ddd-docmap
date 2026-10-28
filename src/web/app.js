@@ -11,7 +11,7 @@ const labels = {
 };
 const state = {
   map: null, groups: new Map(), documents: new Map(), redirects: new Map(), expanded: new Set(['.']),
-  openDocuments: null, selectedId: null
+  openDocuments: null, selectedId: null, locatedId: null
 };
 
 function element(tag, className, text) {
@@ -108,6 +108,7 @@ function renderGroup(group) {
       if (duplicate) button.setAttribute('aria-label', label + ' — ' + source.relativePath);
       button.dataset.focusKey = 'doc:' + source.id;
       if (source.id === state.selectedId) button.setAttribute('aria-current', 'page');
+      if (source.id === state.locatedId) button.classList.add('is-located');
       button.onclick = () => { void reader.open(id); };
       list.append(button);
     }
@@ -127,6 +128,36 @@ function getDocument(id) {
   return state.documents.get(state.redirects.get(id) || id);
 }
 
+function expandDocumentPath(source) {
+  state.openDocuments = source.groupId;
+  let parent = state.groups.get(source.groupId).parentId;
+  while (parent !== null) {
+    state.expanded.add(parent);
+    parent = state.groups.get(parent).parentId;
+  }
+}
+
+function revealDocument(id) {
+  const source = getDocument(id);
+  reader.showMap({ cancelPending: true });
+  if (!source) {
+    $('map-message').textContent = 'This document is no longer in the map. Search again to find its current location.';
+    $('doc-search').focus({ preventScroll: true });
+    return;
+  }
+  state.locatedId = source.id;
+  expandDocumentPath(source);
+  renderTree();
+  const target = $('map-tree').querySelector('[data-focus-key="' + CSS.escape('doc:' + source.id) + '"]');
+  $('map-message').textContent = 'Located in tree: ' + source.relativePath;
+  if (target) {
+    const scroll = $('map-scroll');
+    scroll.scrollTop += target.getBoundingClientRect().top - scroll.getBoundingClientRect().top -
+      (scroll.clientHeight - target.offsetHeight) / 2;
+    target.focus({ preventScroll: true });
+  }
+}
+
 function applyMap(map) {
   const oldGroups = state.groups;
   state.map = map;
@@ -139,10 +170,11 @@ function applyMap(map) {
   }
   if (!state.groups.has(state.openDocuments)) state.openDocuments = null;
   state.selectedId = getDocument(state.selectedId)?.id || null;
+  state.locatedId = getDocument(state.locatedId)?.id || null;
   const features = map.groups.filter(group => group.documentIds.length).length;
   const count = map.documents.filter(source => !source.canonicalId).length;
   $('map-count').textContent = features + ' features · ' + count + ' documents';
-  $('map-message').textContent = count ? '' : 'No documentation found. Add Markdown under a docs folder, or use ddd-docmap.config.json to include another location.';
+  $('map-message').textContent = count ? '' : 'No documentation found. Add Markdown under a docs folder, use --docs-dir or --all-md, or configure docatlas.config.json.';
   $('warnings').hidden = !map.warnings.length;
   $('warning-summary').textContent = map.warnings.length + ' collection notices';
   $('warning-list').replaceChildren(...map.warnings.map(warning =>
@@ -169,30 +201,27 @@ async function load() {
         state.selectedId = source?.id || null;
         if (source) $('map-message').textContent = '';
         if (source && reveal) {
-          state.openDocuments = source.groupId;
-          let parent = state.groups.get(source.groupId).parentId;
-          while (parent !== null) {
-            state.expanded.add(parent);
-            parent = state.groups.get(parent).parentId;
-          }
+          state.locatedId = null;
+          expandDocumentPath(source);
         }
         renderTree();
         search?.selected();
       },
       captureMap: () => ({
         scroll: $('map-scroll').scrollTop, expanded: [...state.expanded], openDocuments: state.openDocuments,
-        search: search?.capture()
+        search: search?.capture(), locatedId: state.locatedId
       }),
       restoreMap(saved) {
         state.expanded = new Set(saved.expanded.filter(id => state.groups.has(id)));
         state.openDocuments = state.groups.has(saved.openDocuments) ? saved.openDocuments : null;
+        state.locatedId = getDocument(saved.locatedId)?.id || null;
         renderTree();
         search?.restore(saved.search, saved.scroll);
         $('map-scroll').scrollTop = saved.scroll;
       },
       onError: message => { $('map-message').textContent = message; }
     });
-    search = createSearch({ open: reader.open, showMap: reader.showMap,
+    search = createSearch({ open: reader.open, reveal: revealDocument, showMap: reader.showMap,
       getSequence: () => state.map.sequence, getSelected: () => state.selectedId });
     await reader.initialize();
     connectLive({

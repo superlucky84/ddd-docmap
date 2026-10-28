@@ -10,15 +10,51 @@ test('help, version, invalid arguments, and invalid roots exit without a server'
   const { root } = await createProject(t);
   for (const [args, code, expected] of [
     [['--help'], 0, 'Press Ctrl+C'],
-    [['--version'], 0, '0.1.0'],
+    [['--version'], 0, '0.2.0'],
     [['--unknown'], 2, '--help'],
     [['--root'], 2, 'argument'],
+    [['--docs-dir'], 2, 'argument'],
+    [['--docs-dir', '../outside', '--no-open'], 2, 'project-relative'],
+    [['--all-md=true'], 2, '--all-md'],
     [['--root', './missing', '--no-open'], 2, 'root']
   ]) {
     const result = spawnSync(process.execPath, [cliPath, ...args], { cwd: root, encoding: 'utf8' });
     assert.equal(result.status, code, result.stderr);
     assert.ok((result.stdout + result.stderr).includes(expected), result.stderr);
   }
+});
+
+test('help explains additional scope, configuration migration and every JSON field', async t => {
+  const { root } = await createProject(t);
+  const result = spawnSync(process.execPath, [cliPath, '--help'], { cwd: root, encoding: 'utf8' });
+  assert.equal(result.status, 0);
+  for (const item of ['--docs-dir', '--all-md', 'docatlas.config.json', 'ddd-docmap.config.json',
+    'version: 1', 'include', 'exclude', 'groups', 'redirects', 'node_modules']) assert.ok(result.stdout.includes(item), item);
+});
+
+test('repeated docs directories resolve against --root, not the CLI cwd', async t => {
+  const project = await createProject(t, {
+    'docs/DESIGN.md': '# Default', 'documentation/intro.md': '# Introduction', '팀 문서/guide.md': '# Guide'
+  });
+  const other = await createProject(t, { 'documentation/wrong.md': '# Wrong project' });
+  const cli = await startCli(t, { cwd: other.root, args: ['--root', project.root,
+    '--docs-dir', 'documentation', '--docs-dir', '팀 문서', '--no-open'] });
+  const snapshot = await (await fetch(cli.url + 'api/map')).json();
+  assert.deepEqual(snapshot.documents.map(doc => doc.id), ['docs/DESIGN.md', 'documentation/intro.md', '팀 문서/guide.md']);
+  cli.child.kill('SIGINT');
+  assert.deepEqual(await cli.exited, { code: 0, signal: null });
+});
+
+test('all-md overrides configured include but preserves exclusions in a running CLI', async t => {
+  const { root } = await createProject(t, {
+    'docatlas.config.json': '{"version":1,"include":[]}', 'README.md': '# Root', 'notes/idea.md': '# Idea',
+    'node_modules/pkg/docs/hidden.md': '# Dependency', 'dist/docs/hidden.md': '# Output'
+  });
+  const cli = await startCli(t, { cwd: root, args: ['--all-md', '--docs-dir', 'notes', '--no-open'] });
+  const snapshot = await (await fetch(cli.url + 'api/map')).json();
+  assert.deepEqual(snapshot.documents.map(doc => doc.id), ['README.md', 'notes/idea.md']);
+  cli.child.kill('SIGTERM');
+  assert.deepEqual(await cli.exited, { code: 0, signal: null });
 });
 
 test('cwd starts a foreground server and SIGINT exits cleanly', async t => {

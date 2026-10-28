@@ -5,7 +5,7 @@ import path from 'node:path';
 import { collectProject, ConfigurationError } from 'docatlas';
 import { createBasicProject, createProject } from './helpers/projects.js';
 
-const CONFIG = 'ddd-docmap.config.json';
+const CONFIG = 'docatlas.config.json';
 
 test('include and exclude replace their defaults but cannot bypass protected directories', async t => {
   const { root, write } = await createBasicProject(t);
@@ -88,4 +88,45 @@ test('a symbolic configuration file is not followed', async t => {
   const outside = await createProject(t, { 'config.json': '{"version":1}' });
   await fs.symlink(path.join(outside.root, 'config.json'), path.join(root, CONFIG));
   await assert.rejects(collectProject(root), ConfigurationError);
+});
+
+test('legacy configuration remains a fallback and its errors and warnings identify the legacy file', async t => {
+  const legacy = 'ddd-docmap.config.json';
+  const project = await createProject(t, {
+    [legacy]: '{"version":1,"include":["notes/**/*.md"],"groups":{"missing":{"title":"Unused"}}}',
+    'notes/idea.md': '# Idea', 'docs/DESIGN.md': '# Default'
+  });
+  const snapshot = await collectProject(project.root);
+  assert.deepEqual(snapshot.documents.map(doc => doc.id), ['notes/idea.md']);
+  assert.equal(snapshot.warnings[0].path, legacy);
+  await project.write(legacy, '{"version":99}');
+  await assert.rejects(collectProject(project.root), error => {
+    assert.ok(error instanceof ConfigurationError);
+    assert.equal(error.file, legacy);
+    assert.ok(error.message.startsWith(legacy + ':'));
+    return true;
+  });
+});
+
+test('the new configuration takes precedence without reading or merging malformed legacy JSON', async t => {
+  const { root } = await createProject(t, {
+    [CONFIG]: '{"version":1,"include":["notes/**/*.md"],"groups":{"missing":{"title":"Unused"}}}',
+    'ddd-docmap.config.json': '{invalid legacy', 'notes/idea.md': '# Idea', 'docs/DESIGN.md': '# Default'
+  });
+  const snapshot = await collectProject(root);
+  assert.deepEqual(snapshot.documents.map(doc => doc.id), ['notes/idea.md']);
+  assert.equal(snapshot.warnings[0].path, CONFIG);
+});
+
+test('invalid or symbolic new configuration never falls back to a valid legacy configuration', async t => {
+  const project = await createProject(t, { [CONFIG]: '{"version":99}', 'ddd-docmap.config.json': '{"version":1}' });
+  await assert.rejects(collectProject(project.root), error => {
+    assert.equal(error.file, CONFIG);
+    assert.ok(error.message.startsWith(CONFIG + ':'));
+    return true;
+  });
+  await fs.unlink(path.join(project.root, CONFIG));
+  const outside = await createProject(t, { 'config.json': '{"version":1}' });
+  await fs.symlink(path.join(outside.root, 'config.json'), path.join(project.root, CONFIG));
+  await assert.rejects(collectProject(project.root), error => error instanceof ConfigurationError && error.file === CONFIG);
 });

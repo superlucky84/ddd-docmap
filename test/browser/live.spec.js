@@ -144,7 +144,7 @@ test('explicit redirects work from an absent previous URL, search path and relat
   await expect(page).toHaveURL(/doc=docs%2Fcatalog%2FDESIGN.md#details$/);
   await page.getByRole('searchbox').fill('old.md');
   await expect(page.locator('#search-status')).toHaveText('1 document');
-  await expect(page.locator('.result-path')).toHaveText('docs/catalog/DESIGN.md');
+  await expect(page.locator('.result-path-text')).toHaveText('docs/catalog/DESIGN.md');
   await page.getByRole('button', { name: 'Clear search' }).click();
   await page.getByRole('group', { name: 'Documents for Catalog', exact: true }).getByRole('button', { name: 'Requirements', exact: true }).click();
   await page.getByRole('link', { name: 'Old design', exact: true }).click();

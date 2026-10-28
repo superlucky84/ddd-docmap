@@ -14,6 +14,9 @@
 - 완료: Phase 5 Test Hardening. Node 93개·Chrome 34개와 F-08 성능 측정·회귀 기준 기록.
 - 진행 중: Phase 6 Integration Test. 별도 설치 자동 검증은 Node 22.12.0·24.22.1에서 통과했다.
   전체 수동 인수·선언한 Node 22.0·최종 지원 OS 검증은 남아 있다.
+- 완료: 0.1.0은 사용자가 npm 배포했다. 0.2.0의 추가 수집 옵션·설정 파일명·전체 설정 안내와 자동 검증을 완료했다.
+  0.2.0은 미배포이며 아래 완료 검증과 맨 아래 인계가 현재 상태다.
+- 완료: 검색 결과의 경로에서 트리 위치 찾기. 최신 문법 51개·Chrome 40개·설치 통합 4개 통과.
 
 기술 선택은 각 단계에서 근거와 검증을 기록해 DC/IC를 해소한다.
 상세 계약을 바꾸면 요구사항·설계·단계·수동 기준을 같은 작업에서 갱신한다.
@@ -260,6 +263,102 @@ tarball을 지정한 npm exec의 일회성 실행이 0.1.0을 출력했고 대�
 구현 커밋 e9977a4(feat: rename package and CLI to docatlas)를 새 origin의 main에 push했다.
 GitHub에서 README와 package.json을 다시 읽어 새 이름·MIT·실행 안내를 확인했다.
 README blob은 95f8d2ddfaa425509fca908ac194109203c72301이며 설치 여부별 사용법과 cwd 기본 루트를 설명한다.
+
+## 수집 범위와 설정 안내 — 0.2.0 구현 완료
+
+대응: RQ-11·12 / DC-13 / M-01·07·09·11·13. 기준 커밋은 ceb5b3e다.
+배포된 0.1.0은 보존하며 새 공개 후보는 0.2.0으로 준비한다. 실제 npm 배포는 이번 범위에 포함하지 않는다.
+
+### 범위·설정 구현
+
+- [x] 기준 4종에 두 CLI 옵션·새 파일 우선/fallback·원본 경계·설정 우선순위를 먼저 기록한다.
+- [x] collectProject/scan/store/CLI에 독립적인 수집 옵션을 전달한다.
+- [x] docatlas.config.json을 우선하고 이전 파일은 fallback하며 두 파일을 감지한다.
+- [x] 실제 사용한 설정 파일을 오류/경고에 표시한다. CLI 옵션은 설정 갱신 후에도 유지한다.
+- [x] --help와 README에 옵션·설정 필드 전체·예제·기본값 대체를 설명한다.
+
+기준 테스트: 문법 48개·Node 93개·Chrome 34개·설치 통합 4개와 기존 수집·접근 정책.
+종료 기준: 기본 동작은 유지하며 추가 폴더/전체 Markdown과 새/이전 설정 파일이 같은 세대로 동작한다.
+
+### Test Hardening
+
+- [x] CLI/설정 조합·반복 경로·한글/공백·리터럴 glob 문자·잘못된 경로·node_modules/.git·ignore·symlink를 검증한다.
+- [x] 두 설정 파일의 우선순위·오류 위치·생성/삭제/fallback과 마지막 정상 인덱스·복구를 검증한다.
+- [x] 추가 폴더의 생성/삭제와 옵션 유지, 문서/이미지 요청 시 새 제외 규칙 재검증을 확인한다.
+
+기준 테스트: 기존 전체 회귀와 수집/설정/CLI/live/reading-server 경계 테스트.
+종료 기준: 새로운 포함 옵션도 기존 파일 정책과 종료·세대 일관성을 지키며 재현한 실패가 해소된다.
+
+### Integration Test와 문서 반영
+
+- [x] 0.2.0 tarball 설치 CLI에서 --docs-dir와 --all-md, 새 설정과 이전 fallback을 검증한다.
+- [x] 문법·Node·Chrome·설치 통합·pack/publish dry-run·문서/설정 예제 정합성을 확인한다.
+- [x] 기존 Confluence 팀 가이드에 전체 설정과 이름 변경·옵션 사용법을 배포 버전과 구분해 반영한다.
+
+기준 테스트: 실제 설치 패키지의 지도/검색/읽기/저장 갱신/원본 보존과 기존 다중 실행/신호 종료.
+종료 기준: 실행 가능한 0.2.0 후보와 정확한 README/--help/팀 가이드를 제공하고 실제 npm 배포 여부를 명시한다.
+
+### 0.2.0 완료 검증 — 2026-10-28
+
+환경: macOS / Node 22.12.0 / arm64 / Chrome 156.0.8078.48. 이번 변경에서 Node 24·다른 OS를 재검증한 것으로 표시하지 않는다.
+
+| 검증 | 결과 |
+| --- | --- |
+| npm run check | JavaScript 50개 통과 |
+| npm test | 109개 통과. discovery/config/CLI/live/reading-server와 기존 경계·검색·종료 회귀 포함 |
+| DOCMAP_BROWSER_CHANNEL=chrome npm run test:browser | 34개 통과 |
+| DOCMAP_BROWSER_CHANNEL=chrome DOCMAP_NPM_CACHE=/private/tmp/ddd-docmap-phase1-npm-cache npm run test:integration | 4개 통과. 실제 production-only/offline tarball의 JS 10문서·비 JS 11문서, 새 옵션·새/이전 설정·API·읽기·갱신·원본 해시·신호 종료 |
+| npm pack --dry-run / npm publish --dry-run | docatlas@0.2.0, 실행 파일·options 모듈·README·LICENSE 포함 29개 파일. 실제 npm 게시 없음 |
+| Markdown/JSON 예제 | README·기준 4종·팀 가이드의 JSON 7개와 로컬 링크 27개·이미지 5개 확인. 설정 예제는 실제 loader로 검증 |
+| Confluence | 기존 페이지 1735491669를 버전 3으로 갱신. 이미지 5장·대상 페이지 1개 동기화, 기존 다른 변경 파일 7개 보존 |
+
+팀 가이드: https://thejoongang.atlassian.net/wiki/pages/viewpage.action?pageId=1735491669.
+로컬 원본은 ~/project/confluence/page/share/1735491669.md다. 0.1.0 배포본과 0.2.0 후보의 차이를 명시했다.
+Confluence의 다른 문서가 함께 게시되지 않도록 원본 publish/sync 명령을 대상 페이지만 담은 임시 작업 폴더에서 실행했다.
+
+다음: 실제 프로젝트의 사용성 인수·npm 0.2.0 별도 배포·남은 지원 환경 검증.
+기술적 차단 없음. 최신 확인 커밋은 ceb5b3e이며 이번 변경은 미커밋이다. 기존 인계는 이전 단계의 기록으로 보존한다.
+
+## 검색 결과에서 트리 위치 찾기 — 구현 완료
+
+대응: RQ-13 / DC-14 / M-03·05·07·12. 0.2.0 준비본에 추가하며 실제 npm 배포는 하지 않는다.
+
+### 구현
+
+- [x] 기준 4종에 경로 버튼·검색 해제·트리 펼침/스크롤/초점·현재 본문 보존 계약을 기록한다.
+- [x] 검색 결과의 경로를 별도 동작으로 표시하고 현재 트리의 문서를 찾는다.
+- [x] 진행 중인 검색/사용자 열기 요청과 초점·스크롤·모바일 지도 전환을 처리한다.
+- [x] README의 검색 사용법을 갱신한다.
+
+기준 검증: 현재 Node 109개·Chrome 34개·설치 통합 4개와 검색/지도/읽기 이력 계약.
+종료 기준: 제목의 문서 열기와 경로의 트리 탐색이 독립적으로 동작한다.
+
+### Test Hardening
+
+- [x] 접힌 다단계·루트/한글/동명/긴 경로·키보드·모바일·본문/원문/위치 보존을 검증한다.
+- [x] 검색 및 사용자 열기의 늦은 응답·자동 갱신·초점 보존·삭제·이전 경로의 현재 위치를 검증한다.
+
+기준 검증: browser search/live/hardening 시나리오와 독립 지도/본문 스크롤.
+종료 기준: 경로 찾기 뒤 검색이 되살아나거나 오래된 문서 이동이 화면을 덮어쓰지 않는다.
+
+### Integration Test
+
+- [x] 문법·전체 Chrome·실제 설치 tarball 검색→경로→트리→본문 흐름과 pack dry-run을 확인한다.
+- [x] README·기준 4종과 최신 검증/인계를 정리한다.
+
+기준 검증: 설치된 0.2.0 패키지·원본 보존·기존 읽기/갱신/종료.
+종료 기준: npm 재배포 없이 검토 가능한 준비본과 검증 근거를 제공한다.
+
+### 검색 경로 탐색 완료 검증 — 2026-10-28
+
+- npm run check: JavaScript 51개 통과.
+- DOCMAP_BROWSER_CHANNEL=chrome npm run test:browser: 전체 40개 통과. 새 search-path.spec.js의 6개와 기존 검색/이력/읽기 회귀 포함.
+- DOCMAP_BROWSER_CHANNEL=chrome DOCMAP_NPM_CACHE=/private/tmp/ddd-docmap-phase1-npm-cache npm run test:integration: 4개 통과.
+  실제 설치된 추가 디렉터리 문서를 검색 → 경로 클릭 → 트리 초점/강조 → 본문 열기로 확인했고 기존 원본 해시·갱신·종료도 통과했다.
+- npm pack --dry-run: 29개 파일. 수집기/서버 계약은 이번 UI 작업에서 바꾸지 않았다. 직전 Node 전체 109개 통과 기록은 위 수집 범위 단계에 있다.
+- Chrome 156.0.8078.48 / Node 22.12.0 / macOS arm64. 모바일 390×844와 데스크톱 1440×1000을 검증했다.
+- 가상 예제의 검색/트리 이동 캡처 2개를 /private/tmp/docatlas-search-path-preview/에 남기고 경로 표시·대상 테두리·본문 유지를 시각 확인했다.
+  기존 Confluence 가이드는 이번 검색 기능으로 추가 게시하지 않았다.
 
 ## 검증 예제와 기록
 
@@ -522,7 +621,7 @@ DOCMAP_BROWSER_CHANNEL=chrome npm run test:browser
 
 ## 인계 상태 — 2026-10-28
 
-이 절과 다음 프로젝트별 설치 인계는 이름 변경 전의 기록이다. 현재 상태는 맨 아래 docatlas 인계를 따른다.
+이 절부터 docatlas 인계까지는 이전 작업 기록이다. 현재 상태는 맨 아래 0.2.0 인계를 따른다.
 
 - 사용자 요청으로 재개했고 Phase 5를 완료했다. 보존 패치는 이미 적용했으므로 다시 적용하지 않는다.
 - Phase 6의 재현 가능한 설치 통합 테스트를 추가했고 Node 22.12.0·24.22.1에서 통과했다.
@@ -558,3 +657,21 @@ DOCMAP_BROWSER_CHANNEL=chrome npm run test:browser
 - 차단 요인: 현재 준비 범위의 기술적 차단 없음. npm 인증 401은 이후 실제 배포 전에 해소해야 한다.
 - 최신 구현 커밋: e9977a4. 새 GitHub main의 README와 manifest를 확인했고 이 검증 기록도 문서 커밋으로 남긴다.
 - 실제 joongangscripts의 manifest·lockfile·원본 문서는 수정하지 않았다.
+
+## 0.2.0 수집 범위·설정 인계 — 2026-10-28
+
+- 완료: 추가 수집 옵션·새 설정 이름/이전 fallback·재수집/읽기 정책·전체 설정 안내와 Test Hardening/Integration Test.
+- 문법 50개·Node 109개·Chrome 34개·설치 통합 4개, pack/publish dry-run·JSON·링크 검증이 통과했다.
+- 검증한 후보 tarball은 /private/tmp/docatlas-0.2.0.tgz다. npm 0.1.0은 사용자 배포 완료, 0.2.0은 미배포다.
+- Confluence 팀 가이드 1735491669는 버전 3으로 갱신했고 기존 다른 변경과 캡처 5장을 보존했다.
+- 다음: 실제 프로젝트 사용성 인수, 필요 시 별도 npm 0.2.0 배포·남은 지원 환경 검증. 기술적 차단 없음.
+- 최신 확인 커밋: ceb5b3e. 이번 변경은 작업 트리에 있으며 아직 커밋하지 않았다.
+
+## 0.2.0 검색 경로 탐색 인계 — 2026-10-28
+
+- 완료: RQ-13/DC-14의 경로 표시·트리 이동·현재 읽기 보존·접근성/경합/갱신과 설치 통합.
+- 문법 51개·Chrome 40개·설치 통합 4개, pack dry-run과 실제 캡처 검토가 통과했다. README·기준 4종을 갱신했다.
+- 수집 범위 단계의 Node 109개는 직전 검증 기록이다. 이번 변경은 UI와 해당 테스트에 한정한다.
+- 다음: 실제 프로젝트 사용성 인수, 필요 시 별도 npm 0.2.0 배포와 팀 가이드 추가 반영. npm 배포는 실행하지 않았다.
+- 기술적 차단 없음. 수동 인수·Node 22.0·다른 OS 검증은 계속 남아 있다.
+- 최신 확인 커밋: ceb5b3e. 이번 작업과 직전 0.2.0 변경은 작업 트리에 미커밋 상태로 있다.

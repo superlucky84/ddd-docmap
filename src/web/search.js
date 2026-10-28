@@ -21,7 +21,7 @@ function highlighted(tag, className, value, terms) {
   return element;
 }
 
-export function createSearch({ open, showMap, getSequence, getSelected }) {
+export function createSearch({ open, reveal, showMap, getSequence, getSelected }) {
   let request;
   let timer;
   let composing = false;
@@ -32,7 +32,7 @@ export function createSearch({ open, showMap, getSequence, getSelected }) {
   const input = $('doc-search');
 
   function selected() {
-    for (const button of $('search-results').querySelectorAll('button')) {
+    for (const button of $('search-results').querySelectorAll('.search-result')) {
       if (button.dataset.documentId === getSelected()) button.setAttribute('aria-current', 'page');
       else button.removeAttribute('aria-current');
     }
@@ -51,6 +51,8 @@ export function createSearch({ open, showMap, getSequence, getSelected }) {
     $('clear-search').hidden = !input.value;
     if (!active) {
       $('search-results').replaceChildren();
+      $('search-results').removeAttribute('aria-busy');
+      $('search-status').textContent = '';
       $('map-scroll').scrollTop = restoreScroll ?? treeScroll;
       restoreScroll = null;
       return;
@@ -65,28 +67,47 @@ export function createSearch({ open, showMap, getSequence, getSelected }) {
       if (!response.ok) throw new Error(data.error);
       if (data.sequence < getSequence()) { timer = setTimeout(run, 100); return; }
       const focusId = document.activeElement?.dataset.documentId;
+      const focusAction = document.activeElement?.dataset.action;
       const terms = termsFor(query);
       const scroll = restoreScroll ?? $('map-scroll').scrollTop;
       $('search-results').replaceChildren(...data.results.map(result => {
         const item = document.createElement('li');
+        item.className = 'search-item';
         const button = document.createElement('button');
         button.type = 'button';
         button.className = 'search-result';
         button.dataset.documentId = result.id;
+        button.dataset.action = 'open';
         button.append(highlighted('span', 'result-title', result.title, terms),
           highlighted('span', 'result-group', result.groupTitle, terms),
-          highlighted('span', 'result-path', result.relativePath, terms),
           highlighted('span', 'result-snippet', result.snippet, terms));
         button.title = 'Matched ' + result.matchedField;
         button.onclick = () => { void open(result.id); };
-        item.append(button);
+        const path = document.createElement('button');
+        path.type = 'button';
+        path.className = 'result-path';
+        path.dataset.documentId = result.id;
+        path.dataset.action = 'reveal';
+        path.setAttribute('aria-label', 'Show ' + result.relativePath + ' in document tree');
+        path.title = 'Show this document in the tree';
+        const action = document.createElement('span');
+        action.className = 'result-path-action';
+        action.textContent = 'Show in tree';
+        path.append(highlighted('span', 'result-path-text', result.relativePath, terms), action);
+        path.onclick = () => {
+          input.value = '';
+          void run();
+          reveal(result.id);
+        };
+        item.append(button, path);
         return item;
       }));
       selected();
       $('search-status').textContent = data.total
         ? data.total + (data.total === 1 ? ' document' : ' documents') + (data.total > 50 ? ' · showing first 50' : '')
         : 'No matching documents.';
-      if (focusId) ($('search-results').querySelector('[data-document-id="' + CSS.escape(focusId) + '"]') || input).focus({ preventScroll: true });
+      if (focusId) ($('search-results').querySelector('[data-document-id="' + CSS.escape(focusId) +
+        '"][data-action="' + CSS.escape(focusAction || 'open') + '"]') || input).focus({ preventScroll: true });
       $('map-scroll').scrollTop = scroll;
       restoreScroll = null;
     } catch (error) {

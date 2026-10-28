@@ -4,7 +4,8 @@ import picomatch from 'picomatch';
 import { ConfigurationError } from './errors.js';
 import { readRegularFile } from './read.js';
 
-export const CONFIG_FILE = 'ddd-docmap.config.json';
+export const CONFIG_FILE = 'docatlas.config.json';
+export const CONFIG_FILES = [CONFIG_FILE, 'ddd-docmap.config.json'];
 
 const DEFAULT_INCLUDE = [
   '**/docs/**/*.md',
@@ -17,6 +18,7 @@ const DEFAULT_EXCLUDE = [
   '**/dist/**',
   '**/build/**',
   '**/coverage/**',
+  '**/.docatlas/**',
   '**/.ddd-docmap/**'
 ];
 
@@ -76,27 +78,7 @@ function patterns(value, defaults, field) {
   }
 }
 
-export async function loadConfiguration(root) {
-  const filename = path.join(root, CONFIG_FILE);
-  let value = { version: 1 };
-  let stat;
-  try {
-    stat = await fs.lstat(filename);
-  } catch (cause) {
-    if (cause.code !== 'ENOENT') {
-      throw new ConfigurationError('cannot inspect config (' + cause.code + ')', { cause });
-    }
-  }
-  if (stat) {
-    if (!stat.isFile() || stat.isSymbolicLink()) {
-      fail('config', 'expected a regular file, not a symbolic link');
-    }
-    try {
-      value = JSON.parse(await readRegularFile(root, filename));
-    } catch (cause) {
-      throw new ConfigurationError('cannot read JSON: ' + cause.message, { cause });
-    }
-  }
+function parseConfiguration(value) {
   if (!isObject(value)) {
     fail('config', 'expected a JSON object');
   }
@@ -146,4 +128,39 @@ export async function loadConfiguration(root) {
     isExcluded: (relative, directory = false) =>
       exclude.matches(relative) || (directory && exclude.matches(relative + '/'))
   };
+}
+
+export async function loadConfiguration(root) {
+  let file = CONFIG_FILE;
+  let stat;
+  for (const candidate of CONFIG_FILES) {
+    try {
+      stat = await fs.lstat(path.join(root, candidate));
+      file = candidate;
+      break;
+    } catch (cause) {
+      if (cause.code !== 'ENOENT') {
+        throw new ConfigurationError('cannot inspect config (' + cause.code + ')', { file: candidate, cause });
+      }
+    }
+  }
+  let value = { version: 1 };
+  if (stat) {
+    if (!stat.isFile() || stat.isSymbolicLink()) {
+      throw new ConfigurationError('config: expected a regular file, not a symbolic link', { file });
+    }
+    try {
+      value = JSON.parse(await readRegularFile(root, path.join(root, file)));
+    } catch (cause) {
+      throw new ConfigurationError('cannot read JSON: ' + cause.message, { file, cause });
+    }
+  }
+  try {
+    return { ...parseConfiguration(value), file };
+  } catch (cause) {
+    if (cause instanceof ConfigurationError && cause.file !== file) {
+      throw new ConfigurationError(cause.detail, { file, cause: cause.cause });
+    }
+    throw cause;
+  }
 }

@@ -27,12 +27,63 @@ async function liveProject(t, files) {
   return { ...project, after: fn => cleanups.push(fn) };
 }
 
-async function watched(t, files = {}) {
+async function watched(t, files = {}, collectionOptions = {}) {
   const project = await liveProject(t, { 'docs/DESIGN.md': '# Initial\n\nFirst body.', ...files });
-  const store = await createProjectStore(project.root);
+  const store = await createProjectStore(project.root, { collectionOptions });
   project.after(() => store.close());
   return { ...project, store };
 }
+
+test('new configuration creation, errors, replacement and removal preserve immutable directory options', async t => {
+  const options = { docsDirs: ['documentation'] };
+  const { root, write, store } = await watched(t, {
+    'ddd-docmap.config.json': JSON.stringify({ version: 1, include: ['legacy/**/*.md'] }),
+    'legacy/info.md': '# Legacy', 'current/info.md': '# Current',
+    'documentation/guide.md': '# Added'
+  }, options);
+  options.docsDirs[0] = 'unselected';
+  assert.ok(store.current.documents.has('legacy/info.md'));
+  assert.ok(store.current.documents.has('documentation/guide.md'));
+  await changed(store, current => current.documents.has('current/info.md') && !current.documents.has('legacy/info.md'),
+    () => write('docatlas.config.json', JSON.stringify({ version: 1, include: ['current/**/*.md'] })));
+  assert.ok(store.current.documents.has('documentation/guide.md'));
+  const revision = store.current.snapshot.revision;
+  await changed(store, (_current, status) => Boolean(status.error?.includes('docatlas.config.json')),
+    () => write('docatlas.config.json', '{invalid'));
+  assert.equal(store.current.snapshot.revision, revision);
+  assert.ok(!store.current.documents.has('legacy/info.md'));
+  await changed(store, (current, status) => !status.error && current.documents.has('documentation/guide.md'),
+    () => write('docatlas.config.json', JSON.stringify({ version: 1, include: [] })));
+  await changed(store, current => current.documents.has('legacy/info.md'),
+    () => fs.unlink(path.join(root, 'docatlas.config.json')));
+  assert.ok(store.current.documents.has('documentation/guide.md'));
+  await changed(store, current => current.documents.has('docs/DESIGN.md'),
+    () => fs.unlink(path.join(root, 'ddd-docmap.config.json')));
+});
+
+test('an additional directory can appear and disappear without retaining stale documents', async t => {
+  const { root, write, store } = await watched(t, {}, { docsDirs: ['future'] });
+  assert.ok(store.current.snapshot.warnings.some(warning => warning.code === 'DOCS_DIR_SKIPPED'));
+  await changed(store, current => current.documents.has('future/guide.md'), () => write('future/guide.md', '# Created'));
+  assert.ok(!store.current.snapshot.warnings.some(warning => warning.code === 'DOCS_DIR_SKIPPED'));
+  await changed(store, current => current.contents.get('future/guide.md')?.includes('Updated'),
+    () => write('future/guide.md', '# Updated'));
+  await changed(store, current => !current.documents.has('future/guide.md'),
+    () => fs.rm(path.join(root, 'future'), { recursive: true }));
+  assert.ok(store.current.snapshot.warnings.some(warning => warning.code === 'DOCS_DIR_SKIPPED'));
+  assert.equal(store.status().error, null);
+});
+
+test('all Markdown survives configuration watcher replacement while exclusions still change', async t => {
+  const { write, store } = await watched(t, { 'notes/guide.md': '# Notes' }, { allMarkdown: true });
+  await changed(store, current => !current.documents.has('notes/guide.md'),
+    () => write('docatlas.config.json', JSON.stringify({ version: 1, include: [], exclude: ['notes/**'] })));
+  assert.ok(store.current.documents.has('docs/DESIGN.md'));
+  await changed(store, current => current.documents.has('notes/guide.md'),
+    () => write('docatlas.config.json', JSON.stringify({ version: 1, include: [] })));
+  await changed(store, current => current.contents.get('notes/guide.md')?.includes('Still watched'),
+    () => write('notes/guide.md', '# Still watched'));
+});
 
 test('watch publishes coherent content/search generations for edit, addition, deletion and atomic save', async t => {
   const { root, write, store } = await watched(t);

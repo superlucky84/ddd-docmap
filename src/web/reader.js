@@ -11,7 +11,7 @@ const routeUrl = (id, fragment = '') => id
 
 export function createReader({ projectId, getDocument, getGroup, onSelect, captureMap, restoreMap, onError }) {
   const state = {
-    current: null, mode: 'read', fragment: '', request: null,
+    current: null, mode: 'read', fragment: '', request: null, requestLive: false,
     entryId: crypto.randomUUID(), positions: new Map(), cache: new Map(), modes: new Map(),
     documents: new Map(), restorePosition: null, sequence: 0, refreshAttempt: 0, missingId: null
   };
@@ -102,6 +102,7 @@ export function createReader({ projectId, getDocument, getGroup, onSelect, captu
     state.request?.abort();
     const request = new AbortController();
     state.request = request;
+    state.requestLive = Boolean(options.live);
     state.restorePosition = null;
     clearNotice();
     if (state.current?.id === id && !options.fromLink && !options.entry && !options.force && (state.current.sequence || 0) >= state.sequence) {
@@ -232,8 +233,17 @@ export function createReader({ projectId, getDocument, getGroup, onSelect, captu
     await open(source.id, { force: true, live: true, replace: true, restore: saved, fragment: state.fragment });
   }
 
-  function showMap() {
+  function showMap({ cancelPending = false } = {}) {
     remember();
+    if (cancelPending && state.request && !state.requestLive) {
+      state.request.abort();
+      state.request = null;
+      $('document-status').textContent = '';
+      if (!state.current) {
+        $('document-view').hidden = true;
+        $('reader-empty').hidden = false;
+      }
+    }
     document.body.dataset.view = 'map';
     document.querySelector('[data-focus-key="' + CSS.escape('doc:' + state.current?.id) + '"]')?.focus({ preventScroll: true });
   }

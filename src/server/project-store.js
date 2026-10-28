@@ -2,10 +2,12 @@ import path from 'node:path';
 import { watch } from 'chokidar';
 import { scanProject } from '../collector/scan.js';
 import { createSearchIndex } from '../collector/search.js';
-import { CONFIG_FILE } from '../collector/config.js';
+import { CONFIG_FILES } from '../collector/config.js';
+import { normalizeCollectionOptions } from '../collector/options.js';
 
 /** Owns one project's watcher and atomically published read/search generation. */
-export async function createProjectStore(root, { watcherFactory = watch } = {}) {
+export async function createProjectStore(root, { watcherFactory = watch, collectionOptions = {} } = {}) {
+  collectionOptions = normalizeCollectionOptions(collectionOptions);
   let current;
   let error = null;
   let watcher;
@@ -28,7 +30,7 @@ export async function createProjectStore(root, { watcherFactory = watch } = {}) 
       searchIndex: createSearchIndex(scan) };
     error = null;
   }
-  publish(await scanProject(root, { previous: current }));
+  publish(await scanProject(root, { previous: current, collectionOptions }));
   root = current.snapshot.project.rootLabel;
 
   async function startWatcher() {
@@ -41,7 +43,7 @@ export async function createProjectStore(root, { watcherFactory = watch } = {}) 
       ignored(filename, stat) {
         const relative = path.relative(root, filename).split(path.sep).join('/');
         if (!relative) return false;
-        if (relative === CONFIG_FILE) return false;
+        if (CONFIG_FILES.includes(relative)) return false;
         if (path.posix.basename(relative) === '.gitignore') {
           const parent = path.posix.dirname(relative);
           return parent !== '.' && !policy(parent, true);
@@ -56,7 +58,7 @@ export async function createProjectStore(root, { watcherFactory = watch } = {}) 
     next.on('all', (_event, filename) => {
       if (closed) return;
       const name = path.basename(filename);
-      if (name === CONFIG_FILE || name === '.gitignore') reconfigure = true;
+      if (CONFIG_FILES.includes(name) || name === '.gitignore') reconfigure = true;
       dirty = true;
       clearTimeout(timer);
       timer = setTimeout(() => { void rebuild(); }, 150);
@@ -89,7 +91,7 @@ export async function createProjectStore(root, { watcherFactory = watch } = {}) 
         const reset = reconfigure;
         reconfigure = false;
         try {
-          const scan = await scanProject(root, { previous: current });
+          const scan = await scanProject(root, { previous: current, collectionOptions });
           if (closed) return;
           publish(scan);
           if (reset) {
@@ -98,7 +100,7 @@ export async function createProjectStore(root, { watcherFactory = watch } = {}) 
             await startWatcher();
             // Include changes made while the replacement watcher was starting.
             if (closed) return;
-            const audited = await scanProject(root, { previous: current });
+            const audited = await scanProject(root, { previous: current, collectionOptions });
             if (closed) return;
             publish(audited);
           }
@@ -113,7 +115,7 @@ export async function createProjectStore(root, { watcherFactory = watch } = {}) 
 
   try {
     await startWatcher();
-    const scan = await scanProject(root, { previous: current });
+    const scan = await scanProject(root, { previous: current, collectionOptions });
     if (scan.snapshot.revision !== current.snapshot.revision) publish(scan);
   } catch (cause) {
     closed = true;

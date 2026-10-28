@@ -4,6 +4,7 @@ test-results/
 playwright-report/
 .cache/
 .ddd-docmap/
+.docatlas/
 *.tgz
 .DS_Store
 .env

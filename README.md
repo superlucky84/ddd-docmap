@@ -5,8 +5,9 @@ Local document maps for **Doc-Driven Development** projects.
 Find feature documentation spread across a repository, explore its hierarchy,
 and read Markdown without losing your place.
 
-> The first npm release is still pending. Until it is published, use the local
-> tarball instructions below. The package name and command are both `docatlas`.
+> `docatlas@0.1.0` is published. This checkout prepares **0.2.0** with
+> `--docs-dir`, `--all-md`, and `docatlas.config.json`; these additions require
+> the new version. Until it is published, try them using the tarball below.
 
 ## Document map
 
@@ -14,7 +15,7 @@ Run a CLI in a project to open its local document map:
 
 1. Browse thin horizontal cards arranged by area and feature.
 2. Read a short description of each feature.
-3. Expand a card to choose its requirements, design, implementation, or manual checks.
+3. Click a card title to choose its requirements, design, implementation, or manual checks.
 4. Read the selected Markdown document beside the map.
 
 The default keeps the server running in the terminal. Press Ctrl+C to stop it.
@@ -32,7 +33,7 @@ Use `--root` to select a different directory.
 
 ### Without adding a project dependency
 
-After the npm release, change into the project you want to explore and run:
+Change into the project you want to explore and run:
 
 ~~~sh
 cd /path/to/project
@@ -75,7 +76,7 @@ An optional package script also provides `npm run docatlas` or `pnpm run docatla
 }
 ~~~
 
-### Before the first npm release
+### Try the next version from source
 
 Create a tarball from this source checkout after installing its dependencies:
 
@@ -87,7 +88,7 @@ Then install it from your project's root:
 
 ~~~sh
 cd /path/to/project
-pnpm add -D /tmp/docatlas-0.1.0.tgz
+pnpm add -D /tmp/docatlas-0.2.0.tgz
 pnpm docatlas
 ~~~
 
@@ -95,13 +96,13 @@ Or use npm:
 
 ~~~sh
 cd /path/to/project
-npm install --save-dev /tmp/docatlas-0.1.0.tgz
+npm install --save-dev /tmp/docatlas-0.2.0.tgz
 npx --no-install docatlas
 ~~~
 
 ### Options and shutdown
 
-After publication, the same options work for one-off and local runs:
+The same options work for one-off and local runs:
 
 ~~~sh
 npx docatlas --root /path/to/another-project
@@ -114,8 +115,138 @@ With `--no-open`, or if opening a browser fails, open the printed address manual
 Installed users can also pass options to `pnpm docatlas` or `npx --no-install docatlas`.
 Earlier `docmap` and `ddd-docmap` command names remain accepted for compatibility.
 
-The arrow expands child features; the card expands its documents. On narrow
-screens, selecting a document switches to its reader, with a button back to the map.
+An arrow appears only when a group has child groups. Click it to expand those
+children. Click the title to show documents directly in that group. A group with
+its own Markdown and child directories supports both actions; a group with only
+Markdown has no arrow. Counts describe the group's own documents. Empty directories
+are omitted, so an on-disk subdirectory alone does not guarantee an arrow.
+On narrow screens, selecting a document switches to its reader, with a button back to the map.
+
+## Choose document locations
+
+By default, Docatlas collects `.md` files under every `docs/` directory, including
+`docs/DESIGN.md` directly inside it. It also finds `REQUIREMENTS.md`, `DESIGN.md`,
+`IMPLEMENT.md`, and `MANUAL_TEST_CHECKLIST.md` elsewhere in the project.
+An arbitrary `README.md` outside `docs/` needs an additional location or include rule.
+
+Starting with **0.2.0**, add project-relative directories without replacing those defaults:
+
+~~~sh
+npx docatlas --docs-dir documentation
+npx docatlas --docs-dir notes --docs-dir "팀 문서"
+npx docatlas --root /path/to/project --docs-dir documentation
+~~~
+
+`--docs-dir` is repeatable and adds to the configured `include` rules, or to the
+default rules when `include` is absent. Paths are relative to the selected project
+root, even with `--root`; they are literal directory names, not glob patterns.
+Use `/` separators. Absolute paths and `..` are rejected. A missing, excluded, or
+symbolic directory produces a collection notice and does not stop healthy documents.
+Creating or deleting an additional directory is reflected while the server runs.
+
+To collect all Markdown in the project:
+
+~~~sh
+npx docatlas --all-md
+~~~
+
+`--all-md` overrides `include`. Configuration is still validated, and its labels,
+redirects, and exclusions still apply. Combining it with `--docs-dir` adds no wider
+scope. `--docs-dir .` also selects the project root.
+
+Neither option bypasses exclusions: **`node_modules/` and `.git/` at any depth are
+always skipped**, as are symbolic links and paths outside the project. `.gitignore`
+rules and configuration `exclude` apply before any include or CLI selection.
+Generated `dist/`, `build/`, `coverage/`, `.docatlas/`, and `.ddd-docmap/` directories
+are excluded by default. The document scanner does not search dependency documentation.
+
+| Option | Effect |
+| --- | --- |
+| `--root <directory>` | Select the project root; default is the current directory. |
+| `--docs-dir <directory>` | Add a document directory; repeatable, available in 0.2.0. |
+| `--all-md` | Select all `.md` candidates; available in 0.2.0. |
+| `--no-open` | Print the local address without opening a browser. |
+| `--help`, `-h` | Show options and configuration guidance. |
+| `--version`, `-v` | Show the version actually running. |
+
+## Configuration
+
+Starting with **0.2.0**, create optional **`docatlas.config.json`** at the project root.
+If it is absent, Docatlas reads the legacy `ddd-docmap.config.json` instead.
+When both exist, only the new file is used; fields are not merged. An invalid new
+file reports its own error and does not fall back. Version **0.1.0** recognizes only
+the legacy filename. Rename the file after upgrading; the JSON schema stays version 1.
+
+All paths use `/` and are relative to the project root. Configuration is data-only
+JSON; JavaScript configuration and symbolic configuration files are not executed or followed.
+
+| Field | Type and default | Meaning |
+| --- | --- | --- |
+| `version` | Required number: `1` | Configuration schema version, separate from the npm package version. |
+| `include` | Array of glob strings; defaults below | Replaces default inclusion patterns. `[]` selects nothing unless a CLI selection adds it. |
+| `exclude` | Array of glob strings; defaults below | Replaces default output exclusions. Fixed exclusions and `.gitignore` still apply. |
+| `groups` | Object; `{}` | Keys are directory paths (`.` for root). Values may set a nonempty `title` and a string `summary`. |
+| `redirects` | Object; `{}` | Map old `.md` paths to indexed current `.md` paths. |
+
+For example, include `documentation/` alongside the original discovery rules and
+give one group a clearer label:
+
+~~~json
+{
+  "version": 1,
+  "include": [
+    "**/docs/**/*.md",
+    "**/REQUIREMENTS.md",
+    "**/DESIGN.md",
+    "**/IMPLEMENT.md",
+    "**/MANUAL_TEST_CHECKLIST.md",
+    "documentation/**/*.md"
+  ],
+  "exclude": [
+    "**/dist/**",
+    "**/build/**",
+    "**/coverage/**",
+    "**/.docatlas/**",
+    "**/.ddd-docmap/**",
+    "documentation/private/**"
+  ],
+  "groups": {
+    "documentation": {
+      "title": "Team documentation",
+      "summary": "Shared project contracts and guides."
+    }
+  },
+  "redirects": {
+    "docs/old/DESIGN.md": "docs/current/DESIGN.md"
+  }
+}
+~~~
+
+The first five `include` patterns and first five `exclude` patterns above are the
+0.2.0 defaults. Omit either field to retain its defaults. For example,
+`{"version":1,"include":["documentation/**/*.md"]}` selects only that directory
+unless CLI selections add more. `{"version":1,"include":["**/*.md"]}` selects all
+Markdown candidates and also works in 0.1.0. To add one excluded directory, repeat
+the default exclusions and append yours; `exclude: []` deliberately removes the
+default output exclusions, while `node_modules`, `.git`, and ignore rules remain enforced.
+The 0.1.0 default exclusions contain the same entries except `.docatlas/`.
+
+Globs match without case sensitivity and support dot-prefixed names. Use positive
+patterns without a leading `./` or `!`; absolute paths and `..` are invalid.
+The precedence is: fixed exclusions → `.gitignore` → `exclude` →
+`--all-md`, or the union of `include` and `--docs-dir`.
+No include rule can restore an excluded path.
+
+`groups` changes display labels, not discovery or directory hierarchy. A key with
+no collected group produces a notice. `redirects` works in search, document URLs,
+and relative Markdown links, including when an old file no longer exists. Valid
+chains resolve to one current document; cycles, self references, missing targets,
+and excluded paths produce notices. Redirects never expose unindexed documents.
+
+Both configuration filenames are watched. Saving, creating, or deleting one updates
+the active configuration while preserving CLI selections. Invalid configuration at
+startup exits with an error. During an existing session, it retains the last good
+index and displays an update notice until corrected.
 
 ## Reading and links
 
@@ -135,6 +266,12 @@ Space-separated terms use AND matching; English is case-insensitive and Korean t
 is Unicode-normalized. Results include context and highlight matches. Press / to
 focus search and Escape to clear it. Search shows at most 50 results with the total count.
 
+In 0.2.0, each result shows its full project-relative path as a separate **Show in tree**
+button. Click the document title to read it, or click the path to clear the search,
+expand its ancestor groups and document list, and scroll/focus that document in the map.
+Locating a path preserves the current reader, source mode, reading position, and URL.
+On narrow screens it returns to the map. Both actions support keyboard navigation.
+
 The local server watches Markdown, raster images, configuration, and ignore rules.
 It uses short polling intervals and batches saves into coherent map/search generations.
 The reader preserves its mode and scroll position. Removing the selected document
@@ -142,7 +279,7 @@ clears its old body and explains what happened. Invalid configuration retains th
 last good index and shows an update notice until fixed. A reconnected tab catches up.
 Navigation state stays in each tab's memory.
 
-To register a previous path, add a version 1 config at the project root:
+To register a previous path, add `redirects` to the project-root configuration:
 
 ~~~json
 {
@@ -173,8 +310,8 @@ node bin/docatlas.js --version
 npm pack --dry-run
 ```
 
-The package name is `docatlas`, licensed under MIT. Version `0.1.0` is prepared for
-its first npm release. Registry publication is still pending.
+The package name is `docatlas`, licensed under MIT. Version `0.1.0` is published;
+this checkout prepares `0.2.0`. The next version has not been published by this change.
 
 ## Browser checks
 
@@ -220,15 +357,20 @@ After installing dependencies in this checkout, collect a project without a serv
 ~~~js
 import { collectProject } from 'docatlas';
 
-const snapshot = await collectProject('/path/to/project');
+const snapshot = await collectProject('/path/to/project', {
+  docsDirs: ['documentation'],
+  allMarkdown: false
+});
 console.log(snapshot.documents.length, snapshot.groups.length);
 ~~~
 
 The snapshot contains project identity, document metadata, hierarchical groups,
 warnings, and a content-based revision. It does not contain full document bodies.
 
-The collector reads nested .gitignore rules and optional ddd-docmap.config.json.
-This configuration filename is retained for compatibility.
+The optional second argument is available in 0.2.0 and follows the CLI discovery
+rules. Invalid options reject with `CollectionOptionsError` (`INVALID_COLLECTION_OPTIONS`).
+The collector reads nested `.gitignore` rules and the optional configuration
+described [above](#configuration), including the legacy filename fallback.
 See the [implemented collection contract](https://github.com/superlucky84/docatlas/blob/main/docs/DESIGN.md#phase-1-구현-계약).
 The config supports version, include, exclude, groups, and redirects.
 Redirects are explicit project-relative Markdown paths; they are never inferred from prose.

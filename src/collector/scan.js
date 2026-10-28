@@ -2,7 +2,8 @@ import fs from 'node:fs/promises';
 import path from 'node:path';
 import { createHash } from 'node:crypto';
 import { extendIgnoreLayers, isIgnored, isProtectedName } from './policy.js';
-import { CONFIG_FILE, loadConfiguration } from './config.js';
+import { loadConfiguration } from './config.js';
+import { matchesDocsDirectory, normalizeCollectionOptions } from './options.js';
 import { ProjectError } from './errors.js';
 import {
   documentKind, DOCUMENT_ORDER, extractMetadata, groupTitle, REPRESENTATIVE_ORDER
@@ -67,7 +68,7 @@ function buildGroups(documents, config, project, warnings, headings) {
   for (const id of config.groups.keys()) {
     if (!groups.has(id)) {
       warnings.push({
-        code: 'UNMATCHED_GROUP', path: CONFIG_FILE,
+        code: 'UNMATCHED_GROUP', path: config.file,
         message: 'No discovered group matches ' + id
       });
     }
@@ -79,7 +80,8 @@ function buildGroups(documents, config, project, warnings, headings) {
  * Read a project's Markdown and return a deterministic document-map snapshot.
  * This function never modifies the target project or starts a server.
  */
-export async function scanProject(directory = process.cwd(), { previous } = {}) {
+export async function scanProject(directory = process.cwd(), { previous, collectionOptions = {} } = {}) {
+  const selection = normalizeCollectionOptions(collectionOptions);
   let root;
   try {
     if (typeof directory !== 'string' || !directory.trim()) {
@@ -154,7 +156,8 @@ export async function scanProject(directory = process.cwd(), { previous } = {}) 
         await walk(filename, layers);
         continue;
       }
-      if (!entry.isFile() || !/\.md$/i.test(entry.name) || !config.isIncluded(relative)) {
+      if (!entry.isFile() || !/\.md$/i.test(entry.name) ||
+          !(selection.allMarkdown || config.isIncluded(relative) || matchesDocsDirectory(relative, selection.docsDirs))) {
         continue;
       }
       try {
@@ -181,6 +184,12 @@ export async function scanProject(directory = process.cwd(), { previous } = {}) 
   }
 
   await walk(root, []);
+  for (const directory of selection.docsDirs) {
+    if (!directoryLayers.has(path.join(root, directory))) {
+      warnings.push({ code: 'DOCS_DIR_SKIPPED', path: directory,
+        message: 'Additional docs directory was not discovered; check its path, exclusion rules, and symbolic links.' });
+    }
+  }
   documents.sort((left, right) => compare(left.id, right.id));
   function acceptsPath(relative, directory = false) {
     const segments = relative.split('/');
