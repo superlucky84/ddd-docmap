@@ -32,8 +32,9 @@ Use as much of it as a project needs. Small fixes can skip the documents, and pr
 `AGENTS.md` or `CLAUDE.md` are optional; see
 [Apply it to a project](https://github.com/superlucky84/docatlas/blob/main/METHOD.md#apply-it-to-a-project).
 
-Documents live beside the code they describe, so a growing project has them in many folders.
-That is why this repository also ships a document map.
+Documents live beside the code they describe and keep growing. Agents write most of them, but
+people still need to read, review, and prune them, which is hard across many folders. That is
+why this repository also ships a document map for people.
 
 Read the full method in [METHOD.md](https://github.com/superlucky84/docatlas/blob/main/METHOD.md)
 (한국어: [METHOD.ko.md](https://github.com/superlucky84/docatlas/blob/main/METHOD.ko.md)) and the background essay

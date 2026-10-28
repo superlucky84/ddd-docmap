@@ -114,8 +114,25 @@ repo/
 ```
 
 Keeping documents close to code makes them easy to find while editing, but hard to see as
-a whole. That is why this repository also ships **docatlas**, a local map of every
-document in the project.
+a whole.
+
+## Keep the documents healthy
+
+Documents grow with the project, and not all of them keep paying off. A document for every
+small change buries the ones that matter, so small fixes can go without one (see
+[Apply it to a project](#apply-it-to-a-project)).
+
+Agents write most of the documents, but a person still curates them:
+
+- Merge duplicates and keep one canonical copy.
+- Move a contract up when it becomes shared, and leave a reference behind.
+- Delete or archive plans that no longer match the code.
+- Move old handoffs and verification logs into a history file. The designer skill does this
+  only when you ask.
+
+That is why this repository ships **docatlas**, a document viewer for people. It shows every
+document in a project on one local map, so you can read, review, and decide what to clean up.
+It never edits the documents; changes go through you and your agent.
 
 ## Roles
 
