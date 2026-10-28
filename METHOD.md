@@ -1,6 +1,7 @@
 # Doc-Driven Development
 
 > In this repository, **DDD means Doc-Driven Development**, not Domain-Driven Design.
+> 한국어: [METHOD.ko.md](METHOD.ko.md)
 
 Doc-Driven Development is a way to build software with AI coding agents. A small set of
 Markdown documents is the single source of truth for context. Agents and chat sessions
@@ -171,10 +172,16 @@ code. Doc-Driven Development puts its weight on a few other things:
 
 Neither is required. The method is Markdown plus the habits above.
 
-## Example: this repository
+## Examples
 
-docatlas is built this way. Its [planning documents](docs/) hold requirements `RQ-*`, a
-decision checklist `DC-*`, phases from bootstrap to release with dedicated Test Hardening
-and Integration Test phases, and manual checks `M-*`, with the current handoff in
-`IMPLEMENT.md`. They are written in
-Korean. Run `npx docatlas` in a clone of this repository to explore them.
+[examples/sample-shop](examples/sample-shop/) is a small, made-up shop written in English.
+Its checkout feature has the complete set of four documents: status labels, a decision
+checklist with one `TBD`, phases with Test Hardening and Integration Test, a handoff, and
+manual checks with a run log. The other features show partial sets, nested features, and a
+shared contract. From the root of a clone, open it with `npx docatlas --root examples/sample-shop`.
+
+docatlas itself is built this way. Its [planning documents](docs/) hold requirements
+`RQ-*`, a decision checklist `DC-*`, phases from bootstrap to release with dedicated Test
+Hardening and Integration Test phases, and manual checks `M-*`, with the current handoff in
+`IMPLEMENT.md`. They are written in Korean. Run `npx docatlas` in a clone of this
+repository to explore them.

@@ -32,7 +32,7 @@ Documents live beside the code they describe, so a growing project has them in m
 That is why this repository also ships a document map.
 
 Read the full method in [METHOD.md](https://github.com/superlucky84/docatlas/blob/main/METHOD.md)
-and the background essay
+(한국어: [METHOD.ko.md](https://github.com/superlucky84/docatlas/blob/main/METHOD.ko.md)) and the background essay
 [Doc-Driven Development With AI](https://subtleflo.com/2026/2/27/doc-driven-development-with-ai).
 
 ## What's in this repository
@@ -42,6 +42,7 @@ and the background essay
 | The method | The workflow and its writing rules | [METHOD.md](https://github.com/superlucky84/docatlas/blob/main/METHOD.md) |
 | Agent kit | Designer, implementer, and reviewer skills and rules for Claude Code and Codex | `npx docatlas agents install` |
 | Document map | A local browser view of every document in a project | `npx docatlas` |
+| Example | A made-up shop with a complete document set, shown in the screenshot above | [examples/sample-shop](https://github.com/superlucky84/docatlas/tree/main/examples/sample-shop) |
 
 ## Quick start
 
@@ -88,6 +89,9 @@ example. They are currently written in Korean.
 - [Manual checks](https://github.com/superlucky84/docatlas/blob/main/docs/MANUAL_TEST_CHECKLIST.md): acceptance scenarios.
 
 Clone this repository and run `npx docatlas` in it to explore them on the map.
+For a smaller example in English, open [examples/sample-shop](https://github.com/superlucky84/docatlas/tree/main/examples/sample-shop)
+with `npx docatlas --root examples/sample-shop` from the clone. Its checkout feature has the
+complete set of four documents.
 [AGENTS.md](https://github.com/superlucky84/docatlas/blob/main/AGENTS.md) holds the guidance
 coding agents follow here.
 

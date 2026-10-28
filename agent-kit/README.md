@@ -30,5 +30,5 @@ option, output line, and exit code.
 3. Move the old hashes into the item's `previous` list.
 4. Record the new hashes printed by `node scripts/agent-kit.js hash <file>`.
 5. Update the versions in the table above.
-6. Check that METHOD.md and the summary at the top of the repository README still match the rules.
+6. Check that METHOD.md, METHOD.ko.md, and the summary at the top of the repository README still match the rules.
 7. Run `npm run check`.

@@ -457,6 +457,9 @@ test/integration/package.test.js의 부모 1개·하위 3개, 총 4개가 Node 2
 | M-18 | 링크 90개의 대상 파일과 GitHub 앵커 | 문제 0 |
 | M-18 | docatlas 서버로 README·METHOD·CONTRIBUTING·CHANGELOG·agent-kit/README 읽기 | 참조 오류 없음 |
 | M-18 | npm pack --dry-run | 45개 파일, README 포함·새 안내 문서와 캡처 제외 |
+| M-18 | METHOD.ko.md와 METHOD.md의 구조 대조 | 제목·표 행·목록·코드 블록·링크 수 동일 |
+| M-18 | test/examples.test.js | 예제 21개 문서·checkout 4종·중첩 그룹, 저장소 지도는 docs/만 수집 |
+| M-18 | docatlas 서버로 예제 문서 21개 읽기 | 참조 17개 모두 정상 |
 
 ## 릴리스 판정
 

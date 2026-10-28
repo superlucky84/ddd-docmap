@@ -99,9 +99,9 @@ See the [recorded results and regression criteria](docs/IMPLEMENT.md#phase-5-완
 
 ## README screenshot
 
-`scripts/screenshot.js` builds a synthetic sample project, opens it in docatlas, and saves
-`.github/assets/document-map.png`. Point `--project` at an empty folder with a short path,
-because the sidebar shows the project root:
+`scripts/screenshot.js` copies [examples/sample-shop](examples/sample-shop/) to a folder, opens
+it in docatlas, and saves `.github/assets/document-map.png`. Point `--project` at an empty folder
+with a short path, because the sidebar shows the project root:
 
 ~~~sh
 node scripts/screenshot.js --project ~/projects/sample-shop
@@ -109,6 +109,14 @@ node scripts/screenshot.js --project ~/projects/sample-shop
 
 Without `--project`, it uses a temporary folder and removes it afterwards. The browser follows
 `DOCMAP_BROWSER_CHANNEL`; `--executable-path` selects a specific browser binary.
+
+## Examples
+
+[examples/sample-shop](examples/sample-shop/) is the user-facing example of a Doc-Driven
+Development project. It is written in English and uses made-up content only. The root
+[docatlas.config.json](docatlas.config.json) limits this repository's own map to `docs/`, so the
+example appears only with `--root examples/sample-shop`. `test/examples.test.js` checks both.
+Tests still create their own fixtures in temporary folders.
 
 ## Try a source checkout in another project
 
@@ -138,7 +146,8 @@ npx --no-install docatlas
 
 [agent-kit/](agent-kit/) holds the canonical skills and agent rules. Follow
 [agent-kit/README.md](agent-kit/README.md) when one changes: raise versions, record hashes, and
-run `npm run check`. Then make sure [METHOD.md](METHOD.md) and the summary at the top of
-[README.md](README.md) still describe the rules correctly.
+run `npm run check`. Then make sure [METHOD.md](METHOD.md), its Korean translation
+[METHOD.ko.md](METHOD.ko.md), and the summary at the top of [README.md](README.md) still describe
+the rules correctly. Change both method files in the same commit.
 
 Release notes go in [CHANGELOG.md](CHANGELOG.md).
