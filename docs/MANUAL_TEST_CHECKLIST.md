@@ -308,6 +308,20 @@ DOCMAP_BROWSER_CHANNEL=chrome으로 설치 Chrome을 선택한다. 지원 환경
 통과: 실제 클라이언트가 설치본을 읽고, 안내가 문서 지도 실행에 영향을 주지 않는다.
 상태: Claude Code 확인 완료. Codex는 자동 관찰만 했고 사람의 실제 세션 확인이 남았다.
 
+### M-18 — 저장소 소개와 방법론 문서
+
+대응: RQ-19 / DC-20·21.
+
+- [ ] GitHub 저장소 첫 화면에서 DDD가 Doc-Driven Development이며 Domain-Driven Design이 아님을 바로 읽는다.
+- [ ] README만 보고 세 구성(방법론·agent kit·문서 지도)과 시작 명령을 찾는다.
+- [ ] METHOD.md의 문서 세트·결정·phase·인계 규칙이 설치되는 세 스킬의 규칙과 모순되지 않는다.
+- [ ] 이전 README에 있던 설정·제외·Windows·읽기/검색·API 안내와 개발·검증 안내를 새 위치에서 찾는다.
+- [ ] 다음 게시 후 npm 패키지 페이지에서 README의 캡처와 GitHub 링크가 열린다.
+- [ ] 공개 안내(README·METHOD·CONTRIBUTING·agent-kit 안내)에 Confluence·사내 사본 설명이 없다.
+
+통과: 처음 온 사람이 README 첫 화면에서 방법론과 시작 방법을 이해하고, 기존 사용자가 필요한 레퍼런스를 잃지 않는다.
+상태: 계획됨.
+
 ## Phase 1 자동 검증 대응
 
 아래는 수집기 수준의 자동 검증이며 브라우저 인수 전체를 pass로 변경하지 않는다.
@@ -424,7 +438,8 @@ test/integration/package.test.js의 부모 1개·하위 3개, 총 4개가 Node 2
 - [x] npm registry latest는 0.2.0이고 0.3.0은 미게시임을 조회한다.
 - [x] manifest·lockfile·세 bin이 0.3.0을 표시하고 README의 tarball 예제가 일치한다.
 - [x] Node 테스트 155개·설치 통합 5개 통과. 문법 70개·agent kit 세 쌍·pack/publish dry-run 통과, 45파일에 agent-kit/ 포함.
-- [ ] 사용자가 게시 후 npm view docatlas@0.3.0 version과 npx --yes docatlas@0.3.0 --version을 확인한다.
+- [x] 사용자가 게시 후 npm view docatlas@0.3.0 version과 npx --yes docatlas@0.3.0 --version을 확인한다.
+  2026-10-28 조회: registry latest 0.3.0, 빈 임시 폴더의 npx --yes docatlas@0.3.0 --version 출력 0.3.0.
 
 커밋·푸시·npm 인증·실제 publish는 사용자 실행 단계다. 상세 결과와 절차는 구현 계획의 현재 인계를 따른다.
 

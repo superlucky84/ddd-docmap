@@ -500,6 +500,42 @@ README의 기본 사용 명령은 docatlas다. 프로젝트 루트에서의 npx 
 화면은 기본 DOM·ES modules·CSS이며 별도 번들링 없이 완성된 자산을 패키지에 포함한다.
 렌더링은 markdown-it, 변경 감지는 chokidar 5.0.0을 사용한다.
 
+## 저장소 소개 문서 — RQ-19 계약
+
+2026-10-28 사용자 결정(DC-20)에 따른 문서 구성이다. 제품 코드·설치 동작·스킬과 룰 원본은 바꾸지 않는다.
+
+| 파일 | 내용 | npm 패키지 |
+| --- | --- | --- |
+| README.md | 소개·DDD 요약·구성·빠른 시작·역할·이 저장소 예시, 문서 지도 사용법, Reference | 자동 포함 |
+| METHOD.md | 방법론 전문(영문): 정의·원칙·4종 문서·흐름·작성 규칙·역할·문서 배치·도구와의 관계 | 제외 |
+| CONTRIBUTING.md | 개발 설치·검사·브라우저/설치 통합·플랫폼·벤치마크·소스 tarball·문서 작업 방식 | 제외 |
+| CHANGELOG.md | 게시한 버전별 변경 요약 | 제외(npm 10.9.4 pack에서 자동 포함 안 됨 확인) |
+| agent-kit/README.md | 킷 구성·설치 명령·현재 버전·변경 절차 | 포함 |
+
+README 순서:
+
+1. 제목과 한 줄 소개. DDD가 Doc-Driven Development이며 Domain-Driven Design이 아님을 밝힌다.
+2. Doc-Driven Development 요약: 핵심 문장, 4종 문서, 흐름, 핵심 규칙, METHOD와 블로그 링크.
+3. 이 저장소의 세 구성: 방법론·agent kit·문서 지도.
+4. 빠른 시작: 스킬 설치 → 에이전트와 설계 → 문서 지도 실행.
+5. 에이전트 역할: designer·implementer·reviewer와 기본 설치 여부.
+6. 이 저장소도 같은 방식으로 만든다: docs/의 기준 4종과 이 저장소에서 문서 지도를 여는 방법.
+7. 문서 지도: 실행·설치 방법과 화면 동작(기존 내용).
+8. Reference: 문서 위치·옵션·Configuration·읽기·검색·agent 설치 상세·Windows·Collector API.
+9. 기여·계획 문서·라이선스.
+
+규칙:
+
+- src/cli.js의 도움말이 README#configuration을 가리키므로 `## Configuration` 제목을 유지한다.
+- npm 패키지에 없는 파일(METHOD·CONTRIBUTING·CHANGELOG·docs·캡처)은 GitHub 절대 URL로,
+  패키지에 있는 LICENSE·agent-kit/는 상대 경로로 연결한다. 기존 README 링크 규칙과 같다.
+- METHOD.md와 README 요약은 agent-kit 세 스킬·룰의 규칙을 요약한다. 새 규칙을 만들지 않는다.
+  스킬·룰을 바꾸면 METHOD.md와 README 요약이 여전히 맞는지 확인한다. 이 단계를 agent-kit/README.md 변경 절차에 넣는다.
+- 공개 안내는 Confluence·ctxbin을 원본과 사본의 관계로 설명하지 않는다. ctxbin 관리 파일 건너뛰기는 설치 동작 설명에만 남긴다.
+- 문서 지도 캡처는 저장소에 넣을 수 있는 합성 영문 예제로 만들어 .github/assets/에 둔다. 만든 방법은 구현 계획에 기록한다.
+- 이전 README의 사용법 정보는 지우지 않고 새 위치로 옮긴다. 버전별 신규 표시는 CHANGELOG.md로 옮긴다.
+- package.json은 description과 keywords만 바꾼다. 이름·버전·bin·files·의존성은 그대로다.
+
 ## 결정 체크리스트
 
 ### Phase 1 구현 계약
@@ -600,6 +636,10 @@ README의 기본 사용 명령은 docatlas다. 프로젝트 루트에서의 npx 
   격리한 HOME·CODEX_HOME에서 프로젝트 스킬은 신뢰와 무관하게 읽고, 프로젝트 룰은 신뢰한 프로젝트에서만 읽는다.
   같은 이름 룰은 프로젝트 것만 보이고, 같은 이름 스킬은 둘 다 보인다. 경고 문구와 codex-trust 경고에 반영했다. M-17.
 - [x] DC-19: 2026-10-28 사용자 확인. 공개 저장소와 npm 패키지(MIT)에 스킬·룰 원본을 포함한다. M-16.
+- [x] DC-20: 2026-10-28 사용자 선택. docatlas 저장소 하나를 DDD 본거지로 소개하고, 위 RQ-19 계약의 README 순서·
+  루트 METHOD.md(영문)·CONTRIBUTING.md·CHANGELOG.md 분리·공개 안내에서 Confluence/ctxbin 사본 설명 제외·이전 인계 정리를 채택했다. M-18.
+- [ ] DC-21: METHOD 한국어판과 examples/ 합성 예제 프로젝트의 필요 여부는 TBD다.
+  examples/의 문서는 이 저장소의 기본 문서 지도에 함께 수집되므로, 추가할 때 수집 설정도 함께 정한다. M-18.
 - [x] DC-11: 프로젝트별 설치와 docmap/ddd-docmap 공통 진입점을 구현하고 설치 검증을 통과했다.
   사용자 선택은 npx docmap / pnpm docmap이며 전역 런처를 추가하지 않는다. M-08, M-11.
 - [x] IC-01: picomatch 4.0.7, ignore 7.0.14, mdast-util-from-markdown 2.1.0과

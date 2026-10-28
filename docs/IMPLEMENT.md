@@ -18,7 +18,8 @@
   Python·Java 기본 제외와 에이전트 스킬 설치를 포함한 다음 후보는 사용자 요청으로 0.3.0이다. 현재 인계가 최신 상태다.
 - 완료: 검색 결과의 경로에서 트리 위치 찾기. 최신 문법 51개·Chrome 40개·설치 통합 4개 통과.
 - 완료: RQ-16·17·18 에이전트 스킬 관리와 설치의 구현·자동 검증·Windows/macOS CI·Claude Code 실제 세션 확인과 PR #1 병합.
-  Codex 실제 세션 확인과 남은 수동 인수는 별도다. 0.3.0 배포 준비·로컬 검증을 마쳤고 실제 npm 게시는 사용자 실행 단계다.
+  Codex 실제 세션 확인과 남은 수동 인수는 별도다. 0.3.0은 사용자가 npm에 게시했다(2026-10-28 registry latest 확인).
+- 진행 중: RQ-19 저장소 소개와 DDD 본거지 문서. 제품 코드는 바꾸지 않는다.
 
 기술 선택은 각 단계에서 근거와 검증을 기록해 DC/IC를 해소한다.
 상세 계약을 바꾸면 요구사항·설계·단계·수동 기준을 같은 작업에서 갱신한다.
@@ -620,6 +621,44 @@ npx --yes docatlas@0.3.0 agents help
 로그인·게시 시 표시되는 브라우저/2FA 절차를 따른다. registry와 실제 CLI에서 0.3.0을 확인한다.
 선택적으로 게시 성공 후 git tag v0.3.0, git push origin v0.3.0으로 버전 태그를 남긴다.
 공식 절차: https://docs.npmjs.com/creating-and-publishing-unscoped-public-packages/.
+
+게시 확인(2026-10-28): npm view docatlas@0.3.0 version이 0.3.0, dist-tag latest가 0.3.0이다.
+빈 임시 폴더에서 npx --yes docatlas@0.3.0 --version이 0.3.0을 출력했다.
+
+## 저장소 소개와 DDD 본거지 — 진행 중
+
+대응: RQ-19 / DC-20·21 / M-18.
+진입: 사용자 결정(2026-10-28)을 기준 4종에 기록했다. 작업 브랜치 claude/tender-gates-sa5kn8, 기준 커밋 00064c2.
+기준 검증(변경 전): npm run check 문법 70개·agent kit 1.0.0 세 쌍 통과.
+npm test 155개 중 152개 통과·3개 건너뜀·실패 0. 건너뛴 3개는 root 권한 환경에서 실행하지 않는 POSIX 권한 테스트다.
+npm pack --dry-run 45개 파일. 환경: Linux / Node 22.22.0 / npm 10.9.4.
+
+### 구현
+
+- [ ] METHOD.md: 정의·원칙·4종 문서·흐름·작성 규칙·역할·문서 배치·spec-driven 도구와의 차이·블로그 링크.
+- [ ] README: RQ-19 계약의 순서로 재구성하고 기존 사용법을 Reference로 옮긴다. #configuration 앵커를 유지한다.
+- [ ] CONTRIBUTING.md: 개발·검사·브라우저/설치 통합·플랫폼·벤치마크·소스 tarball 안내를 README에서 옮긴다.
+- [ ] CHANGELOG.md: 게시한 0.1.0~0.3.0의 변경 요약. README의 버전별 신규 표시를 옮긴다.
+- [ ] agent-kit/README.md: 설치 명령 안내를 현재 동작에 맞추고 사본 관계 문구를 뺀다. 스킬 변경 시 METHOD 확인 단계를 넣는다.
+- [ ] package.json의 description·keywords.
+- [ ] 합성 예제 프로젝트로 문서 지도 캡처를 만들어 .github/assets/에 둔다.
+
+### Test Hardening
+
+- [ ] 이전 README의 모든 제목·표·명령이 README나 CONTRIBUTING에 남았는지 대조한다.
+- [ ] 오래된 문구를 검색한다: planned but not available, in this checkout, before it is published, 공개 안내의 Confluence·wiki.
+- [ ] METHOD의 규칙 문장을 세 스킬·룰의 해당 문장과 대조한다.
+
+### Integration Test
+
+- [ ] npm run check, npm test가 기준과 같다.
+- [ ] npm pack --dry-run: README·agent-kit/README 포함, METHOD·CONTRIBUTING·CHANGELOG·docs·캡처 제외, 파일 수 45개 유지.
+- [ ] 새 문서의 상대 링크·앵커와 GitHub 절대 링크의 대상 파일·제목을 확인한다.
+  docatlas로 이 저장소의 README·METHOD·CONTRIBUTING을 열어 참조 상태를 확인한다.
+- [ ] 이전 인계를 docs/handoff/로 옮긴 뒤 기준 4종의 링크·앵커를 확인한다.
+
+종료 기준: README 첫 화면에 DDD 정의와 세 구성·시작 명령이 있고, 기존 사용법 정보가 빠짐없이 새 위치에 있으며,
+검사·테스트·pack 결과가 기준과 같다. 제품 코드 변경은 없다. M-18의 사람 확인(GitHub·npm 화면)은 별도다.
 
 ## 검증 예제와 기록
 
