@@ -29,7 +29,7 @@ CLI ── 프로젝트 루트·실행 상태
 화면은 파일 시스템에 직접 접근하지 않고 서버가 제공하는 읽기 모델을 사용한다.
 파생 인덱스를 잃어도 원본과 선택 설정으로 재생성할 수 있어야 한다.
 RQ-16·17: src/agent-kit/은 스킬 원본 읽기와 설치 판정을 맡는다(2단계 구현). 수집기·서버·화면과 독립이며 서버는 사용하지 않는다.
-CLI의 agents 하위 명령(3단계)이 이 모듈을 사용한다.
+CLI의 docatlas agents 하위 명령이 이 모듈을 사용한다(3단계 구현).
 
 ## 프로젝트 루트와 식별
 
@@ -275,7 +275,7 @@ scripts의 "docatlas": "docatlas"와 npm run docatlas로, pnpm은 pnpm docatlas�
 브라우저는 open 10.2.0에 위임한다. 준비 전에는 열지 않으며 열기 실패 시 서버를 유지한다.
 SIGINT·SIGTERM의 정상 정리를 자동 검증했다. 지원 OS의 최종 실검증 범위는 IC-03·DC-10에서 관리한다.
 백그라운드 실행·서버 재사용·stop/status 명령은 첫 버전의 범위 밖이다.
-계획: 위치 인자를 받지 않는 계약의 예외로 agents 하위 명령 하나만 추가한다. 세부는 아래 에이전트 스킬 설치 계약을 따른다.
+3단계 구현: 위치 인자를 받지 않는 계약의 예외로 agents 하위 명령 하나만 받는다. 세부는 아래 에이전트 스킬 설치 계약을 따른다.
 
 ## 검색·갱신·탐색 상태 — Phase 4 계약
 
@@ -364,36 +364,44 @@ Codex 룰은 name·description·developer_instructions를 가진 TOML이다. 원
 - 검사는 개발 전용 scripts/agent-kit.js와 npm run check가 한다. 2단계에서 설치에 필요한 읽기·해시 규칙을 src/agent-kit/로 옮기고
   검사 스크립트가 그 모듈을 사용하게 한다.
 
-### 명령 — 설계 제안 (DC-17)
+### 명령 — 3단계 구현 (DC-17)
 
 ```sh
 docatlas agents install [--project] [--root <dir>] [--target claude|codex|all] [--all | --only <name>] [--dry-run] [--force]
 docatlas agents help
 ```
 
-- 기본은 전역·designer 한 쌍이다. --project는 --root(기본 cwd) 프로젝트에 설치한다.
+- 기본은 전역·designer 한 쌍이다. --project는 --root(기본 cwd) 프로젝트에 설치한다. --only는 반복할 수 있고 --all과 함께 쓸 수 없다.
 - --target의 기본값은 설치된 클라이언트 감지다. ~/.claude가 있으면 Claude, ~/.codex나 ~/.agents가 있으면 Codex다.
   아무것도 없으면 --target을 요구한다.
-- 결과는 파일마다 한 줄로 동작·대상·종류·이름·경로를 탭으로 구분해 출력한다. --dry-run은 같은 결과를 쓰지 않고 보여준다.
-- 대화형 질문을 하지 않는다(RQ-18). 결정이 필요한 항목은 건너뛰고 이유와 다음 명령을 출력한 뒤 종료 코드로 알린다.
-- 문서 지도 옵션과 섞지 않는다. agents 외의 위치 인자는 지금처럼 오류다.
+- 결과는 탭으로 구분한 줄이다. 파일마다 동작·reason·클라이언트·종류·이름·경로를 쓰고, 이어서 backup·warning·record 줄과
+  마지막 summary 줄(create·replace·unchanged·skipped·blocked 개수)을 쓴다. --dry-run은 동작 줄과 summary 줄 앞에 dry-run을 붙이고 쓰지 않는다.
+- 대화형 질문을 하지 않는다(RQ-18). skip-*나 blocked가 있으면 나머지를 마치고 사용자 결정이 필요하다고 stderr에 알린다.
+- 종료 코드: 0 완료(할 일 없음 포함), 3 완료했지만 사용자 결정이 필요한 항목 있음, 1 실패(이번 실행이 쓴 파일 복구), 2 잘못된 인자.
+  기존 문서 지도의 0·1·2 의미는 유지하고, 3은 agents 명령에만 쓴다.
+- 쓰기 순서: 모든 대상이 판정 이후 바뀌지 않았고 링크가 생기지 않았는지 다시 확인한다 → --force 대상 백업 → 임시 파일 후 이름 변경 →
+  설치 기록 갱신. 백업은 ~/.docatlas/backups/<UTC 시각>/<global|project>/<대상 상대 경로>다. 실패하면 이번 실행이 쓴 파일과 만든 폴더를 되돌린다.
+- 설치 기록에는 쓴 파일과 이미 같은 내용(unchanged)인 파일을 남긴다. 내용이 같으면 기록 파일을 다시 쓰지 않는다.
+- 문서 지도 옵션과 섞지 않는다. agents 외의 위치 인자는 지금처럼 오류다. 제거 명령은 이번 범위에 넣지 않았다.
 
-### 에이전트용 도움말 — 확인됨 (RQ-18)
+### 에이전트용 도움말 — 3단계 구현 (RQ-18)
 
 사람보다 에이전트가 설치를 대신 실행하는 경우가 많다. 2026-10-28 사용자가 아래 내용을 확인했다.
-명령 이름과 결과 열의 세부는 DC-17에서 확정한다. docatlas agents help는 네트워크 없이 다음을 출력한다.
+docatlas agents help(또는 agents install --help)는 네트워크 없이 다음을 출력한다.
 
 - 하는 일, 설치 위치, 기본 대상과 선택 방법.
 - 권장 순서: --dry-run → 결과를 사용자에게 보고 → 사용자 승인 후 적용.
 - skip-modified·skip-downgrade·같은 이름 경고의 의미. --force는 사용자가 명시적으로 승인할 때만 쓴다.
 - 결과 줄의 형식과 종료 코드.
 
-docatlas --help에는 agents 하위 명령과 agents help를 가리키는 한 줄을 추가한다.
-자동 테스트로 도움말의 옵션 목록과 실제 옵션을 대조한다.
+- kit 버전과 항목별 버전·기본 설치 여부.
+
+docatlas --help에는 agents install과 agents help를 가리키는 두 줄이 있다.
+자동 테스트가 도움말 Options의 옵션 목록과 실제 옵션을 양방향으로 대조한다.
 
 ### 판정과 보호 — 2단계 판정 구현 (PR-09)
 
-src/agent-kit/plan.js가 파일을 쓰지 않고 대상마다 아래 순서로 판정한다. 쓰기·백업·기록 저장은 3단계다.
+src/agent-kit/plan.js가 파일을 쓰지 않고 대상마다 아래 순서로 판정한다. 쓰기·백업·기록 저장은 install.js(3단계)가 한다.
 
 | 순서 | 상황 | 동작 (reason) |
 | --- | --- | --- |
@@ -414,7 +422,7 @@ src/agent-kit/plan.js가 파일을 쓰지 않고 대상마다 아래 순서로 �
   위치는 전역 ~/.docatlas/agents.json, 프로젝트 <root>/.docatlas/agents.json(함께 커밋)이다. 백업은 ~/.docatlas/backups/다.
   수집기는 이미 .docatlas/를 기본 제외한다.
 - 반대쪽 범위(전역↔cwd 프로젝트)에 같은 경로가 있으면 같은 이름 경고와 함께 클라이언트 규칙 표의 동작을 알린다.
-- 쓸 때(3단계)는 모든 판정과 원본 검증을 마친 뒤 파일마다 임시 파일을 만들고 이름을 바꾼다. 실패하면 이미 바꾼 파일을 되돌린다.
+- 쓰기 순서와 복구는 위 명령 계약을 따른다.
 
 ### 업데이트 안내 — 설계 제안 (PR-10)
 
@@ -462,7 +470,7 @@ name/version/license/bin과 lockfile 루트를 함께 바꾸며 self import는 d
 기존 내부 상태 키는 호환성을 위해 유지한다.
 
 npm files는 bin/·src/로 제한하고 README·package.json·LICENSE의 자동 포함을 확인한다.
-계획: RQ-17 설치 명령 단계에서 agent-kit/를 files에 추가한다. 그전까지 패키지 내용은 바꾸지 않는다.
+RQ-17 3단계에서 agent-kit/를 files에 추가했다. 스킬·룰 원본 6개와 manifest·README가 패키지에 들어간다.
 기준 문서·AGENTS·보존 패치는 GitHub에서 제공한다. README의 문서 링크는 GitHub의 새 저장소를 가리킨다.
 검증한 tarball을 별도 설치해 실제 docatlas 실행·공개 import·화면·신호 종료를 확인한다.
 README의 기본 사용 명령은 docatlas다. 프로젝트 루트에서의 npx 일회성 실행과 npm/pnpm 로컬 설치,
@@ -571,8 +579,8 @@ README의 기본 사용 명령은 docatlas다. 프로젝트 루트에서의 npx 
 - [x] DC-15: Python·Java 기본 제외와 Windows 점검은 위 계약을 따른다. 실제 Windows 지원 확정은 CI/수동 결과 후 결정한다. M-01, M-07, M-08, M-09, M-11, M-12, M-13.
 - [x] DC-16: 2026-10-28 사용자 선택. 스킬·룰 원본은 agent-kit/, 설치는 docatlas 하위 명령, 기본 전역·프로젝트 옵션,
   재실행 갱신, 기본 designer 한 쌍, 당분간 Confluence 배포 유지. 구현 전. M-16, M-17.
-- [ ] DC-17: 명령 이름·옵션, 결과 열·종료 코드, 백업 위치, 제거 명령. 위 설계 제안이 초안이다.
-  클라이언트 감지·설치 기록 형식·ctxbin 관리 사본 처리·링크 예외는 2단계에서 구현했다. M-16.
+- [x] DC-17: 위 명령 계약대로 명령 이름·옵션·결과 줄·종료 코드(3 추가)·백업 위치를 3단계에서 구현했고, 클라이언트 감지·
+  설치 기록 형식·ctxbin 관리 사본 처리·링크 예외는 2단계에서 구현했다. 제거 명령은 범위에 넣지 않았다. M-16.
 - [ ] DC-18: Codex 프로젝트 .codex/agents의 로드 조건(프로젝트 신뢰 여부)과 전역/프로젝트 같은 이름 우선순위.
   공식 문서에 없어 실제 Codex에서 확인한다. M-17.
 - [x] DC-19: 2026-10-28 사용자 확인. 공개 저장소와 npm 패키지(MIT)에 스킬·룰 원본을 포함한다. M-16.

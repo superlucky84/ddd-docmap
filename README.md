@@ -6,7 +6,7 @@ Find feature documentation spread across a repository, explore its hierarchy,
 and read Markdown without losing your place.
 
 > Docatlas is published on npm. This checkout adds Python/Java generated-directory
-> exclusions for the next release. Those new defaults are not yet published;
+> exclusions and the `docatlas agents` command for the next release. Neither is published yet;
 > use the tarball instructions below to try this checkout.
 
 ## Document map
@@ -324,6 +324,32 @@ To register a previous path, add `redirects` to the project-root configuration:
 An explicit previous path works in search, document URLs, and relative Markdown links,
 even when the old file no longer exists. Valid chains resolve to one current document;
 cycles, missing targets, and excluded sources produce collection notices.
+
+## Agent skills
+
+The package includes the doc-driven agent skills and rules used to write these documents
+(designer, implementer, and reviewer) in [agent-kit/](agent-kit/). `docatlas agents install`
+copies them to the folders that Claude Code and Codex read automatically. This command is new in
+this checkout and is not published yet.
+
+```sh
+npx docatlas agents install --dry-run   # preview; writes nothing
+npx docatlas agents install             # install the designer skill and rule
+```
+
+- The default installs `doc-driven-designer-v1` into your home folder: `~/.claude/skills`,
+  `~/.claude/agents`, `~/.agents/skills`, and `~/.codex/agents`, for the clients whose folders exist.
+  Add `--all` or `--only <name>` for the implementer and reviewer, `--target` to choose clients, and
+  `--project` to install into the project instead. Claude Code uses a global skill before a project
+  skill with the same name, so the command warns about such pairs.
+- After updating docatlas, run the same command again. Files you edited, files from a newer docatlas,
+  and files managed by ctxbin are skipped; `--force` replaces them after saving a backup in
+  `~/.docatlas/backups/`. Install records are kept in `~/.docatlas/agents.json`, or in
+  `.docatlas/agents.json` for a project install.
+- The command never asks questions, so an AI agent can run it for you. It prints one tab-separated
+  line per file and exits with 3 when something was skipped. `docatlas agents help` lists every option,
+  action, and exit code with the steps an agent should follow.
+- It never edits your documents, `AGENTS.md`, or `CLAUDE.md`.
 
 ## Windows and other operating systems
 

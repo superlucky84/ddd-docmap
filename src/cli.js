@@ -3,6 +3,7 @@ import { parseArgs } from 'node:util';
 import open from 'open';
 import { CollectionOptionsError, ConfigurationError, ProjectError } from './collector/index.js';
 import { startServer } from './server/index.js';
+import { runAgents } from './agent-kit/command.js';
 
 const metadata = JSON.parse(readFileSync(new URL('../package.json', import.meta.url), 'utf8'));
 const help = [
@@ -10,7 +11,9 @@ const help = [
   'Usage:',
   '  docatlas [--root <directory>] [--docs-dir <directory>] [--all-md] [--no-open]',
   '  docatlas --help',
-  '  docatlas --version', '',
+  '  docatlas --version',
+  '  docatlas agents install [options]  Install doc-driven agent skills for Claude Code and Codex.',
+  '  docatlas agents help               Steps for people and AI agents running the install.', '',
   'Compatibility aliases: docmap, ddd-docmap', '',
   'Options:',
   '  --root <directory>  Read this project instead of the current directory.',
@@ -35,8 +38,11 @@ const help = [
 ].join('\n');
 
 export async function run(args, {
-  stdout = process.stdout, stderr = process.stderr, signals = process, opener = open
+  stdout = process.stdout, stderr = process.stderr, signals = process, opener = open, home, cwd, kitDir, now
 } = {}) {
+  if (args[0] === 'agents') {
+    return runAgents(args.slice(1), { stdout, stderr, home, cwd, kitDir, now });
+  }
   let values;
   try {
     ({ values } = parseArgs({

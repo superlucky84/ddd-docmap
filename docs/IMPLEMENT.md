@@ -17,7 +17,7 @@
 - 완료: 0.2.0의 추가 수집 옵션·설정 파일명·검색 경로 탐색을 사용자가 npm 배포했다.
   새 작업은 Python·Java 기본 제외와 Windows 점검의 0.2.1 후보이며 맨 아래 인계가 현재 상태다.
 - 완료: 검색 결과의 경로에서 트리 위치 찾기. 최신 문법 51개·Chrome 40개·설치 통합 4개 통과.
-- 진행 중: RQ-16·17·18 에이전트 스킬 관리와 설치. 1단계 원본 이관과 2단계 설치 판정을 완료했고 다음은 3단계 설치 명령이다.
+- 진행 중: RQ-16·17·18 에이전트 스킬 관리와 설치. 1~3단계(원본·판정·설치 명령과 도움말)를 완료했고 다음은 4단계 업데이트 안내다.
 
 기술 선택은 각 단계에서 근거와 검증을 기록해 DC/IC를 해소한다.
 상세 계약을 바꾸면 요구사항·설계·단계·수동 기준을 같은 작업에서 갱신한다.
@@ -413,10 +413,11 @@ Confluence의 다른 문서가 함께 게시되지 않도록 원본 publish/sync
 Windows workflow는 test:platform과 test:browser를 실행한다. full npm test/test:integration은 POSIX 전제가 남아 별도 이식 대상이다.
 Windows 네이티브 Ctrl+C·기본 브라우저·PowerShell/CMD·UNC/네트워크 드라이브는 실제 인수 전 미검증이다.
 
-## 에이전트 스킬 관리와 설치 — 2단계 완료
+## 에이전트 스킬 관리와 설치 — 3단계 완료
 
-대응: RQ-16·17·18 / PR-09·10 / DC-16~19 / M-16·17. 기준 커밋 d71ee97, 계획 cc9e98d, 1단계 b85e00e. 다음 후보 버전 0.3.0은 제안이다.
-상태: 2단계 설치 판정을 완료했다. 파일을 쓰는 설치 명령과 agent-kit/의 패키지 포함은 3단계다.
+대응: RQ-16·17·18 / PR-09·10 / DC-16~19 / M-16·17. 기준 커밋 d71ee97, 계획 cc9e98d, 1단계 b85e00e, 2단계 59a561e.
+다음 후보 버전 0.3.0은 제안이며 package.json은 아직 0.2.1이다.
+상태: docatlas agents install·help가 동작하고 agent-kit/가 패키지에 들어간다. 업데이트 안내는 4단계다.
 
 진입 조건: DC-19 공개 범위 확인. 2026-10-28 사용자 확인으로 충족했다.
 
@@ -469,14 +470,26 @@ Windows 네이티브 Ctrl+C·기본 브라우저·PowerShell/CMD·UNC/네트워�
 | npm pack --dry-run | 34개 파일. src/agent-kit/ 5개가 늘었고 agent-kit/는 3단계 전까지 포함하지 않는다 |
 | 실제 HOME 판정(쓰기 없음) | 세 스킬은 Claude·Codex 모두 unchanged. 룰은 ctxbin이 관리해 skip-managed. ~/.docatlas를 만들지 않았다 |
 
-### 3단계 — 설치 명령과 에이전트용 도움말
+### 3단계 — 설치 명령과 에이전트용 도움말: 완료
 
-- [ ] docatlas agents install·help와 docatlas --help의 안내 한 줄을 추가한다. agents 외의 위치 인자는 기존처럼 오류다.
-- [ ] 판정 후 쓰기·백업·설치 기록·실패 시 복구·심볼릭 링크 거부를 구현한다. 대화형 질문을 하지 않는다.
-- [ ] package.json files에 agent-kit/를 추가하고 README에 사용법을 추가한다. 팀 안내 시점은 사용자가 정한다.
+- [x] docatlas agents install·help(install --help 포함)와 docatlas --help의 안내 두 줄을 추가했다. agents 외의 위치 인자는 기존처럼 오류다.
+- [x] 쓰기 전 재확인(판정 이후 변경·링크)·--force 백업·임시 파일 후 이름 변경·설치 기록·실패 시 복구를 src/agent-kit/install.js에 구현했다.
+  대화형 질문 없이 탭 구분 결과 줄과 종료 코드 0/1/2/3으로 알린다.
+- [x] package.json files에 agent-kit/를 추가하고 README에 Agent skills 사용법을 추가했다. 미배포 기능으로 표시했고 팀 안내 시점은 사용자가 정한다.
 
 기준 검증: npm run check, npm test, npm pack --dry-run.
-종료 기준: 임시 HOME에서 전역/프로젝트 설치·재실행·보호·--dry-run 무쓰기와 도움말-옵션 대조가 통과한다.
+종료 기준: 임시 HOME에서 전역/프로젝트 설치·재실행·보호·--dry-run 무쓰기와 도움말-옵션 대조가 통과한다. 충족했다.
+
+#### 3단계 검증 — 2026-10-28
+
+환경: macOS / Node 22.12.0.
+
+| 명령/범위 | 결과 |
+| --- | --- |
+| npm run check | JavaScript 66개 문법, agent kit 세 쌍 검사 통과 |
+| DOCMAP_NPM_CACHE=/private/tmp/ddd-docmap-phase1-npm-cache npm test | 143개 통과. agent-kit-install.test.js 9개 포함 |
+| npm pack --dry-run | 44개 파일, 59.6kB. agent-kit/ 8개와 src/agent-kit/ 7개 포함 |
+| 설치 명령 테스트 | dry-run 무쓰기, 설치·기록·재실행 무변경, 이전 배포본 교체, 수정본 skip(종료 3)과 --force 백업, 프로젝트 설치·같은 이름 경고, 인자 오류 8종, 쓰기 실패 복구, 판정 후 변경 중단, bin 경유 실행 |
 
 ### 4단계 — 업데이트 안내
 
@@ -870,13 +883,13 @@ registry와 실행 버전이 0.2.0인지 확인하고 새 설정·수집 옵션�
 
 - 완료: 0.2.1의 Python·Java 기본 제외·플랫폼 테스트와 캐시 전제 보정. 최신 구현 커밋은 967c175이며 main에 푸시했다.
 - run 40657181408의 macOS/Windows × Node 22/24 네 작업이 모두 성공했다. 원인·재현·작업별 결과는 아래 플랫폼 CI 캐시 전제 보정 기록에 있다.
-- 에이전트 스킬: 작업 브랜치 feat/agent-kit. 계획 cc9e98d, 1단계 원본 이관 b85e00e, 2단계 설치 판정은 미커밋이다.
-  사용자는 1단계 리뷰 없이 진행하기로 했다. 검증은 위 1·2단계 기록을 따른다.
-- 다음: 2단계 리뷰 여부를 사용자에게 확인한 뒤 3단계 설치 명령과 에이전트용 도움말. 별도로 실제 Windows 콘솔 Ctrl+C·
-  PowerShell/CMD·기본 브라우저 인수와 필요 시 npm 0.2.1 배포·팀 가이드 갱신.
+- 에이전트 스킬: 작업 브랜치 feat/agent-kit. 계획 cc9e98d, 1단계 b85e00e, 2단계 59a561e. 3단계 설치 명령은 미커밋이다.
+  사용자는 1·2단계를 리뷰 없이 진행하기로 했다. 검증은 위 1~3단계 기록을 따른다.
+- 다음: 3단계 리뷰 여부를 사용자에게 확인한 뒤 4단계 업데이트 안내, 이후 Test Hardening·Integration Test.
+  별도로 실제 Windows 콘솔 Ctrl+C·PowerShell/CMD·기본 브라우저 인수와 필요 시 npm 배포·팀 가이드 갱신.
 - 남은 일: Confluence 팀 페이지는 이전 designer 1.0.0이다. 갱신 시점은 사용자가 정한다.
-- 차단: 없음. DC-17·18은 해당 단계에서 해소한다.
-- 최신 커밋: b85e00e. 2단계 변경은 미커밋이다. npm 0.2.1은 미배포이며 Confluence는 읽기만 했다.
+- 차단: 없음. DC-18은 Integration Test의 실제 Codex 확인에서 해소한다.
+- 최신 커밋: 59a561e. 3단계 변경은 미커밋이다. npm 0.2.1은 미배포이며 Confluence는 읽기만 했다.
   문서만 바뀐 인계 커밋은 CI를 재실행하지 않는다.
 
 ## 플랫폼 CI 캐시 전제 보정 — 검증 완료

@@ -110,7 +110,7 @@ async function ctxbinNames(directory, cache) {
 
 // Refuses paths that pass through a symbolic link. In the global scope the client folder
 // itself (for example ~/.claude kept in a dotfiles repository) may be a link to a directory.
-async function unsafeReason(base, parts, allowClientLink) {
+export async function unsafeReason(base, parts, allowClientLink) {
   let current = base;
   for (const [index, part] of parts.entries()) {
     current = path.join(current, part);
@@ -136,25 +136,26 @@ async function unsafeReason(base, parts, allowClientLink) {
   return null;
 }
 
-function outcome(action, reason, backup = false) {
-  return { action, reason, backup };
+// observed is the target's hash at planning time; installs re-check it before writing.
+function outcome(action, reason, observed, backup = false) {
+  return { action, reason, backup, observed };
 }
 
 async function decide({ base, parts, scope, item, client, kind, sha256, key, recorded, kitVersion, force, cache }) {
   const unsafe = await unsafeReason(base, parts, scope === 'global');
   if (unsafe) {
-    return outcome('blocked', unsafe);
+    return outcome('blocked', unsafe, null);
   }
   const filename = path.join(base, ...parts);
   if (!await lstatOrNull(filename)) {
-    return outcome('create', 'new');
+    return outcome('create', 'new', null);
   }
   const text = (await fs.readFile(filename)).toString('utf8');
   const current = hashText(text);
   if (current === sha256) {
-    return outcome('unchanged', 'same');
+    return outcome('unchanged', 'same', current);
   }
-  const skip = (action, reason) => force ? outcome('replace', reason, true) : outcome(action, reason);
+  const skip = (action, reason) => force ? outcome('replace', reason, current, true) : outcome(action, reason, current);
   if ((await ctxbinNames(path.join(base, ...parts.slice(0, 2)), cache)).has(item.name)) {
     return skip('skip-managed', 'ctxbin');
   }
@@ -163,16 +164,16 @@ async function decide({ base, parts, scope, item, client, kind, sha256, key, rec
     if (compareVersions(entry.kitVersion, kitVersion) > 0) {
       return skip('skip-downgrade', 'downgrade');
     }
-    return outcome('replace', 'recorded');
+    return outcome('replace', 'recorded', current);
   }
   const previousKind = client === 'codex' && kind === 'agent' ? 'codex-agent' : kind;
   const known = item.previous.filter(previous => previous.kind === previousKind);
   if (known.some(previous => previous.part === 'file' && previous.sha256 === current)) {
-    return outcome('replace', 'previous-file');
+    return outcome('replace', 'previous-file', current);
   }
   const body = hashText(bodyOf(text));
   if (previousKind !== 'codex-agent' && known.some(previous => previous.part === 'body' && previous.sha256 === body)) {
-    return outcome('replace', 'previous-body');
+    return outcome('replace', 'previous-body', current);
   }
   return skip('skip-modified', 'modified');
 }
