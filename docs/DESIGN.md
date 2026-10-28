@@ -28,6 +28,7 @@ CLI ── 프로젝트 루트·실행 상태
 수집기는 브라우저와 CLI 실행 방식에 의존하지 않게 한다.
 화면은 파일 시스템에 직접 접근하지 않고 서버가 제공하는 읽기 모델을 사용한다.
 파생 인덱스를 잃어도 원본과 선택 설정으로 재생성할 수 있어야 한다.
+계획(RQ-16·17): CLI의 agents 하위 명령은 src/agent-kit/을 사용한다. 이 모듈은 수집기·서버·화면과 독립이며 서버는 사용하지 않는다.
 
 ## 프로젝트 루트와 식별
 
@@ -273,6 +274,7 @@ scripts의 "docatlas": "docatlas"와 npm run docatlas로, pnpm은 pnpm docatlas�
 브라우저는 open 10.2.0에 위임한다. 준비 전에는 열지 않으며 열기 실패 시 서버를 유지한다.
 SIGINT·SIGTERM의 정상 정리를 자동 검증했다. 지원 OS의 최종 실검증 범위는 IC-03·DC-10에서 관리한다.
 백그라운드 실행·서버 재사용·stop/status 명령은 첫 버전의 범위 밖이다.
+계획: 위치 인자를 받지 않는 계약의 예외로 agents 하위 명령 하나만 추가한다. 세부는 아래 에이전트 스킬 설치 계약을 따른다.
 
 ## 검색·갱신·탐색 상태 — Phase 4 계약
 
@@ -316,6 +318,92 @@ PR-02·05·06·08 / DC-09, IC-03에 대응한다. 아래 계약으로 구현했�
 - 두 검색 버튼은 Tab과 Enter/Space로 사용할 수 있다. 갱신 뒤 초점은 같은 문서의 같은 동작으로 돌아가며 삭제되면 검색창으로 복구한다.
   긴 경로는 줄바꿈하며 모바일에서도 가로 넘침이나 본문으로의 강제 전환을 일으키지 않는다.
 
+## 에이전트 스킬 설치 — 다음 후보 계약
+
+대응: RQ-16·17·18 / PR-09·10 / DC-16~19 / M-16·17. 구현 전이다. 확인된 결정과 설계 제안을 구분한다.
+
+### 확인된 결정 — 2026-10-28
+
+- 원본은 agent-kit/의 designer·implementer·reviewer 스킬과 에이전트 룰이다. Confluence·ctxbin은 배포본이다.
+- docatlas 하위 명령으로 설치한다. Claude 플러그인 마켓플레이스와 ctxbin 전용 방식은 채택하지 않았다.
+  마켓플레이스는 Claude 전용이고 스킬 이름에 플러그인 접두사가 붙는다. ctxbin은 팀원에게 원격 저장소 접근이 필요하다.
+- 기본 위치는 사용자 전역이고 프로젝트 설치는 옵션이다. 갱신은 같은 명령을 다시 실행하는 것이다.
+- 기본 대상은 designer 한 쌍이다. implementer·reviewer는 명시적으로 선택한다.
+- 팀 배포는 당분간 Confluence 사본을 유지한다. docatlas 설치 안내 시점은 사용자가 정한다.
+- 공개 저장소와 npm 패키지에 스킬·룰 원본을 포함한다(DC-19).
+- 에이전트가 설치를 대신 실행하도록 에이전트용 도움말과 대화형 질문 없는 출력을 제공한다(RQ-18).
+
+### 클라이언트 위치와 같은 이름 규칙
+
+2026-10-28 Claude Code·Codex 공식 문서에서 확인했다. 클라이언트 규칙이 바뀌면 다시 확인한다.
+
+| 항목 | 전역 (기본) | 프로젝트 (옵션) | 같은 이름일 때 |
+| --- | --- | --- | --- |
+| Claude 스킬 | ~/.claude/skills/<name>/SKILL.md | <root>/.claude/skills/<name>/SKILL.md | 전역 우선 |
+| Claude 룰 | ~/.claude/agents/<name>.md | <root>/.claude/agents/<name>.md | 프로젝트 우선 |
+| Codex 스킬 | ~/.agents/skills/<name>/SKILL.md | <root>/.agents/skills/<name>/SKILL.md | 합치지 않고 둘 다 표시 |
+| Codex 룰 | ~/.codex/agents/<name>.toml | <root>/.codex/agents/<name>.toml | 문서 미기재 (DC-18) |
+
+전역 사본이 있는 사용자에게는 프로젝트 설치만으로 Claude 스킬 갱신이 전달되지 않는다. 이것이 전역 기본의 근거다.
+Codex 룰은 name·description·developer_instructions를 가진 TOML이다. 원본 Markdown 본문을 developer_instructions로 변환한다.
+
+### 원본 형식 — 설계 제안
+
+- agent-kit/skills/<name>/SKILL.md와 agent-kit/agents/<name>.md로 둔다. 룰의 frontmatter에는 name·description만 쓴다.
+- 원본 파일에 docatlas 전용 표시를 넣지 않는다. Confluence에서 복사한 사본과 설치본이 같아야 한다.
+- agent-kit/manifest.json에 kit 버전, 파일별 해시, 이전 배포본의 해시를 둔다. 이전 해시로 수동 복사본을 알아본다.
+  스킬 frontmatter의 metadata.version은 사람이 보는 버전이며 kit 버전과 함께 올린다.
+
+### 명령 — 설계 제안 (DC-17)
+
+```sh
+docatlas agents install [--project] [--root <dir>] [--target claude|codex|all] [--all | --only <name>] [--dry-run] [--force]
+docatlas agents help
+```
+
+- 기본은 전역·designer 한 쌍이다. --project는 --root(기본 cwd) 프로젝트에 설치한다.
+- --target의 기본값은 설치된 클라이언트 감지다. ~/.claude가 있으면 Claude, ~/.codex나 ~/.agents가 있으면 Codex다.
+  아무것도 없으면 --target을 요구한다.
+- 결과는 파일마다 한 줄로 동작·대상·종류·이름·경로를 탭으로 구분해 출력한다. --dry-run은 같은 결과를 쓰지 않고 보여준다.
+- 대화형 질문을 하지 않는다(RQ-18). 결정이 필요한 항목은 건너뛰고 이유와 다음 명령을 출력한 뒤 종료 코드로 알린다.
+- 문서 지도 옵션과 섞지 않는다. agents 외의 위치 인자는 지금처럼 오류다.
+
+### 에이전트용 도움말 — 확인됨 (RQ-18)
+
+사람보다 에이전트가 설치를 대신 실행하는 경우가 많다. 2026-10-28 사용자가 아래 내용을 확인했다.
+명령 이름과 결과 열의 세부는 DC-17에서 확정한다. docatlas agents help는 네트워크 없이 다음을 출력한다.
+
+- 하는 일, 설치 위치, 기본 대상과 선택 방법.
+- 권장 순서: --dry-run → 결과를 사용자에게 보고 → 사용자 승인 후 적용.
+- skip-modified·skip-downgrade·같은 이름 경고의 의미. --force는 사용자가 명시적으로 승인할 때만 쓴다.
+- 결과 줄의 형식과 종료 코드.
+
+docatlas --help에는 agents 하위 명령과 agents help를 가리키는 한 줄을 추가한다.
+자동 테스트로 도움말의 옵션 목록과 실제 옵션을 대조한다.
+
+### 판정과 보호 — 설계 제안 (PR-09)
+
+| 상황 | 동작 |
+| --- | --- |
+| 대상 파일 없음 | create |
+| 내용이 같음 | unchanged |
+| 설치 기록의 해시와 같음 | replace |
+| 기록은 없지만 이전 배포본 해시와 같음 | replace하고 기록을 만든다 |
+| 그 외(사용자가 고침) | skip-modified. --force일 때 백업 후 replace |
+| 설치본 버전이 패키지보다 높음 | skip-downgrade. --force일 때만 replace |
+| ctxbin 설치 기록에 있는 항목 | skip-managed. 한 위치를 두 도구가 관리하지 않게 한다 (DC-17) |
+
+- 모든 판정과 원본 검증을 마친 뒤 쓴다. 파일마다 임시 파일을 만든 뒤 이름을 바꾸고, 실패하면 이미 바꾼 파일을 되돌린다.
+- 대상 경로나 상위 디렉터리가 심볼릭 링크면 쓰지 않는다.
+- 설치 기록은 전역 ~/.docatlas/agents.json, 프로젝트 <root>/.docatlas/agents.json(함께 커밋)이다. 백업은 ~/.docatlas/backups/다.
+  위치는 DC-17에서 확정한다. 수집기는 이미 .docatlas/를 기본 제외한다.
+- 프로젝트 설치 때 전역에 같은 이름이 있으면 Claude에서는 전역 스킬이 쓰인다고 경고한다. 전역 설치 때도 cwd 프로젝트의 같은 이름을 경고한다.
+
+### 업데이트 안내 — 설계 제안 (PR-10)
+
+- 문서 지도 시작 시 전역과 cwd 프로젝트의 설치 기록만 읽는다. 패키지 kit 버전보다 낮으면 서버 주소 출력 뒤 한 줄로 안내한다.
+- 파일을 쓰지 않고 읽기 실패는 무시한다. 시작 시간과 종료 동작에 영향을 주지 않는다.
+
 ## Phase 5 검증 계약
 
 - 기존 Node 81개·Chrome 30개를 회귀 기준으로 유지한다.
@@ -357,6 +445,7 @@ name/version/license/bin과 lockfile 루트를 함께 바꾸며 self import는 d
 기존 내부 상태 키는 호환성을 위해 유지한다.
 
 npm files는 bin/·src/로 제한하고 README·package.json·LICENSE의 자동 포함을 확인한다.
+계획: RQ-17 설치 명령 단계에서 agent-kit/를 files에 추가한다. 그전까지 패키지 내용은 바꾸지 않는다.
 기준 문서·AGENTS·보존 패치는 GitHub에서 제공한다. README의 문서 링크는 GitHub의 새 저장소를 가리킨다.
 검증한 tarball을 별도 설치해 실제 docatlas 실행·공개 import·화면·신호 종료를 확인한다.
 README의 기본 사용 명령은 docatlas다. 프로젝트 루트에서의 npx 일회성 실행과 npm/pnpm 로컬 설치,
@@ -463,6 +552,13 @@ README의 기본 사용 명령은 docatlas다. 프로젝트 루트에서의 npx 
 - [x] DC-13: 수집 범위 옵션과 새 설정 파일은 위 0.2.0 계약을 채택한다. 구현/검증은 아래 추가 단계에서 추적한다. M-01, M-07, M-09, M-11, M-13.
 - [x] DC-14: 검색 경로는 별도의 트리 위치 탐색 동작으로 제공하며 현재 본문을 보존한다. 구현/검증은 추가 단계에서 추적한다. M-03, M-05, M-07, M-12.
 - [x] DC-15: Python·Java 기본 제외와 Windows 점검은 위 계약을 따른다. 실제 Windows 지원 확정은 CI/수동 결과 후 결정한다. M-01, M-07, M-08, M-09, M-11, M-12, M-13.
+- [x] DC-16: 2026-10-28 사용자 선택. 스킬·룰 원본은 agent-kit/, 설치는 docatlas 하위 명령, 기본 전역·프로젝트 옵션,
+  재실행 갱신, 기본 designer 한 쌍, 당분간 Confluence 배포 유지. 구현 전. M-16, M-17.
+- [ ] DC-17: 명령 이름·옵션, 클라이언트 감지, 결과 열·종료 코드, 설치 기록/백업 위치,
+  ctxbin 관리 사본 처리, 제거 명령. 위 설계 제안이 초안이다. M-16.
+- [ ] DC-18: Codex 프로젝트 .codex/agents의 로드 조건(프로젝트 신뢰 여부)과 전역/프로젝트 같은 이름 우선순위.
+  공식 문서에 없어 실제 Codex에서 확인한다. M-17.
+- [x] DC-19: 2026-10-28 사용자 확인. 공개 저장소와 npm 패키지(MIT)에 스킬·룰 원본을 포함한다. M-16.
 - [x] DC-11: 프로젝트별 설치와 docmap/ddd-docmap 공통 진입점을 구현하고 설치 검증을 통과했다.
   사용자 선택은 npx docmap / pnpm docmap이며 전역 런처를 추가하지 않는다. M-08, M-11.
 - [x] IC-01: picomatch 4.0.7, ignore 7.0.14, mdast-util-from-markdown 2.1.0과
