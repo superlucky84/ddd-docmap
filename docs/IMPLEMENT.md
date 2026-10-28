@@ -826,7 +826,7 @@ npm pack --dry-run 45개 파일. 이 저장소의 문서 지도는 docs/의 5개
 
 종료 기준: README가 핵심과 링크만 담고, 이전 정보가 모두 새 위치에 있으며, 검사가 통과한다.
 
-## implementer·reviewer 설치 안내 — 진행 중
+## implementer·reviewer 설치 안내 — 완료(배포 전)
 
 대응: RQ-17·18 / DC-26 / M-16.
 진입: 사용자 결정(2026-10-28)을 기준 4종에 기록했다. PR #2·#3이 main에 병합됐고, 작업 브랜치를 main(18ef3ad)으로 빨리 감기했다.
@@ -834,17 +834,20 @@ npm pack --dry-run 45개 파일. 이 저장소의 문서 지도는 docs/의 5개
 
 ### 구현
 
-- [ ] src/agent-kit/command.js 에이전트용 도움말: 설치 대상을 정하지 않은 요청이면 implementer·reviewer 포함 여부를 먼저 묻는 1단계.
-- [ ] README 빠른 시작에 --all 한 줄, agent-kit/README.md 설치 절에 기본이 designer인 이유.
-- [ ] CHANGELOG Unreleased 항목.
+- [x] src/agent-kit/command.js 에이전트용 도움말: 설치 대상을 정하지 않은 요청이면 implementer·reviewer 포함 여부를 먼저 묻는 1단계.
+- [x] README 빠른 시작에 --all 한 줄, agent-kit/README.md 설치 절에 기본이 designer인 이유.
+  에이전트가 실제로 묻는지는 사람이 확인하지 않았으므로 "도움말이 묻도록 안내한다"로 표현했다.
+- [x] CHANGELOG Unreleased 항목.
 
 ### Test Hardening
 
-- [ ] test/agent-kit-install.test.js의 도움말 검사에 새 단계 문구를 더한다. 바꾸기 전에는 실패하고 바꾼 뒤 통과하는지 확인한다.
+- [x] test/agent-kit-install.test.js의 도움말 검사에 새 단계 문구를 더한다. 바꾸기 전에는 실패하고 바꾼 뒤 통과하는지 확인한다.
+  도움말 변경 전 1개 실패, 변경 후 설치 테스트 8개 모두 통과.
 
 ### Integration Test
 
-- [ ] npm run check, npm test, npm run test:platform, 실제 docatlas agents help 출력, 링크 검사. 새 PR을 만든다.
+- [x] npm run check, npm test, npm run test:platform, 실제 docatlas agents help 출력, 링크 검사. 새 PR을 만든다.
+  문법 72개·agent kit 세 쌍, Node 157개 중 154개 통과·3개 건너뜀·실패 0, 플랫폼 6개, pack 45개 파일, 링크 83개 문제 0.
 
 종료 기준: 도움말·README·agent-kit 안내가 같은 내용을 말하고 기존 검사가 통과한다. 기본 설치 동작은 바뀌지 않는다.
 
@@ -1069,7 +1072,8 @@ npm ci가 받아 둔 잠금파일의 tarball만으로는 새 의존성 트리를
 
 - 완료: RQ-19 저장소 소개(DC-20~25)와 .conda 기본 제외(DC-24)·CLI 도움말 링크가 PR #2·#3으로 main에 병합됐다(18ef3ad).
   자세한 근거는 위의 각 작업 절에 있다. .conda와 CLI 도움말 링크는 아직 npm에 배포되지 않았다(CHANGELOG Unreleased).
-- 진행 중: DC-26 implementer·reviewer 설치 안내. 작업 브랜치 claude/tender-gates-sa5kn8를 main에서 다시 시작했다.
-- 다음: DC-26 검증과 PR, 이후 다음 npm 배포(사용자 단계). M-16·M-18 사람 확인과 Codex 실제 세션, Windows 콘솔·Node 22.0 인수는 남아 있다.
+- 완료(DC-26): 에이전트용 도움말 1단계(설치 대상 미지정 시 implementer·reviewer 포함 여부 묻기), README --all 안내,
+  agent-kit 안내의 기본 설치 이유. 작업 브랜치 claude/tender-gates-sa5kn8를 main에서 다시 시작했다.
+- 다음: DC-26 PR 검토와 병합, 이후 다음 npm 배포(사용자 단계). M-16·M-18 사람 확인과 Codex 실제 세션, Windows 콘솔·Node 22.0 인수는 남아 있다.
 - 차단: 없음.
 - 최신 커밋: main 18ef3ad 위의 작업 브랜치. 실제 최신 SHA는 git log -1로 확인한다.

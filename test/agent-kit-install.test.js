@@ -39,7 +39,8 @@ test('the agents help covers every install option, action and exit code', async 
   const documented = new Set([...help.split('Options:')[1].split('Output lines')[0].matchAll(/--([a-z-]+)/g)].map(match => match[1]));
   assert.deepEqual([...documented].sort(), Object.keys(INSTALL_OPTIONS).sort());
   for (const text of ['--dry-run [options]', 'ask for approval', 'skip-modified', 'skip-downgrade', 'skip-managed', 'blocked',
-    '  0  Done', '  1  Failed', '  2  Invalid', '  3  Done, but', 'doc-driven-designer-v1', 'default', 'with --all or --only']) {
+    '  0  Done', '  1  Failed', '  2  Invalid', '  3  Done, but', 'doc-driven-designer-v1', 'default', 'with --all or --only',
+    'ask whether to add the implementer and reviewer']) {
     assert.ok(help.includes(text), text);
   }
   const main = spawnSync(process.execPath, [cliPath, '--help'], { encoding: 'utf8' });
