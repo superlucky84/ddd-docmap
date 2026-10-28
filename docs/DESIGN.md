@@ -484,7 +484,8 @@ name/version/license/bin과 lockfile 루트를 함께 바꾸며 self import는 d
 
 npm files는 bin/·src/로 제한하고 README·package.json·LICENSE의 자동 포함을 확인한다.
 RQ-17 3단계에서 agent-kit/를 files에 추가했다. 스킬·룰 원본 6개와 manifest·README가 패키지에 들어간다.
-기준 문서·AGENTS·보존 패치는 GitHub에서 제공한다. README의 문서 링크는 GitHub의 새 저장소를 가리킨다.
+기준 문서·AGENTS·METHOD·CONTRIBUTING·CHANGELOG·인계 이력은 GitHub에서 제공한다. README의 문서 링크는 GitHub의 새 저장소를 가리킨다.
+Phase 5 보존 패치는 적용이 끝나 2026-10-28에 docs/handoff/에서 삭제했다. 원본은 git 이력(00064c2)에 있다.
 검증한 tarball을 별도 설치해 실제 docatlas 실행·공개 import·화면·신호 종료를 확인한다.
 README의 기본 사용 명령은 docatlas다. 프로젝트 루트에서의 npx 일회성 실행과 npm/pnpm 로컬 설치,
 다음 버전의 tarball을 설치하는 방법을 별도 항목으로 설명한다.
@@ -499,6 +500,60 @@ README의 기본 사용 명령은 docatlas다. 프로젝트 루트에서의 npx 
 실제 파일 갱신과 테스트 용이성을 기록한다. 수집기 의존성은 IC-01을 따르며
 화면은 기본 DOM·ES modules·CSS이며 별도 번들링 없이 완성된 자산을 패키지에 포함한다.
 렌더링은 markdown-it, 변경 감지는 chokidar 5.0.0을 사용한다.
+
+## 저장소 소개 문서 — RQ-19 계약
+
+2026-10-28 사용자 결정(DC-20)에 따른 문서 구성이다. 제품 코드·설치 동작·스킬과 룰 원본은 바꾸지 않는다.
+
+| 파일 | 내용 | npm 패키지 |
+| --- | --- | --- |
+| README.md | 소개·DDD 요약·구성·빠른 시작·역할·이 저장소 예시, 문서 지도 사용법, Reference | 자동 포함 |
+| METHOD.md | 방법론 전문(영문): 정의·원칙·4종 문서·흐름·작성 규칙·역할·문서 배치·도구와의 관계 | 제외 |
+| CONTRIBUTING.md | 개발 설치·검사·브라우저/설치 통합·플랫폼·벤치마크·소스 tarball·문서 작업 방식 | 제외 |
+| CHANGELOG.md | 게시한 버전별 변경 요약 | 제외(npm 10.9.4 pack에서 자동 포함 안 됨 확인) |
+| agent-kit/README.md | 킷 구성·설치 명령·현재 버전·변경 절차 | 포함 |
+| METHOD.ko.md | METHOD.md의 한국어 번역(DC-21) | 제외 |
+| examples/sample-shop/ | 영문 합성 예제 프로젝트(DC-21) | 제외 |
+| docatlas.config.json | 이 저장소 문서 지도의 include를 docs/**/*.md로 한정(DC-21) | 제외 |
+
+README 순서:
+
+1. 제목과 한 줄 소개. DDD가 Doc-Driven Development이며 Domain-Driven Design이 아님을 밝힌다.
+2. Doc-Driven Development 요약: 핵심 문장, 4종 문서, 흐름, 핵심 규칙, METHOD와 블로그 링크.
+3. 이 저장소의 세 구성: 방법론·agent kit·문서 지도.
+4. 빠른 시작: 스킬 설치 → 에이전트와 설계 → 문서 지도 실행.
+5. 에이전트 역할: designer·implementer·reviewer와 기본 설치 여부.
+6. 이 저장소도 같은 방식으로 만든다: docs/의 기준 4종과 이 저장소에서 문서 지도를 여는 방법.
+7. 문서 지도: 실행·설치 방법과 화면 동작(기존 내용).
+8. Reference: 문서 위치·옵션·Configuration·읽기·검색·agent 설치 상세·Windows·Collector API.
+9. 기여·계획 문서·라이선스.
+
+규칙:
+
+- src/cli.js의 도움말이 README#configuration을 가리키므로 `## Configuration` 제목을 유지한다.
+- npm 패키지에 없는 파일(METHOD·CONTRIBUTING·CHANGELOG·docs·캡처)은 GitHub 절대 URL로,
+  패키지에 있는 LICENSE·agent-kit/는 상대 경로로 연결한다. 기존 README 링크 규칙과 같다.
+- METHOD.md와 README 요약은 agent-kit 세 스킬·룰의 규칙을 요약한다. 새 규칙을 만들지 않는다.
+  스킬·룰을 바꾸면 METHOD.md와 README 요약이 여전히 맞는지 확인한다. 이 단계를 agent-kit/README.md 변경 절차에 넣는다.
+- 공개 안내는 Confluence·ctxbin을 원본과 사본의 관계로 설명하지 않는다. ctxbin 관리 파일 건너뛰기는 설치 동작 설명에만 남긴다.
+- 문서 지도 캡처는 저장소에 넣을 수 있는 합성 영문 예제로 만들어 .github/assets/document-map.png에 둔다.
+  개발 스크립트 scripts/screenshot.js가 예제 복사·서버 실행·브라우저 캡처를 재현한다. 제품 코드와 npm 패키지에는 포함하지 않는다.
+- DC-21: METHOD.ko.md는 METHOD.md의 번역이며 영어판이 기준이다. 두 문서는 같은 변경에서 함께 고친다.
+- DC-21: examples/sample-shop/은 사용자 안내용 영문 합성 예제다. checkout은 4종 전체로 상태 표시·결정·phase·인계를 보여 주고,
+  다른 기능은 부분 문서·중첩 기능·공유 계약·코드 옆 docs/를 보여 준다. 실제 회사 문서를 쓰지 않는다.
+  테스트 fixture가 아니며, 기존 테스트는 계속 임시 디렉터리에 예제를 만든다. README 캡처는 이 예제를 복사해 만든다.
+- DC-21: 저장소 루트의 docatlas.config.json은 {"version":1,"include":["docs/**/*.md"]}이다. 기본 제외 목록을 반복하지 않고
+  이 저장소의 지도에서 예제를 뺀다. 예제는 --root examples/sample-shop으로 연다.
+- DC-21: test/examples.test.js가 예제의 수집 결과와 저장소 지도의 예제 제외를 확인한다.
+- DC-22: METHOD.md·METHOD.ko.md에 프로젝트 적용 절을 둔다. 적용 범위는 세 단계 선택지다.
+  필요할 때만 스킬 사용(프로젝트 설정 없음) → AGENTS.md·CLAUDE.md에서 있는 문서를 따르도록 안내 → 이 저장소 AGENTS.md 같은 전체 규칙.
+  권장 예시는 두 번째 단계이며 문서가 없는 작은 수정에는 새 문서를 요구하지 않는다. 그대로 쓰지 않고 고쳐 써도 된다고 밝힌다.
+  설치 명령은 계속 AGENTS.md·CLAUDE.md를 수정하지 않는다. README 핵심 규칙 아래에도 필요한 만큼 쓰라는 한 줄을 둔다.
+  examples/sample-shop/AGENTS.md는 같은 가벼운 예시다. 루트 파일이라 기본 수집 대상이 아니며 예제 문서 수(21개)는 그대로다.
+- DC-22: METHOD 두 언어에 문서 관리 절을 둔다. 정리는 에이전트가 하되 사람이 문서의 분포와 내용을 알아야 정리를 시킬 수
+  있다는 점과, 그래서 docatlas가 사람이 보는 읽기 전용 뷰어라는 점을 설명한다. README 요약도 같은 이유로 문서 지도를 소개한다.
+- 이전 README의 사용법 정보는 지우지 않고 새 위치로 옮긴다. 버전별 신규 표시는 CHANGELOG.md로 옮긴다.
+- package.json은 description과 keywords만 바꾼다. 이름·버전·bin·files·의존성은 그대로다.
 
 ## 결정 체크리스트
 
@@ -600,6 +655,12 @@ README의 기본 사용 명령은 docatlas다. 프로젝트 루트에서의 npx 
   격리한 HOME·CODEX_HOME에서 프로젝트 스킬은 신뢰와 무관하게 읽고, 프로젝트 룰은 신뢰한 프로젝트에서만 읽는다.
   같은 이름 룰은 프로젝트 것만 보이고, 같은 이름 스킬은 둘 다 보인다. 경고 문구와 codex-trust 경고에 반영했다. M-17.
 - [x] DC-19: 2026-10-28 사용자 확인. 공개 저장소와 npm 패키지(MIT)에 스킬·룰 원본을 포함한다. M-16.
+- [x] DC-20: 2026-10-28 사용자 선택. docatlas 저장소 하나를 DDD 본거지로 소개하고, 위 RQ-19 계약의 README 순서·
+  루트 METHOD.md(영문)·CONTRIBUTING.md·CHANGELOG.md 분리·공개 안내에서 Confluence/ctxbin 사본 설명 제외·이전 인계 정리를 채택했다. M-18.
+- [x] DC-21: 2026-10-28 사용자 요청으로 해소. METHOD.ko.md(영어판 기준 번역)와 영문 합성 예제 examples/sample-shop/을 추가하고,
+  저장소 루트 docatlas.config.json의 include를 docs/**/*.md로 한정해 이 저장소의 지도에서 예제를 뺀다. M-18.
+- [x] DC-22: 2026-10-28 사용자 선택. 프로젝트 적용은 강제 규칙이 아니라 선택지로 안내하고,
+  AGENTS.md·CLAUDE.md 권장 예시는 출발점으로 보여 준다. M-18.
 - [x] DC-11: 프로젝트별 설치와 docmap/ddd-docmap 공통 진입점을 구현하고 설치 검증을 통과했다.
   사용자 선택은 npx docmap / pnpm docmap이며 전역 런처를 추가하지 않는다. M-08, M-11.
 - [x] IC-01: picomatch 4.0.7, ignore 7.0.14, mdast-util-from-markdown 2.1.0과
@@ -610,80 +671,10 @@ README의 기본 사용 명령은 docatlas다. 프로젝트 루트에서의 npx 
 - [ ] IC-03: open 10.2.0과 SIGINT·SIGTERM 정리는 Phase 2에서 채택·검증했다.
   파일 감지는 chokidar 5.0.0을 채택한다. OS별 최종 지원 범위는 Phase 7의 TBD다. M-07, M-08, M-12.
 
-## 인계 상태 — 2026-10-28
+## 이전 인계 기록
 
-아래 이전 인계는 각 시점의 작업 기록이다. 현재 상태는 맨 아래 최신 인계를 따른다.
-
-- 사용자 요청으로 재개해 보존 패치를 적용하고 Phase 5 검증 계약을 구현·검증했다.
-- Phase 6의 설치된 CLI/API/브라우저 통합 검증은 통과했다. 전체 수동 인수·지원 환경은 별도다.
-- 다음: 남은 M 항목과 Node 하한·지원 OS를 검증하고 Phase 7의 DC-10·IC-03을 해소한다.
-- 기술적 차단 없음. 라이선스·배포 경로·최종 지원 OS는 TBD다.
-- 최신 확인 커밋(이번 작업 전): 4b8b195. 이번 구현·테스트·검증 기록은 사용자 요청으로 함께 커밋한다.
-- 상세 검증과 명령: [구현 계획의 최신 인계](./IMPLEMENT.md#인계-상태--2026-10-28).
-
-## 프로젝트별 설치 인계 — 2026-10-28
-
-- 사용자 선택: 프로젝트별 개발 의존성 설치 후 npx docmap / pnpm docmap으로 실행한다.
-- docmap과 ddd-docmap을 같은 bin에 연결했고, 도움말·오류 안내·로컬 명령 발견과 설치된 CLI 흐름을 검증했다.
-- 로컬 설치 없이 npx docmap을 실행하면 다른 registry 패키지를 찾을 수 있다. 이 패키지 배포 후 일회성 실행은
-  npx --package=@superlucky84/ddd-docmap docmap으로 패키지를 명시한다. 현재는 미배포다.
-- 다음: 사용자의 실제 프로젝트에 tarball 설치 후 사용성 인수. 전역 런처·셸 변경은 추가하지 않는다.
-- 차단 요인: 기술적 차단 없음. npm 배포와 최종 지원 환경은 기존 TBD다.
-- 최신 확인 커밋: 2cb552b. 이번 명령·테스트·문서 변경은 작업 트리에 있다.
-
-## docatlas 인계 — 2026-10-28
-
-- DC-12의 docatlas 이름·MIT와 세 bin 공통 진입점·공개 import·브라우저 브랜드를 구현·검증했다.
-- GitHub 저장소는 https://github.com/superlucky84/docatlas이며 ID 1435263800과 공개 상태를 유지한다.
-- npm 후보는 docatlas@0.1.0이다. README·LICENSE·bin/·src/의 28개 파일과 배포 dry-run을 확인했다.
-- 사용자 선택은 배포 준비까지다. 원본 설정 파일과 이전 두 명령의 호환 정책을 유지한다.
-- 다음: 실제 사용성 인수와 지원 환경 검증, 이후 npm 인증 갱신과 배포. 준비 범위의 기술적 차단 없음.
-
-## 0.2.0 수집 범위·설정 인계 — 2026-10-28
-
-- DC-13 계약을 구현했다. 공개 수집 옵션은 CLI/서버 없이도 사용하며 각 실행에 복사·고정한다.
-- 새 설정 우선·이전 이름 fallback·실제 오류 파일명·두 파일 감지·옵션 유지·없는 추가 폴더 갱신을 검증했다.
-- 범위를 넓혀도 기존 제외·읽기 경계·래스터 자산 등록·세대·종료 정책을 유지한다.
-- 문법 50개·Node 109개·Chrome 34개·설치 통합 4개와 패키징/문서 예제 검증이 통과했다.
-- README·--help·Confluence 가이드 버전 3에 설정 전체와 버전별 차이를 반영했다. npm 0.2.0은 미배포다.
-- 다음: 실제 프로젝트 사용성 인수, 별도 npm 배포와 남은 지원 환경 검증. 기술적 차단 없음.
-- 최신 확인 커밋: ceb5b3e. 이번 변경은 미커밋이며 상세 근거는 구현 계획의 0.2.0 완료 기록을 따른다.
-
-## 0.2.0 검색 경로 탐색 인계 — 2026-10-28
-
-- DC-14 구현 완료. 검색 결과는 본문 열기와 경로 위치 찾기를 별도 버튼으로 제공한다.
-- 경로 위치 찾기는 현재 지도에서 최종 문서를 확인해 상위를 펼치고 해당 문서 버튼을 스크롤·초점·강조한다.
-  locatedId는 읽는 문서의 selectedId와 분리하며 자동 갱신과 지도 이력 복원에서 보존한다.
-- 검색 취소와 진행 중인 사용자 본문 열기 취소를 구분한다. 자동 본문 갱신은 위치 찾기 상태를 유지한다.
-- 문법 51개·Chrome 40개·설치 통합 4개와 실제 화면 검토가 통과했다. README와 기준 4종에 반영했다.
-- 다음: 실제 프로젝트 인수와 별도 npm/팀 가이드 반영. npm 0.2.0은 미배포다. 기술적 차단 없음.
-- 최신 확인 커밋: ceb5b3e. 이전 작업과 이번 검색 변경은 미커밋 상태로 유지한다.
-
-## 커밋·배포 준비 인계 — 2026-10-28
-
-- DC-13·14의 구현과 검증을 c16a862에 포함했고 사용자 요청으로 origin/main에 푸시했다.
-- 현재 버전 0.2.0과 기존 0.1.0 설정 호환 계약을 유지한다. npm 최신은 조회 당시 0.1.0이고 실제 0.2.0 배포는 미실행이다.
-- 다음: 사용자가 안내한 npm 배포를 수행하고 registry/실제 프로젝트 실행을 확인한 뒤 배포 상태 문서를 갱신한다.
-- 기술적 차단 없음. 최종 수동 인수·지원 환경 검증은 기존 범위로 남긴다. 최신 구현 커밋: c16a862.
-
-## 0.2.1 Python·Java 기본 제외와 Windows 인계 — 2026-10-28
-
-- DC-15 구현·로컬 검증 완료. 기존 5개 기본 제외에 언어별 13개를 추가해 18개 패턴을 사용한다.
-- 설정의 기본 목록 대체·범위 옵션·고정 제외·ignore·읽기/감지 경계를 유지했다. 일반 경로·소스/manifest를 실행하거나 수정하지 않는다.
-- 플랫폼 검증은 실제 네이티브 경로·한글/공백·CRLF·링크/래스터·감지/재설정·주입 신호 정리·설치된 npm 실행기를 확인한다.
-- macOS Node 22.12.0에서 문법 54개·Node 115개·Chrome 40개·설치 통합 4개, 플랫폼 6개와 패키징/문서 검증이 통과했다.
-- Windows/macOS Node 22/24 CI는 작성했으나 원격 실행 전이다. Windows OS·PowerShell/CMD·기본 브라우저·실제 Ctrl+C·UNC의 공식 지원 여부는 TBD다.
-  기존 전체 Node/설치 통합의 Windows 이식성도 이번 플랫폼 부분 검증과 구분한다.
-- 다음: 별도 커밋·푸시 후 Windows CI와 실제 콘솔 인수, 이후 별도 0.2.1 배포/팀 가이드 반영. 기술적 차단 없음.
-- 최신 확인 커밋: 1ec2bd6. 이번 후보는 미커밋·미배포이며 로컬 결과를 Windows 결과로 해석하지 않는다.
-- 최신 구현 커밋: e9977a4. 새 GitHub main의 README·manifest에서 이름과 실행 계약을 재확인했다.
-
-## 0.2.1 커밋·푸시 인계 — 2026-10-28
-
-- DC-15 구현·플랫폼 테스트와 CI를 3eeda0c에 커밋했고 사용자 요청으로 main에 푸시한다.
-- checkout/setup-node의 v7 action.yml을 실제 GitHub 태그에서 확인했다.
-- 플랫폼 CI 상태: https://github.com/superlucky84/docatlas/actions/workflows/platform.yml. Windows 결과와 실제 콘솔/브라우저 인수는 구분한다.
-- 최신 구현 커밋: 3eeda0c. 기술적 차단 없음. npm 0.2.1은 미배포이며 이후 사용자 배포 범위로 남긴다.
+이전 인계와 그 시점의 검증 기록은 [인계 이력](./handoff/HISTORY.md#설계에서-옮긴-기록)으로 옮겼다.
+현재 인계는 [구현 계획](./IMPLEMENT.md#현재-인계)에 하나만 둔다.
 
 ## DC-15 후속: 플랫폼 CI의 의존성 설치
 

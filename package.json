@@ -1,7 +1,7 @@
 {
   "name": "docatlas",
   "version": "0.3.0",
-  "description": "Local document maps for Doc-Driven Development projects.",
+  "description": "Doc-Driven Development toolkit: agent skills for Claude Code and Codex, and a local map of your project documents.",
   "license": "MIT",
   "author": "superlucky84",
   "type": "module",
@@ -42,7 +42,12 @@
     "doc-driven-development",
     "documentation",
     "markdown",
-    "cli"
+    "cli",
+    "ai-agents",
+    "agent-skills",
+    "claude-code",
+    "codex",
+    "document-map"
   ],
   "dependencies": {
     "chokidar": "5.0.0",
