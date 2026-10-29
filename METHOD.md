@@ -255,8 +255,8 @@ A few prompts that fit the flow:
 
 ## Tools in this repository
 
-- **Agent kit:** `npx docatlas agents install` installs the designer skill and rule for
-  Claude Code and Codex. Add `--all` for the implementer and reviewer.
+- **Agent kit:** `npx docatlas agents install` installs the designer, implementer, and reviewer
+  skills and rules for Claude Code and Codex.
 - **Document map:** `npx docatlas` opens a local map of every document in a project.
 
 Neither is required. The method is Markdown plus the habits above.

@@ -39,13 +39,17 @@ test('the agents help covers every install option, action and exit code', async 
   const documented = new Set([...help.split('Options:')[1].split('Output lines')[0].matchAll(/--([a-z-]+)/g)].map(match => match[1]));
   assert.deepEqual([...documented].sort(), Object.keys(INSTALL_OPTIONS).sort());
   for (const text of ['--dry-run [options]', 'ask for approval', 'skip-modified', 'skip-downgrade', 'skip-managed', 'blocked',
-    '  0  Done', '  1  Failed', '  2  Invalid', '  3  Done, but', 'doc-driven-designer-v1', 'default', 'with --all or --only',
-    'ask whether to add the implementer and reviewer',
+    '  0  Done', '  1  Failed', '  2  Invalid', '  3  Done, but',
+    'installs the kit items marked default below', 'add --only <name> for each', 'including items not marked default',
     'tell the user which files were skipped or blocked', 'Never add --force on your own',
     'If you are an agent other than Claude Code or Codex', 'https://github.com/superlucky84/docatlas/tree/main/agent-kit',
     path.join(KIT_DIRECTORY, 'skills', '<name>', 'SKILL.md'), path.join(KIT_DIRECTORY, 'agents', '<name>.md')]) {
     assert.ok(help.includes(text), text);
   }
+  for (const name of ['doc-driven-designer-v1', 'doc-driven-implementer-v1', 'doc-driven-reviewer-v1']) {
+    assert.match(help, new RegExp('^  ' + name + ' +\\d+\\.\\d+\\.\\d+ +default$', 'm'), name);
+  }
+  assert.ok(!help.includes('ask whether to add'), 'the default already installs every item, so agents do not ask first');
   const main = spawnSync(process.execPath, [cliPath, '--help'], { encoding: 'utf8' });
   assert.match(main.stdout, /docatlas agents help {2,}Steps for people and AI agents/);
 });
@@ -99,6 +103,20 @@ test('an install writes every file and its record, and a second run changes noth
   assert.equal(second.code, 0);
   assert.deepEqual(await snapshot(workspace.root), before);
   assert.deepEqual(second.lines.map(line => line[0]), ['unchanged', 'unchanged', 'unchanged', 'unchanged', 'summary']);
+});
+
+test('without --target, a home with one client folder gets files for that client only', async t => {
+  for (const [folder, client, absent] of [['.claude', 'claude', ['.codex', '.agents']], ['.codex', 'codex', ['.claude']]]) {
+    const workspace = await setup(t);
+    await fs.mkdir(path.join(workspace.home, folder));
+    const result = await agents(workspace, ['install']);
+    assert.equal(result.code, 0, result.stderr);
+    const files = result.lines.filter(line => line[0] === 'create');
+    assert.deepEqual(files.map(line => line.slice(2, 5)), [[client, 'skill', 'sample-designer'], [client, 'agent', 'sample-designer']]);
+    for (const other of absent) {
+      await assert.rejects(fs.access(path.join(workspace.home, other)), { code: 'ENOENT' }, other);
+    }
+  }
 });
 
 test('earlier copies are replaced and edited copies wait for --force with a backup', async t => {
@@ -197,9 +215,13 @@ test('the docatlas command runs agents commands against the packaged kit', async
   const dry = spawnSync(process.execPath, [cliPath, 'agents', 'install', '--dry-run'], { cwd: workspace.project, env, encoding: 'utf8' });
   assert.equal(dry.status, 0, dry.stderr);
   assert.deepEqual(await snapshot(workspace.root), before);
+  // Only ~/.claude exists, so every default item is planned for Claude Code alone.
+  const names = ['doc-driven-designer-v1', 'doc-driven-implementer-v1', 'doc-driven-reviewer-v1'];
   assert.deepEqual(dry.stdout.trimEnd().split('\n').map(line => line.split('\t').slice(0, 6)), [
-    ['dry-run', 'create', 'new', 'claude', 'skill', 'doc-driven-designer-v1'],
-    ['dry-run', 'create', 'new', 'claude', 'agent', 'doc-driven-designer-v1'],
-    ['dry-run', 'summary', 'create=2', 'replace=0', 'unchanged=0', 'skipped=0']
+    ...names.flatMap(name => [
+      ['dry-run', 'create', 'new', 'claude', 'skill', name],
+      ['dry-run', 'create', 'new', 'claude', 'agent', name]
+    ]),
+    ['dry-run', 'summary', 'create=6', 'replace=0', 'unchanged=0', 'skipped=0']
   ]);
 });

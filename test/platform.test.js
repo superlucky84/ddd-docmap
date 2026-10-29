@@ -174,7 +174,7 @@ test('installed production tarball exposes npm launchers and reads a manifest-fr
   await fs.access(path.join(agentHome, '.docatlas/agents.json'));
   const rerun = await npm(agentCommand, temporary, agentEnv);
   assert.deepEqual(rerun.stdout.trimEnd().split('\n').filter(line => !line.startsWith('summary')).map(line => line.split('\t')[0]),
-    ['unchanged', 'unchanged', 'unchanged', 'unchanged']);
+    Array(12).fill('unchanged'));
   const installed = path.join(temporary, 'node_modules/docatlas');
   const { run: installedRun } = await import(pathToFileURL(path.join(installed, 'src/cli.js')));
   const cli = await controlledCli(project, installedRun);

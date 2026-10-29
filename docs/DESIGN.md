@@ -375,9 +375,12 @@ docatlas agents install [--project] [--root <dir>] [--target claude|codex|all] [
 docatlas agents help
 ```
 
-- 기본은 전역·designer 한 쌍이다. --project는 --root(기본 cwd) 프로젝트에 설치한다. --only는 반복할 수 있고 --all과 함께 쓸 수 없다.
+- 기본은 전역·manifest에서 default가 true인 항목이다. DC-28부터 세 항목 모두 default다(이전: designer 한 쌍).
+  --all은 default 여부와 관계없이 모든 항목이며 지금은 기본과 같다.
+  --project는 --root(기본 cwd) 프로젝트에 설치한다. --only는 반복할 수 있고 --all과 함께 쓸 수 없다.
 - --target의 기본값은 설치된 클라이언트 감지다. ~/.claude가 있으면 Claude, ~/.codex나 ~/.agents가 있으면 Codex다.
-  아무것도 없으면 --target을 요구한다.
+  아무것도 없으면 --target을 요구한다. 한쪽 폴더만 있는 사용자는 그 클라이언트에만 설치된다.
+  DC-28: 감지 기준은 바꾸지 않는다. ~/.agents만 있어도 Codex로 감지하는 점을 알고 유지한다.
 - 결과는 탭으로 구분한 줄이다. 파일마다 동작·reason·클라이언트·종류·이름·경로를 쓰고, 이어서 backup·warning·record 줄과
   마지막 summary 줄(create·replace·unchanged·skipped·blocked 개수)을 쓴다. --dry-run은 동작 줄과 summary 줄 앞에 dry-run을 붙이고 쓰지 않는다.
 - 대화형 질문을 하지 않는다(RQ-18). skip-*나 blocked가 있으면 나머지를 마치고 사용자 결정이 필요하다고 stderr에 알린다.
@@ -400,7 +403,8 @@ docatlas agents help(또는 agents install --help)는 네트워크 없이 다음
 
 - 하는 일, 설치 위치, 기본 대상과 선택 방법.
 - 권장 순서: --dry-run → 결과를 사용자에게 보고 → 사용자 승인 후 적용.
-  DC-26: 사용자가 설치 대상을 말하지 않았으면 미리보기 전에 implementer·reviewer(--all) 포함 여부를 먼저 묻는다.
+  DC-28: 기본 설치가 세 항목 모두이므로 포함 여부를 먼저 묻지 않는다(DC-26의 질문 단계 대체).
+  1단계는 "사용자가 일부만 원하면 항목마다 --only <name>을 붙인다"이다.
   DC-26 후속: 적용 뒤 종료 코드가 3이면 건너뛰거나 막힌 파일과 이유를 사용자가 묻지 않아도 알린다.
   --force는 에이전트가 스스로 붙이지 않고, 사용자가 그 파일을 교체하라고 할 때만 쓴다(교체 전 백업).
 - DC-27: 도움말에 "Claude Code·Codex가 아닌 에이전트" 절을 둔다. --target으로 남의 폴더를 만들지 말 것, 원본 경로
@@ -677,7 +681,7 @@ guide/는 이 저장소 기획 문서(docs/)와 구분하며, 저장소 지도(d
 - [x] DC-14: 검색 경로는 별도의 트리 위치 탐색 동작으로 제공하며 현재 본문을 보존한다. 구현/검증은 추가 단계에서 추적한다. M-03, M-05, M-07, M-12.
 - [x] DC-15: Python·Java 기본 제외와 Windows 점검은 위 계약을 따른다. 실제 Windows 지원 확정은 CI/수동 결과 후 결정한다. M-01, M-07, M-08, M-09, M-11, M-12, M-13.
 - [x] DC-16: 2026-10-28 사용자 선택. 스킬·룰 원본은 agent-kit/, 설치는 docatlas 하위 명령, 기본 전역·프로젝트 옵션,
-  재실행 갱신, 기본 designer 한 쌍, 당분간 Confluence 배포 유지. 구현 전. M-16, M-17.
+  재실행 갱신, 기본 designer 한 쌍(DC-28로 세 쌍 모두로 변경), 당분간 Confluence 배포 유지. 구현 전. M-16, M-17.
 - [x] DC-17: 위 명령 계약대로 명령 이름·옵션·결과 줄·종료 코드(3 추가)·백업 위치를 3단계에서 구현했고, 클라이언트 감지·
   설치 기록 형식·ctxbin 관리 사본 처리·링크 예외는 2단계에서 구현했다. 제거 명령은 범위에 넣지 않았다. M-16.
 - [x] DC-18: Codex CLI 0.165.0에서 codex debug prompt-input(모델 호출 없음)으로 모델에 보이는 입력을 관찰했다.
@@ -691,7 +695,10 @@ guide/는 이 저장소 기획 문서(docs/)와 구분하며, 저장소 지도(d
 - [x] DC-22: 2026-10-28 사용자 선택. 프로젝트 적용은 강제 규칙이 아니라 선택지로 안내하고,
   AGENTS.md·CLAUDE.md 권장 예시는 출발점으로 보여 준다. M-18.
 - [x] DC-27: 2026-10-28 사용자 선택. 다른 에이전트용 도움말 절, 원본 경로·GitHub 주소 출력, 두 오류 메시지의 안내. 다음 배포. M-16.
-- [x] DC-26: 2026-10-28 사용자 선택. 기본 설치는 designer 한 쌍 그대로 두고, README 빠른 시작에 --all 안내를,
+- [x] DC-28: 2026-10-29 사용자 선택. 기본 설치를 designer·implementer·reviewer 세 쌍 모두로 바꾸고, 도움말의 포함 여부 질문 단계를
+  없앤다. 일부만 원하면 --only. --all과 클라이언트 자동 감지는 그대로 둔다(~/.agents의 Codex 감지 포함, 사용자가 유지 선택).
+  kit 원본 내용이 같아 kitVersion은 올리지 않는다. 다음 배포. M-16.
+- [x] DC-26: 2026-10-28 사용자 선택(기본 대상과 질문 단계는 DC-28로 변경). 기본 설치는 designer 한 쌍 그대로 두고, README 빠른 시작에 --all 안내를,
   agent-kit 안내에 그 이유를, 에이전트용 도움말에 포함 여부를 먼저 묻는 단계를 둔다. 도움말 변경은 다음 배포. M-16.
 - [x] DC-25: 2026-10-28 사용자 선택. README는 핵심과 링크만 두고 사용 레퍼런스는 guide/와 agent-kit/README.md로 옮긴다.
   CLI 도움말 링크 변경은 다음 배포(PR #3). M-18.

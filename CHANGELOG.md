@@ -5,6 +5,15 @@ changes on main that are not published yet.
 Agent skill and rule versions are tracked separately in
 [agent-kit/manifest.json](agent-kit/manifest.json).
 
+## Unreleased
+
+- `docatlas agents install` now installs the designer, implementer, and reviewer by default.
+  Add `--only <name>` to install fewer. After an earlier designer-only install, running the default
+  command again adds the implementer and reviewer. Clients are still chosen from the folders in the
+  home folder, so a Claude Code-only or Codex-only setup gets only its own files.
+- `docatlas agents help` no longer tells AI agents to ask whether to add the implementer and
+  reviewer, since the default already includes them.
+
 ## 0.3.1 — 2026-10-28
 
 - Exclude `.conda` by default at any depth, so a conda environment created inside a project

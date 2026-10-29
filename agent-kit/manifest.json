@@ -48,7 +48,7 @@
     {
       "name": "doc-driven-implementer-v1",
       "version": "1.1.0",
-      "default": false,
+      "default": true,
       "skill": {
         "path": "skills/doc-driven-implementer-v1/SKILL.md",
         "sha256": "d36630cb0ce41ff60e7fb993e3e51a5dacab61e924a1174c9bbfa1000b56b839"
@@ -77,7 +77,7 @@
     {
       "name": "doc-driven-reviewer-v1",
       "version": "1.4.0",
-      "default": false,
+      "default": true,
       "skill": {
         "path": "skills/doc-driven-reviewer-v1/SKILL.md",
         "sha256": "0889e0ad98f9a35870701f81d4ea35e84b3da57adb084378fdea9a93222f40e8"

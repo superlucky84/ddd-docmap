@@ -39,13 +39,13 @@ function hasError(errors, pattern) {
   assert.ok(errors.some(error => pattern.test(error)), 'expected ' + pattern + ' in ' + JSON.stringify(errors));
 }
 
-test('the repository kit lists three valid pairs with only the designer installed by default', async () => {
+test('the repository kit lists three valid pairs, all installed by default', async () => {
   const { errors, manifest } = await checkAgentKit(repositoryKit);
   assert.deepEqual(errors, []);
   assert.deepEqual(manifest.items.map(item => [item.name, item.default]), [
     ['doc-driven-designer-v1', true],
-    ['doc-driven-implementer-v1', false],
-    ['doc-driven-reviewer-v1', false]
+    ['doc-driven-implementer-v1', true],
+    ['doc-driven-reviewer-v1', true]
   ]);
 });
 

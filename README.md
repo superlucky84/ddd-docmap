@@ -47,15 +47,15 @@ Read the full method in [METHOD.md](https://github.com/superlucky84/docatlas/blo
 
 You need Node.js 22+ and npm.
 
-1. Install the designer skill and rule for Claude Code and Codex:
+1. Install the designer, implementer, and reviewer skills and rules for Claude Code and Codex:
 
    ```sh
    npx docatlas agents install --dry-run   # preview; writes nothing
    npx docatlas agents install
    ```
 
-   The implementer and reviewer are optional. Add `--all` to install them too
-   ([why](agent-kit/README.md#install)).
+   It installs only for the clients it finds in your home folder. To install only some roles, add
+   `--only <name>` for each ([details](agent-kit/README.md#install)).
 
 2. In a new agent session, start with the designer:
 
@@ -70,11 +70,13 @@ You need Node.js 22+ and npm.
 
 ## Agent roles
 
-| Skill and rule | Role | Installed by default |
-| --- | --- | --- |
-| `doc-driven-designer-v1` | Co-writes the four documents with you and turns open questions into decisions | Yes |
-| `doc-driven-implementer-v1` | Implements one phase at a time with test evidence, synced documents, and a handoff | With `--all` or `--only` |
-| `doc-driven-reviewer-v1` | Reviews uncommitted changes read-only and returns a severity-ranked report | With `--all` or `--only` |
+| Skill and rule | Role |
+| --- | --- |
+| `doc-driven-designer-v1` | Co-writes the four documents with you and turns open questions into decisions |
+| `doc-driven-implementer-v1` | Implements one phase at a time with test evidence, synced documents, and a handoff |
+| `doc-driven-reviewer-v1` | Reviews uncommitted changes read-only and returns a severity-ranked report |
+
+All three are installed by default.
 
 Install options, update behavior, and the exact rules are in [agent-kit/](agent-kit/).
 

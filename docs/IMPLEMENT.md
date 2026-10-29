@@ -21,6 +21,7 @@
   Codex 실제 세션 확인과 남은 수동 인수는 별도다. 0.3.0은 사용자가 npm에 게시했다(2026-10-28 registry latest 확인).
 - 완료: RQ-19 저장소 소개와 DDD 본거지 문서와 이전 인계 정리. 제품 코드는 바꾸지 않았다. M-18 사람 확인은 남아 있다.
 - 완료: DC-21 METHOD 한국어판과 examples/ 합성 예제 프로젝트. M-18 사람 확인은 남아 있다.
+- 완료: DC-28 기본 설치 항목을 designer·implementer·reviewer 세 쌍으로 변경. 다음 배포에 포함한다.
 
 기술 선택은 각 단계에서 근거와 검증을 기록해 DC/IC를 해소한다.
 상세 계약을 바꾸면 요구사항·설계·단계·수동 기준을 같은 작업에서 갱신한다.
@@ -921,6 +922,42 @@ npx --yes docatlas@0.3.1 agents help
 참고: docatlas 저장소 안에서 npx docatlas를 실행하면 레지스트리 패키지가 아니라 그 checkout의 소스가 실행되므로
 npm install 전에는 ERR_MODULE_NOT_FOUND(open)가 난다. 레지스트리 버전은 npx --yes docatlas@latest로 실행한다.
 
+## 기본 설치 항목을 세 쌍으로 — 완료(배포 전)
+
+대응: RQ-17·18 / DC-28 / M-16.
+진입: 사용자 결정(2026-10-29)을 기준 4종에 기록했다. 기준 커밋 e1f3976.
+기준 검증(e1f3976): 문법 72개·agent kit 세 쌍, Node 158개 중 155개 통과·3개 건너뜀(root 권한)·실패 0.
+기준 관찰: 임시 HOME에서 --dry-run 미리보기. ~/.claude만 있으면 Claude 2줄, ~/.codex만 있으면 Codex 2줄,
+~/.claude와 ~/.agents가 있으면 두 클라이언트 4줄, 아무것도 없으면 종료 2. 모두 designer 한 항목뿐이다.
+
+### 구현
+
+- [x] agent-kit/manifest.json의 implementer·reviewer default를 true로 바꾼다. 원본 내용이 같으므로 버전·해시는 그대로다.
+- [x] src/agent-kit/command.js 에이전트용 도움말 1단계를 "일부만 원하면 --only <name>"으로 바꾸고, --all 설명을
+  "default가 아닌 항목까지 모두"로 고친다. 항목 목록의 default 표시는 manifest를 그대로 따른다.
+- [x] README 빠른 시작·역할 표, METHOD 두 언어판의 도구 안내, agent-kit/README.md 설치 절과 표, CHANGELOG Unreleased.
+  agent-kit/README.md에 "0.3.1 이하에서는 designer만 기본이었고, 같은 명령을 다시 실행하면 둘이 추가된다"는 안내를 더했다.
+
+### Test Hardening
+
+- [x] 저장소 kit의 default가 세 항목 모두인지(agent-kit.test.js), 도움말의 새 1단계 문구와 질문 단계 문구가 사라졌는지
+  (agent-kit-install.test.js) 확인한다. 바꾸기 전에는 실패하고 바꾼 뒤 통과하는지 본다.
+  코드 변경 전 2개 실패, 변경 후 통과. 저장소 kit을 쓰는 테스트 2개(Claude만 있는 HOME의 미리보기 6줄, 기본 선택 세 항목)도 함께 고쳤다.
+- [x] 한쪽 클라이언트 폴더만 있는 HOME에서 기본 설치가 그 클라이언트에만 쓰고 다른 클라이언트 폴더를 만들지 않는지
+  runAgents 수준에서 확인한다(합성 kit). 감지 동작은 바뀌지 않으므로 바꾸기 전에도 통과해야 한다. 변경 전후 모두 통과.
+
+### Integration Test
+
+- [x] npm run check, npm test, npm run test:platform, npm run test:integration(기본 미리보기 12줄·프로젝트 --all 같은 이름 경고 12개),
+  실제 docatlas agents help와 임시 HOME 미리보기, npm pack --dry-run, 링크 검사.
+  문법 72개·agent kit 세 쌍, Node 159개 중 156개 통과·3개 건너뜀(root 권한)·실패 0, 플랫폼 6개, 통합 5개 통과.
+  통합의 F-07은 이 세션의 Playwright 브라우저 버전이 맞지 않아 PLAYWRIGHT_BROWSERS_PATH로 설치된 Chromium을 가리켜 실행했다.
+  실제 도움말 1단계와 항목 세 개 모두 default 표시, ~/.claude만 있는 HOME은 Claude 6줄, ~/.codex만 있는 HOME은 Codex 6줄.
+  pack 45개 파일, 바뀐 문서 9개의 링크 56개 문제 0, git diff --check 통과.
+
+종료 기준: 옵션 없는 설치가 감지된 클라이언트에 세 항목을 설치하고, 도움말·README·METHOD·agent-kit 안내가 같은 내용을 말하며
+기존 검사가 통과한다. 클라이언트 감지와 --only·--all·--target 동작은 바뀌지 않는다.
+
 ## 검증 예제와 기록
 
 F-01~08의 구체적인 구성은 [수동 검증의 가상 프로젝트](./MANUAL_TEST_CHECKLIST.md#가상-프로젝트)를 따른다.
@@ -1141,10 +1178,11 @@ npm ci가 받아 둔 잠금파일의 tarball만으로는 새 의존성 트리를
 2026-10-28 이전의 인계와 검증 기록은 [인계 이력](./handoff/HISTORY.md#구현-계획에서-옮긴-기록)에 있다.
 
 - 완료: 0.3.1을 npm에 게시했다(gitHead 8f6bc69). 저장소 소개(DC-20~25), .conda 기본 제외(DC-24), 에이전트용 도움말 보강(DC-26·27) 포함.
-- 완료(2026-10-29): README·METHOD 두 언어판·예제 README의 clone 실행 안내에 npm install 선행 단계를 추가하고 기준 문서를 맞췄다.
-  npm run check(문법 72개·agent kit 세 쌍), 예제 테스트 2개, npm pack --dry-run(45개 파일), git diff --check 통과.
-  사용자 요청대로 문서만 커밋하며 npm 배포는 하지 않는다.
-- 사용자 단계: 태그 v0.3.1(8f6bc69)과 GitHub 릴리스 노트. 이 세션에서는 태그 푸시가 403으로 거부됐다.
-- 다음: M-16·M-18 사람 확인(에이전트가 새 도움말을 따르는지, npm 페이지 README), Codex 실제 세션, Windows 콘솔·Node 22.0 인수.
+- 완료(2026-10-29): README·METHOD 두 언어판·예제 README의 clone 실행 안내에 npm install 선행 단계를 추가했다(e1f3976).
+- 완료(2026-10-29, 배포 전): DC-28. agents install의 기본 대상을 세 쌍으로 바꾸고 도움말의 포함 여부 질문 단계를 없앴다.
+  클라이언트 자동 감지는 사용자 선택으로 그대로다. 검증 결과는 위 "기본 설치 항목을 세 쌍으로" 단계에 있다.
+- 사용자 단계: 태그 v0.3.1(8f6bc69)과 GitHub 릴리스 노트. 다음 배포 버전 번호는 정하지 않았다(TBD).
+- 다음: 다음 배포 준비(CHANGELOG Unreleased에 DC-28). M-16 사람 확인(세 항목 기본 설치, 한쪽 클라이언트만 있는 HOME,
+  에이전트가 묻지 않고 미리보기를 보여 주는지), M-18, Codex 실제 세션, Windows 콘솔·Node 22.0 인수.
 - 차단: 없음.
-- 최신 확인 커밋: 0ef9dc1. 이번 문서 수정 커밋의 SHA는 git log -1로 확인한다.
+- 최신 확인 커밋: e1f3976. 이번 DC-28 커밋의 SHA는 git log -1로 확인한다.

@@ -232,8 +232,8 @@ Codex는 `AGENTS.md`를, Claude Code는 `CLAUDE.md`를 읽습니다. 둘 다 쓴
 
 ## 이 저장소의 도구
 
-- **에이전트 킷:** `npx docatlas agents install`이 Claude Code와 Codex용 designer 스킬과 룰을 설치합니다.
-  implementer와 reviewer까지 설치하려면 `--all`을 붙입니다.
+- **에이전트 킷:** `npx docatlas agents install`이 Claude Code와 Codex용 designer·implementer·reviewer
+  스킬과 룰을 설치합니다.
 - **문서 지도:** `npx docatlas`가 프로젝트의 모든 문서를 보여 주는 로컬 지도를 엽니다.
 
 둘 다 필수는 아닙니다. 방법론은 Markdown과 위의 습관이 전부입니다.
