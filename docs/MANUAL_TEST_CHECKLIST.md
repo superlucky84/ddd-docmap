@@ -452,8 +452,11 @@ test/integration/package.test.js의 부모 1개·하위 3개, 총 4개가 Node 2
 - [x] manifest·lockfile·CLI가 0.4.0을 표시하고 CHANGELOG에 0.4.0 항목이 있다.
 - [x] 문법·Node·플랫폼·통합 테스트와 pack/publish dry-run이 통과하고 파일 수가 45개다.
   2026-10-29 Linux / Node 22.22.0: Node 156개 통과·3개 건너뜀, 플랫폼 6개, 통합 5개, docatlas@0.4.0 45개 파일·56.4 kB.
-- [ ] 사용자가 게시 후 npm view docatlas@0.4.0 version과 npx --yes docatlas@0.4.0 agents help를 확인한다.
+- [x] 사용자가 게시 후 npm view docatlas@0.4.0 version과 npx --yes docatlas@0.4.0 agents help를 확인한다.
+  2026-10-29 조회: version 0.4.0, gitHead fada805, latest 0.4.0. 빈 폴더에서 npx --yes docatlas@0.4.0 --version이 0.4.0을,
+  agents help가 세 항목 모두 default로 출력했다. 태그 v0.4.0은 fada805를 가리킨다.
 - [ ] 게시 후 npx --yes docatlas@0.4.0 agents install --dry-run이 사용자의 클라이언트에만 세 항목의 줄을 보여 준다(M-16).
+  자동 관찰(2026-10-29): ~/.claude만 있는 임시 HOME에서 게시본의 미리보기가 Claude 6줄만 보였다. 사용자 실제 환경 확인은 남아 있다.
 
 ## 0.3.1 배포 준비 확인 — 2026-10-28
 
