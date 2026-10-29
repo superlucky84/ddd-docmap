@@ -5,7 +5,7 @@ changes on main that are not published yet.
 Agent skill and rule versions are tracked separately in
 [agent-kit/manifest.json](agent-kit/manifest.json).
 
-## Unreleased
+## 0.4.0 — 2026-10-29
 
 - `docatlas agents install` now installs the designer, implementer, and reviewer by default.
   Add `--only <name>` to install fewer. After an earlier designer-only install, running the default

@@ -445,6 +445,16 @@ test/integration/package.test.js의 부모 1개·하위 3개, 총 4개가 Node 2
 | M-16 | production tarball의 npm 실행기로 한글·공백 HOME에 미리보기·설치·재실행 (macOS 로컬, PR #1 CI의 macOS·Windows 통과) | platform.test.js |
 | M-16·17 | F-09: 개발 의존성 설치본으로 도움말→미리보기→설치→재실행, 프로젝트 --all 설치와 경고, 문서 무변경, 낡은 기록 안내→갱신 후 사라짐, 수정본 종료 3과 --force 백업 | integration/agent-kit.test.js |
 
+## 0.4.0 배포 준비 확인 — 2026-10-29
+
+사용자 결정: DC-28을 병합한 main을 0.4.0으로 배포한다. 아래 자동 확인은 기존 수동 인수 체크박스를 대신하지 않는다.
+
+- [x] manifest·lockfile·CLI가 0.4.0을 표시하고 CHANGELOG에 0.4.0 항목이 있다.
+- [x] 문법·Node·플랫폼·통합 테스트와 pack/publish dry-run이 통과하고 파일 수가 45개다.
+  2026-10-29 Linux / Node 22.22.0: Node 156개 통과·3개 건너뜀, 플랫폼 6개, 통합 5개, docatlas@0.4.0 45개 파일·56.4 kB.
+- [ ] 사용자가 게시 후 npm view docatlas@0.4.0 version과 npx --yes docatlas@0.4.0 agents help를 확인한다.
+- [ ] 게시 후 npx --yes docatlas@0.4.0 agents install --dry-run이 사용자의 클라이언트에만 세 항목의 줄을 보여 준다(M-16).
+
 ## 0.3.1 배포 준비 확인 — 2026-10-28
 
 사용자 결정: PR #4까지 병합한 main을 0.3.1로 배포한다. 아래 자동 확인은 기존 수동 인수 체크박스를 대신하지 않는다.

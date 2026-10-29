@@ -958,6 +958,39 @@ npm install 전에는 ERR_MODULE_NOT_FOUND(open)가 난다. 레지스트리 버�
 종료 기준: 옵션 없는 설치가 감지된 클라이언트에 세 항목을 설치하고, 도움말·README·METHOD·agent-kit 안내가 같은 내용을 말하며
 기존 검사가 통과한다. 클라이언트 감지와 --only·--all·--target 동작은 바뀌지 않는다.
 
+## 0.4.0 배포 준비 — 완료, 게시 대기
+
+대응: RQ-17·18 / DC-28 / M-16.
+진입: DC-28을 main에 병합했다(c6a66bd). 사용자가 0.4.0으로 버전을 미리 올려 main에 푸시하라고 요청했다(2026-10-29).
+기준 검증(ad436b1): 문법 72개·agent kit 세 쌍, Node 159개 중 156개 통과·3개 건너뜀·실패 0, 플랫폼 6개, 통합 5개.
+
+- [x] manifest·lockfile을 npm version 0.4.0 --no-git-tag-version --ignore-scripts로 갱신한다. CLI --version이 0.4.0을 출력한다.
+- [x] CHANGELOG의 Unreleased를 0.4.0으로 옮긴다. 날짜는 npm 게시일(UTC)이며 다른 날 게시하면 고친다.
+- [x] npm run check, npm test, npm run test:platform, npm run test:integration, npm pack --dry-run, npm publish --dry-run.
+  문법 72개·agent kit 세 쌍, Node 159개 중 156개 통과·3개 건너뜀·실패 0, 플랫폼 6개, 통합 5개(F-07은 PLAYWRIGHT_BROWSERS_PATH로
+  설치된 Chromium 사용). pack·publish dry-run: docatlas@0.4.0, 45개 파일, 56.4 kB. publish dry-run은 로그인 필요 경고만 냈다.
+  바뀐 문서의 링크 29개 문제 0, git diff --check 통과.
+- [x] 사용자 요청으로 준비 커밋을 main에 직접 푸시하고, 사용자가 실행할 게시·확인 명령을 안내한다.
+
+종료 기준: 0.4.0 후보의 파일 구성과 버전 표시가 맞고 검사가 통과한다. 실제 npm publish·태그는 사용자 단계다.
+
+### 사용자가 실행할 0.4.0 배포 절차
+
+준비 커밋의 main 푸시와 CI 통과 뒤 main에서 실행한다. package.json은 이미 0.4.0이므로 npm version을 다시 실행하지 않는다.
+
+```sh
+git checkout main
+git pull origin main
+npm whoami --registry=https://registry.npmjs.org/
+npm publish --dry-run --access public --registry=https://registry.npmjs.org/
+npm publish --access public --registry=https://registry.npmjs.org/
+npm view docatlas version --registry=https://registry.npmjs.org/
+npx --yes docatlas@0.4.0 agents help
+npx --yes docatlas@0.4.0 agents install --dry-run
+```
+
+선택: git tag v0.4.0, git push origin v0.4.0. 아직 만들지 않은 v0.3.1(8f6bc69) 태그도 같은 방식으로 만든다.
+
 ## 검증 예제와 기록
 
 F-01~08의 구체적인 구성은 [수동 검증의 가상 프로젝트](./MANUAL_TEST_CHECKLIST.md#가상-프로젝트)를 따른다.
@@ -1182,8 +1215,10 @@ npm ci가 받아 둔 잠금파일의 tarball만으로는 새 의존성 트리를
 - 완료(2026-10-29, 배포 전): DC-28. agents install의 기본 대상을 세 쌍으로 바꾸고 도움말의 포함 여부 질문 단계를 없앴다.
   클라이언트 자동 감지는 사용자 선택으로 그대로다. 검증 결과는 위 "기본 설치 항목을 세 쌍으로" 단계에 있다.
   사용자 요청으로 PR 없이 main에 fast-forward로 병합했다(ad436b1).
-- 사용자 단계: 태그 v0.3.1(8f6bc69)과 GitHub 릴리스 노트. 다음 배포 버전 번호는 정하지 않았다(TBD).
-- 다음: 다음 배포 준비(CHANGELOG Unreleased에 DC-28). M-16 사람 확인(세 항목 기본 설치, 한쪽 클라이언트만 있는 HOME,
+- 완료(2026-10-29): 0.4.0 배포 준비. package.json·lockfile·CHANGELOG를 0.4.0으로 올리고 검사를 통과해 main에 직접 푸시했다.
+- 사용자 단계: 준비 커밋의 main CI 통과 확인 뒤 위 "사용자가 실행할 0.4.0 배포 절차"로 npm publish와 게시 확인.
+  태그 v0.4.0·v0.3.1(8f6bc69)과 GitHub 릴리스 노트. 이 세션에서는 태그 푸시가 403으로 거부됐다.
+- 다음: 게시 후 npm view 결과(version·gitHead)를 기준 문서에 기록. M-16 사람 확인(세 항목 기본 설치, 한쪽 클라이언트만 있는 HOME,
   에이전트가 묻지 않고 미리보기를 보여 주는지), M-18, Codex 실제 세션, Windows 콘솔·Node 22.0 인수.
 - 차단: 없음.
-- 최신 확인 커밋: ad436b1(DC-28 구현). 이 인계 갱신 커밋의 SHA는 git log -1로 확인한다.
+- 최신 확인 커밋: c6a66bd(DC-28 병합). 0.4.0 준비 커밋의 SHA는 git log -1로 확인한다.
