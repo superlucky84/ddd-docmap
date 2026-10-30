@@ -285,13 +285,19 @@ DOCMAP_BROWSER_CHANNEL=chrome으로 설치 Chrome을 선택한다. 지원 환경
 - [ ] --dry-run은 계획만 출력하고 파일을 만들거나 바꾸지 않는다.
 - [ ] Confluence에서 복사한 이전 배포본과 같은 전역 사본은 새 버전으로 바뀌고 설치 기록이 생긴다.
 - [ ] 사용자가 고친 사본은 skip-modified로 남고, --force일 때만 백업 후 교체된다.
+- [x] ctxbin이 관리하는 사본은 skip-managed로 남고, --force일 때만 백업 후 교체된다.
+  2026-10-30 사용자 실제 환경(docatlas@0.4.1, Claude Code·Codex 전역): ctxbin sync로 설치한 8개가 미리보기에서 skip-managed였고,
+  --force 적용 때 ~/.docatlas/backups/에 8개를 백업한 뒤 replace로 바뀌었다.
 - [ ] 이전 docatlas 버전에서 실행해도 더 높은 버전의 설치본을 낮추지 않는다.
-- [ ] 같은 명령을 다시 실행하면 바뀐 파일만 교체되고 나머지는 unchanged다.
+- [x] 같은 명령을 다시 실행하면 바뀐 파일만 교체되고 나머지는 unchanged다.
+  2026-10-30 사용자 실제 환경: 첫 적용에서 내용이 같은 implementer·reviewer 스킬 4개는 unchanged였고, --force 적용 뒤 다시 실행한 미리보기는 unchanged 12였다.
 - [x] --project 설치 때 전역에 같은 이름이 있으면 Claude에서는 전역 스킬이 쓰인다고 경고한다.
   2026-10-28 사용자 실제 환경(전역에 같은 이름 있음)에서 --project --all 설치: create 12, 같은 이름 경고 12, codex-trust 경고 1.
 - [ ] 에이전트가 docatlas agents help만 읽고 미리보기 → 사용자 확인 → 적용 순서로 설치한다.
 - [ ] 설치 대상을 말하지 않은 설치 요청에서 에이전트가 포함 여부를 묻지 않고 세 항목의 미리보기를 보여 준다(DC-28, DC-26의 질문 대체).
-- [ ] 사용자가 주의를 주지 않아도, 에이전트가 건너뛴 파일을 알리고 허락 없이 --force를 쓰지 않는다(DC-26).
+- [x] 사용자가 주의를 주지 않아도, 에이전트가 건너뛴 파일을 알리고 허락 없이 --force를 쓰지 않는다(DC-26).
+  2026-10-30 사용자 실제 환경: "docatlas로 install해서 맞춰 달라"는 요청에서 Claude Code가 미리보기의 skip-managed 8줄과 이유를 알리고,
+  사용자가 교체 범위를 고른 뒤에만 --force를 썼다.
 - [ ] Claude Code·Codex가 아닌 에이전트가 --target으로 엉뚱한 폴더를 만들지 않고, 도움말의 원본 경로를 읽어 사용자에게
   규칙 위치를 확인한 뒤 옮기고, 그 사본은 docatlas가 갱신하지 않는다고 알린다(DC-27).
 - [ ] 설치 명령이 문서·AGENTS.md·CLAUDE.md를 수정하지 않고 대화형 입력을 기다리지 않는다.
