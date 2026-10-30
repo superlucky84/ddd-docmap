@@ -448,6 +448,17 @@ test/integration/package.test.js의 부모 1개·하위 3개, 총 4개가 Node 2
 | M-16 | production tarball의 npm 실행기로 한글·공백 HOME에 미리보기·설치·재실행 (macOS 로컬, PR #1 CI의 macOS·Windows 통과) | platform.test.js |
 | M-16·17 | F-09: 개발 의존성 설치본으로 도움말→미리보기→설치→재실행, 프로젝트 --all 설치와 경고, 문서 무변경, 낡은 기록 안내→갱신 후 사라짐, 수정본 종료 3과 --force 백업 | integration/agent-kit.test.js |
 
+## 0.4.1 배포 준비 확인 — 2026-10-30
+
+사용자 결정: DC-29(designer 1.2.0·kit 1.1.0)를 0.4.1 패치로 배포한다. 아래 자동 확인은 기존 수동 인수 체크박스를 대신하지 않는다.
+
+- [x] manifest·lockfile·CLI가 0.4.1을 표시하고 CHANGELOG에 0.4.1 항목이 있다.
+- [x] 문법·Node·플랫폼·통합 테스트와 pack/publish dry-run이 통과하고 파일 수가 45개다.
+  2026-10-30 macOS 15.6 / Node 22.12.0: Node 159개, 플랫폼 6개, 통합 5개(F-07은 DOCMAP_BROWSER_CHANNEL=chrome),
+  docatlas@0.4.1 45개 파일·56.6 kB. agents help가 Kit 1.1.0과 designer 1.2.0 default를 출력했다.
+- [ ] 사용자가 게시 후 npm view docatlas@0.4.1 version과 npx --yes docatlas@0.4.1 agents help(designer 1.2.0)를 확인한다.
+- [ ] docatlas로 kit 1.0.0을 설치한 실제 환경에서 0.4.1 문서 지도가 업데이트 안내를 한 줄 보이고, 같은 설치 명령 뒤 사라진다(M-17).
+
 ## 0.4.0 배포 준비 확인 — 2026-10-29
 
 사용자 결정: DC-28을 병합한 main을 0.4.0으로 배포한다. 아래 자동 확인은 기존 수동 인수 체크박스를 대신하지 않는다.

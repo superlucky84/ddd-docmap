@@ -1,6 +1,6 @@
 {
   "name": "docatlas",
-  "version": "0.4.0",
+  "version": "0.4.1",
   "description": "Doc-Driven Development toolkit: agent skills for Claude Code and Codex, and a local map of your project documents.",
   "license": "MIT",
   "author": "superlucky84",

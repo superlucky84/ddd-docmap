@@ -5,7 +5,7 @@ changes on main that are not published yet.
 Agent skill and rule versions are tracked separately in
 [agent-kit/manifest.json](agent-kit/manifest.json).
 
-## Unreleased
+## 0.4.1 — 2026-10-30
 
 - Agent kit 1.1.0 with `doc-driven-designer-v1` 1.2.0. The designer places new documents at the
   level of a group the code already shows instead of a `docs/` folder beside every module, gives a
