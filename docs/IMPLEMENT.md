@@ -22,6 +22,7 @@
 - 완료: RQ-19 저장소 소개와 DDD 본거지 문서와 이전 인계 정리. 제품 코드는 바꾸지 않았다. M-18 사람 확인은 남아 있다.
 - 완료: DC-21 METHOD 한국어판과 examples/ 합성 예제 프로젝트. M-18 사람 확인은 남아 있다.
 - 완료: DC-28 기본 설치 항목을 designer·implementer·reviewer 세 쌍으로 변경. 0.4.0으로 게시했다.
+- 완료(배포 전): DC-29 문서 위치 원칙을 METHOD 두 언어판과 designer 스킬 1.2.0(kit 1.1.0)에 반영.
 
 기술 선택은 각 단계에서 근거와 검증을 기록해 DC/IC를 해소한다.
 상세 계약을 바꾸면 요구사항·설계·단계·수동 기준을 같은 작업에서 갱신한다.
@@ -995,6 +996,44 @@ npx --yes docatlas@0.4.0 agents install --dry-run
 npm view docatlas@0.4.0의 gitHead는 fada805이며 latest는 0.4.0이다. 사용자가 태그 v0.3.1(8f6bc69)·v0.4.0(fada805)을 만들었다.
 GitHub 릴리스 v0.3.1은 있다. v0.4.0 릴리스 노트는 사용자가 gh release create로 만든다(이 세션에는 gh 인증이 없다).
 
+## 문서 위치 원칙 보강 — 완료(배포 전)
+
+대응: RQ-19 / DC-29 / M-18.
+진입: 사용자 결정(2026-10-30)을 기준 4종에 기록했다. 기준 커밋 2127c8c.
+기준 검증(2127c8c, macOS 15.6 / Node 22.12.0): 문법 72개·agent kit 1.0.0 세 쌍, Node 159개 통과·실패 0.
+
+### 구현
+
+- [x] METHOD.md 문서 위치 절: 첫 문장의 이유(테스트 비유), 2번 항목의 묶음 규칙, 구조가 불분명할 때의 문단.
+- [x] METHOD.ko.md에 같은 변경. 두 문서의 구조(제목 17·목록 51·코드 펜스 6·표 행 23·링크 11)가 같다.
+- [x] designer SKILL.md의 Documentation Discovery and Placement에 묶음 규칙과 위치 확인 규칙. metadata.version 1.2.0.
+- [x] manifest.json의 designer version 1.2.0·kitVersion 1.1.0, 이전 스킬 해시(a64e7b2e…)를 previous 1.1.0으로, 새 해시(cebb1d14…) 기록.
+  agent-kit/README.md 표와 kit 버전, CHANGELOG Unreleased.
+- [x] 리뷰(doc-driven-reviewer-v1, 2026-10-30): APPROVE, critical 0·warning 3·suggestion 4.
+  warning 3개(CHANGELOG 안내 조건, DESIGN RQ-19 절의 예외 표시, 인계의 커밋 표현)와 스킬의 서브에이전트 문구 suggestion을 반영했다.
+  서브에이전트는 제안한 위치에 초안을 두고 위치를 TBD로 표시해 질문을 돌려준다. 배포 전이라 스킬 버전은 1.2.0 그대로이고 해시만 다시 기록했다.
+  나머지 suggestion 3개(DC-29 체크리스트 순서, M-18 대응 줄, 출처 제목 표기)는 반영하지 않았다.
+
+### Test Hardening
+
+- [x] npm run check가 새 버전·해시·previous 규칙을 통과한다. manifest를 고치기 전에는 해시 불일치와 metadata.version 불일치로 실패했다.
+- [x] 저장소 kit의 버전을 고정한 테스트 2개가 새 버전에서 실패하는 것을 확인하고 기대값을 고쳤다.
+  agent-kit-plan.test.js의 kitVersion 1.0.0→1.1.0, agent-kit-install.test.js의 도움말 designer 1.1.0→1.2.0.
+  버전 변경을 알아채게 하는 의도된 고정이므로 그대로 둔다.
+
+### Integration Test
+
+- [x] npm run check, npm test, npm pack --dry-run, 임시 HOME에서 실제 docatlas agents install 미리보기와
+  kit 1.0.0 설치 기록의 업데이트 안내 확인, 바뀐 문서의 링크 검사, git diff --check.
+  문법 72개·agent kit 1.1.0 세 쌍, Node 159개 통과·실패 0, pack 45개 파일·56.6 kB.
+  ~/.claude만 있는 임시 HOME에 설치한 뒤 기록을 kit 1.0.0·이전 designer 스킬로 되돌리면 문서 지도가
+  "kit 1.1.0 is available (installed 1.0.0)" 안내를 출력했다. 미리보기와 설치는 replace 1(designer 스킬)·unchanged 5이고,
+  설치 후 스킬은 1.2.0이며 안내가 사라졌다. 바뀐 문서 9개의 상대 링크 52개 문제 0, git diff --check 통과.
+  npm run test:platform·test:integration·test:browser는 제품 코드와 설치 동작이 바뀌지 않아 실행하지 않았다.
+
+종료 기준: METHOD 두 언어판과 designer 스킬이 같은 위치 규칙을 말하고, kit 버전·해시 검사와 기존 테스트가 통과한다.
+에이전트 룰·implementer·reviewer·제품 코드는 바뀌지 않는다.
+
 ## 검증 예제와 기록
 
 F-01~08의 구체적인 구성은 [수동 검증의 가상 프로젝트](./MANUAL_TEST_CHECKLIST.md#가상-프로젝트)를 따른다.
@@ -1220,8 +1259,12 @@ npm ci가 받아 둔 잠금파일의 tarball만으로는 새 의존성 트리를
   클라이언트 자동 감지는 사용자 선택으로 그대로다. 검증 결과는 위 "기본 설치 항목을 세 쌍으로" 단계에 있다.
   사용자 요청으로 PR 없이 main에 fast-forward로 병합했다(ad436b1).
 - 완료(2026-10-29): 0.4.0을 npm에 게시했다(gitHead fada805, latest). 태그 v0.3.1·v0.4.0을 사용자가 만들었다.
+- 완료(2026-10-30, 배포 전): DC-29. 블로그 글의 문서 위치 원칙을 METHOD 두 언어판과 designer 스킬 1.2.0(kit 1.1.0)에 반영했다.
+  검증 결과와 리뷰 반영은 위 "문서 위치 원칙 보강" 단계에 있다.
 - 사용자 단계: GitHub 릴리스 v0.4.0 노트(gh release create). 이 세션에는 gh 인증이 없다.
-- 다음: M-16 사람 확인(세 항목 기본 설치, 한쪽 클라이언트만 있는 HOME, 에이전트가 묻지 않고 미리보기를 보여 주는지),
-  M-18, Codex 실제 세션, Windows 콘솔·Node 22.0 인수.
+  Confluence·ctxbin 사본 갱신 시점은 사용자가 정한다.
+- 다음: M-18의 DC-29 항목(위치 절 읽기, 구조가 불분명한 프로젝트에서 designer 1.2.0이 위치를 묻는지),
+  M-16 사람 확인(세 항목 기본 설치, 한쪽 클라이언트만 있는 HOME, 에이전트가 묻지 않고 미리보기를 보여 주는지),
+  M-18 나머지, Codex 실제 세션, Windows 콘솔·Node 22.0 인수.
 - 차단: 없음.
-- 최신 확인 커밋: fada805(0.4.0 게시본). 이 인계 커밋의 SHA는 git log -1로 확인한다.
+- 최신 커밋: DC-29 작업의 기준은 2127c8c다. 이 인계 커밋의 SHA는 git log -1로 확인한다.

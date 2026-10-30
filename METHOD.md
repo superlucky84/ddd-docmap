@@ -147,14 +147,21 @@ write by hand too.
 
 ## Where documents live
 
-Documents start beside the code they describe:
+Documents start beside the code they describe, the way tests often sit beside the module
+they cover, so whoever changes that code finds them first:
 
 1. Look for the nearest `docs/` folder or document entry point next to the files being
    changed, then work upward through the module, package, and repository.
-2. If nothing suitable exists, create a feature folder near the responsible module and
-   record that location in `REQUIREMENTS.md`.
+2. If nothing suitable exists, create a feature folder near the responsible code and
+   record that location in `REQUIREMENTS.md`. Follow the groups the code already shows by
+   purpose, feature, or responsibility instead of giving every module its own `docs/`.
+   A feature that spans several modules gets one location that covers it as a whole.
 3. When a contract becomes shared, move it to the nearest common parent and link to it
    from the local documents. Leave a reference at the old location.
+
+Directory names do not always show which pieces form a feature, especially in older code
+or in a project that mixes old and new layouts. There, the agent proposes a location and
+someone who knows the project decides.
 
 So a growing project ends up with documents in many places, on purpose:
 

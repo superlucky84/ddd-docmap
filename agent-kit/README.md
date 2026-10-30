@@ -6,11 +6,11 @@ docatlas installs them for Claude Code and Codex.
 
 | Name | Version | Skill | Agent rule | Installed by default |
 | --- | --- | --- | --- | --- |
-| doc-driven-designer-v1 | 1.1.0 | [SKILL.md](skills/doc-driven-designer-v1/SKILL.md) | [rule](agents/doc-driven-designer-v1.md) | Yes |
+| doc-driven-designer-v1 | 1.2.0 | [SKILL.md](skills/doc-driven-designer-v1/SKILL.md) | [rule](agents/doc-driven-designer-v1.md) | Yes |
 | doc-driven-implementer-v1 | 1.1.0 | [SKILL.md](skills/doc-driven-implementer-v1/SKILL.md) | [rule](agents/doc-driven-implementer-v1.md) | Yes |
 | doc-driven-reviewer-v1 | 1.4.0 | [SKILL.md](skills/doc-driven-reviewer-v1/SKILL.md) | [rule](agents/doc-driven-reviewer-v1.md) | Yes |
 
-Kit version 1.0.0. [manifest.json](manifest.json) records each item's version and hashes.
+Kit version 1.1.0. [manifest.json](manifest.json) records each item's version and hashes.
 
 ## Install
 

@@ -3,7 +3,7 @@ name: doc-driven-designer-v1
 description: Use when a user wants help capturing requirements and co-producing design and implementation documentation before or during development. Build and maintain REQUIREMENTS.md, DESIGN.md, IMPLEMENT.md, and MANUAL_TEST_CHECKLIST.md with explicit decision checklists, phased plans, and test gates that support multi-agent handoff.
 metadata:
   short-description: documentation-first designer
-  version: 1.1.0
+  version: 1.2.0
 ---
 
 # Doc-Driven Designer Playbook
@@ -19,7 +19,8 @@ Translate user requirements into a maintainable document set that guides impleme
 ## Documentation Discovery and Placement
 
 - Respect the user's chosen location and repository conventions. Otherwise, start beside the files being changed: inspect the nearest relevant `docs/` or document entrypoint, then work upward through the module, section, package, and repository. Follow existing references to find the canonical documents before creating a new set.
-- If no suitable documents exist, create a feature-specific directory near the module or section responsible for the change. Record the chosen document location and related code scope in `REQUIREMENTS.md` so another agent can find them.
+- If no suitable documents exist, create a feature-specific directory near the code responsible for the change. Place it at the level of a group the code already shows by purpose, feature, or responsibility instead of adding a `docs/` folder beside every module; a feature that spans several modules gets one location that covers it as a whole. Record the chosen document location and related code scope in `REQUIREMENTS.md` so another agent can find them.
+- When the code layout does not show which modules form the feature or where its documents belong, as often happens in older or mixed layouts, propose a location and ask the user before creating new documents. As a subagent, draft them at the proposed location, mark the location `TBD`, and return the question.
 - Let placement evolve with the work. When content becomes shared across groups or sections, move the shared contract to the nearest suitable common parent documentation location. Keep module-specific requirements and policies near their code and link to the shared contract; sharing an API alone does not require moving every document.
 - Consider consolidating the complete document set when the work needs unified documentation or the user requests it. Choose the location from its actual ownership and scope; package-level `docs/<feature>/` and layouts such as `core/`, `article/`, or `home/` are options, not mandatory starting structures.
 - Maintain one canonical copy of each contract or plan. When moving documents upward, leave references at their former locations and link shared and local documents so code-adjacent discovery still works.

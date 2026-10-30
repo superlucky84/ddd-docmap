@@ -1,20 +1,27 @@
 {
   "schema": 1,
-  "kitVersion": "1.0.0",
+  "kitVersion": "1.1.0",
   "items": [
     {
       "name": "doc-driven-designer-v1",
-      "version": "1.1.0",
+      "version": "1.2.0",
       "default": true,
       "skill": {
         "path": "skills/doc-driven-designer-v1/SKILL.md",
-        "sha256": "a64e7b2e87410f77ab1ab953d9d842ec560b35803f28c9adf2fcd90515e4b1f4"
+        "sha256": "cebb1d14760586cc6f1fe6cb4e3aceb96751c24ced1c157eff094d0c406adf7b"
       },
       "agent": {
         "path": "agents/doc-driven-designer-v1.md",
         "sha256": "e6fe6eaec3297a67bf5da5e72baded8c61423c93d4aabb1b6020819c8e7dbc02"
       },
       "previous": [
+        {
+          "version": "1.1.0",
+          "kind": "skill",
+          "part": "file",
+          "sha256": "a64e7b2e87410f77ab1ab953d9d842ec560b35803f28c9adf2fcd90515e4b1f4",
+          "source": "docatlas agent kit 1.0.0 (docatlas 0.3.0 to 0.4.0)"
+        },
         {
           "version": "1.0.0",
           "kind": "skill",

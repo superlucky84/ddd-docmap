@@ -5,6 +5,14 @@ changes on main that are not published yet.
 Agent skill and rule versions are tracked separately in
 [agent-kit/manifest.json](agent-kit/manifest.json).
 
+## Unreleased
+
+- Agent kit 1.1.0 with `doc-driven-designer-v1` 1.2.0. The designer places new documents at the
+  level of a group the code already shows instead of a `docs/` folder beside every module, gives a
+  feature that spans several modules one location, and asks you where documents belong when the
+  code layout does not make it clear. If you installed the skills with `docatlas agents install`,
+  the document map shows a one-line notice; run the same command again to update them.
+
 ## 0.4.0 — 2026-10-29
 
 - `docatlas agents install` now installs the designer, implementer, and reviewer by default.

@@ -33,7 +33,7 @@ async function trySymlink(t, target, link) {
 
 test('the packaged kit loads verified sources and renders Codex agents', async t => {
   const kit = await loadKit();
-  assert.equal(kit.kitVersion, '1.0.0');
+  assert.equal(kit.kitVersion, '1.1.0');
   assert.deepEqual(selectItems(kit).map(item => item.name),
     ['doc-driven-designer-v1', 'doc-driven-implementer-v1', 'doc-driven-reviewer-v1']);
   const toml = kit.items[0].files.codexAgent.text;
