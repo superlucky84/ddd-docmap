@@ -456,7 +456,10 @@ test/integration/package.test.js의 부모 1개·하위 3개, 총 4개가 Node 2
 - [x] 문법·Node·플랫폼·통합 테스트와 pack/publish dry-run이 통과하고 파일 수가 45개다.
   2026-10-30 macOS 15.6 / Node 22.12.0: Node 159개, 플랫폼 6개, 통합 5개(F-07은 DOCMAP_BROWSER_CHANNEL=chrome),
   docatlas@0.4.1 45개 파일·56.6 kB. agents help가 Kit 1.1.0과 designer 1.2.0 default를 출력했다.
-- [ ] 사용자가 게시 후 npm view docatlas@0.4.1 version과 npx --yes docatlas@0.4.1 agents help(designer 1.2.0)를 확인한다.
+- [x] 사용자가 게시 후 npm view docatlas@0.4.1 version과 npx --yes docatlas@0.4.1 agents help(designer 1.2.0)를 확인한다.
+  2026-10-30 조회: version 0.4.1, gitHead fcb4e68, latest 0.4.1. 빈 폴더에서 npx --yes docatlas@0.4.1 --version이 0.4.1을,
+  agents help가 Kit 1.1.0과 designer 1.2.0·implementer 1.1.0·reviewer 1.4.0 default를 출력했다. 태그 v0.4.1은 fcb4e68을 가리킨다.
+  자동 관찰: ~/.claude만 있는 임시 HOME에서 게시본의 미리보기가 Claude 6줄만 보였다.
 - [ ] docatlas로 kit 1.0.0을 설치한 실제 환경에서 0.4.1 문서 지도가 업데이트 안내를 한 줄 보이고, 같은 설치 명령 뒤 사라진다(M-17).
 
 ## 0.4.0 배포 준비 확인 — 2026-10-29

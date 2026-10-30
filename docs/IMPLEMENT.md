@@ -22,7 +22,7 @@
 - 완료: RQ-19 저장소 소개와 DDD 본거지 문서와 이전 인계 정리. 제품 코드는 바꾸지 않았다. M-18 사람 확인은 남아 있다.
 - 완료: DC-21 METHOD 한국어판과 examples/ 합성 예제 프로젝트. M-18 사람 확인은 남아 있다.
 - 완료: DC-28 기본 설치 항목을 designer·implementer·reviewer 세 쌍으로 변경. 0.4.0으로 게시했다.
-- 완료(배포 전): DC-29 문서 위치 원칙을 METHOD 두 언어판과 designer 스킬 1.2.0(kit 1.1.0)에 반영. 0.4.1 배포 준비를 마쳤다.
+- 완료: DC-29 문서 위치 원칙을 METHOD 두 언어판과 designer 스킬 1.2.0(kit 1.1.0)에 반영. 0.4.1로 게시했다.
 
 기술 선택은 각 단계에서 근거와 검증을 기록해 DC/IC를 해소한다.
 상세 계약을 바꾸면 요구사항·설계·단계·수동 기준을 같은 작업에서 갱신한다.
@@ -1034,7 +1034,7 @@ GitHub 릴리스 v0.3.1은 있다. v0.4.0 릴리스 노트는 사용자가 gh re
 종료 기준: METHOD 두 언어판과 designer 스킬이 같은 위치 규칙을 말하고, kit 버전·해시 검사와 기존 테스트가 통과한다.
 에이전트 룰·implementer·reviewer·제품 코드는 바뀌지 않는다.
 
-## 0.4.1 배포 준비 — 완료(게시 전)
+## 0.4.1 배포 준비 — 완료, 게시 확인
 
 대응: RQ-19 / DC-29 / M-17·18.
 진입: DC-29를 작업 브랜치 claude/dc-29-placement에 커밋했다(aa4f90c). 사용자가 리뷰 반영 후 바로 배포할 수 있게 버전을 올리라고 요청했다(2026-10-30).
@@ -1046,7 +1046,8 @@ GitHub 릴리스 v0.3.1은 있다. v0.4.0 릴리스 노트는 사용자가 gh re
   문법 72개·agent kit 1.1.0 세 쌍, Node 159개 통과·실패 0, 플랫폼 6개, 통합 5개. pack·publish dry-run: docatlas@0.4.1, 45개 파일, 56.6 kB.
   통합의 F-07은 이 환경에 Playwright 기본 브라우저가 없어 처음에 실패했고, DOCMAP_BROWSER_CHANNEL=chrome(설치된 Chrome)으로 통과했다.
   agents help는 Kit 1.1.0과 designer 1.2.0 default를 출력한다.
-- [ ] 작업 브랜치를 main에 반영하고 푸시한다. 사용자가 정한다.
+- [x] 사용자 요청으로 작업 브랜치를 main에 fast-forward로 반영해 푸시했고(fcb4e68) 작업 브랜치는 지웠다.
+  main CI(run 41004822916)가 macOS·Windows × Node 22·24 네 작업 모두 통과했다.
 
 종료 기준: 0.4.1 후보의 파일 구성과 버전 표시가 맞고 검사가 통과한다. main 반영·실제 npm publish·태그는 사용자 단계다.
 
@@ -1067,6 +1068,14 @@ npx --yes docatlas@0.4.1 agents install --dry-run
 ```
 
 선택: git tag v0.4.1, git push origin v0.4.1.
+
+게시 확인(2026-10-30): 위 절차의 main 반영과 푸시는 이 세션에서 했다. main CI(run 41004822916)가 통과했고, 사용자가 0.4.1을 게시했다(04:55 UTC).
+npm view docatlas@0.4.1의 gitHead는 fcb4e68이며 latest는 0.4.1이다. 사용자가 태그 v0.4.1(fcb4e68)을 만들었다.
+GitHub 릴리스 v0.4.1(영문 노트)은 이 세션에서 gh release create --verify-tag로 만들었고 Latest로 표시된다. v0.4.0 릴리스도 있다.
+
+ctxbin 갱신(2026-10-30, 사용자 요청): 원격 스킬 8개·에이전트 3개 전체를 ~/.ctxbin/backups/ctxbin-2026-10-30-before-docatlas-0.4.1.json에
+백업한 뒤 doc-driven 세 쌍을 원본과 해시로 비교했다. designer 스킬만 1.1.0(a64e7b2e…)이라 1.2.0 원본으로 저장했고, 다시 받아 cebb1d14…를 확인했다.
+implementer·reviewer 스킬과 세 룰은 이미 원본과 같아 다시 저장하지 않았다. ctxbin sync로 설치한 로컬 사본은 갱신하지 않았다.
 
 ## 검증 예제와 기록
 
@@ -1293,14 +1302,15 @@ npm ci가 받아 둔 잠금파일의 tarball만으로는 새 의존성 트리를
   클라이언트 자동 감지는 사용자 선택으로 그대로다. 검증 결과는 위 "기본 설치 항목을 세 쌍으로" 단계에 있다.
   사용자 요청으로 PR 없이 main에 fast-forward로 병합했다(ad436b1).
 - 완료(2026-10-29): 0.4.0을 npm에 게시했다(gitHead fada805, latest). 태그 v0.3.1·v0.4.0을 사용자가 만들었다.
-- 완료(2026-10-30, 배포 전): DC-29. 블로그 글의 문서 위치 원칙을 METHOD 두 언어판과 designer 스킬 1.2.0(kit 1.1.0)에 반영했다.
-  검증 결과와 리뷰 반영은 위 "문서 위치 원칙 보강" 단계에 있다. 작업 브랜치 claude/dc-29-placement에 커밋했다(aa4f90c).
-- 완료(2026-10-30, 게시 전): 0.4.1 배포 준비. 버전·CHANGELOG를 올리고 전체 검사와 pack/publish dry-run을 통과했다.
-- 사용자 단계: 작업 브랜치의 main 반영·푸시, 위 "사용자가 실행할 0.4.1 배포 절차"의 게시와 태그.
-  GitHub 릴리스 v0.4.0 노트(gh release create, 이 세션에는 gh 인증이 없다). Confluence·ctxbin 사본 갱신 시점은 사용자가 정한다.
-- 다음: 0.4.1 게시 확인(npm view, agents help의 designer 1.2.0, 실제 환경의 업데이트 안내).
+- 완료(2026-10-30): DC-29. 블로그 글의 문서 위치 원칙을 METHOD 두 언어판과 designer 스킬 1.2.0(kit 1.1.0)에 반영했다(aa4f90c).
+  검증 결과와 리뷰 반영은 위 "문서 위치 원칙 보강" 단계에 있다.
+- 완료(2026-10-30): 0.4.1을 npm에 게시했다(gitHead fcb4e68, latest). 태그 v0.4.1은 사용자가 만들었고, GitHub 릴리스 v0.4.1(영문 노트)을 만들었다.
+  main 반영·푸시 뒤 작업 브랜치는 지웠다. GitHub 릴리스 v0.4.0도 있다.
+- 완료(2026-10-30): ctxbin 원격의 designer 스킬을 1.2.0으로 갱신했다(백업 후). 나머지 doc-driven 스킬·룰은 이미 원본과 같다.
+- 사용자 단계: Confluence 사본 갱신 시점과 로컬 ctxbin sync 여부는 사용자가 정한다.
+- 다음: M-17의 실제 환경 업데이트 안내(docatlas로 kit 1.0.0을 설치한 환경에서 0.4.1 문서 지도의 안내와 재설치 후 사라짐),
   M-18의 DC-29 항목(위치 절 읽기, 구조가 불분명한 프로젝트에서 designer 1.2.0이 위치를 묻는지),
   M-16 사람 확인(세 항목 기본 설치, 한쪽 클라이언트만 있는 HOME, 에이전트가 묻지 않고 미리보기를 보여 주는지),
   M-18 나머지, Codex 실제 세션, Windows 콘솔·Node 22.0 인수.
 - 차단: 없음.
-- 최신 커밋: 작업 브랜치 claude/dc-29-placement. DC-29 커밋은 aa4f90c(기준 2127c8c)이며, 이 인계 커밋의 SHA는 git log -1로 확인한다.
+- 최신 확인 커밋: fcb4e68(0.4.1 게시본). 이 인계 커밋의 SHA는 git log -1로 확인한다.
